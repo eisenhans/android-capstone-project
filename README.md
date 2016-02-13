@@ -1,1 +1,1 @@
-# udacity-android-capstone-project
+# android-capstone-project
