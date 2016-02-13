@@ -6,3 +6,5 @@
 .idea
 local.properties
 
+/RememberMe/build
+/RememberMe/app/build
