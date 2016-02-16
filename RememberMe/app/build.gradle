@@ -25,8 +25,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 
-    apt 'net.simonvt.schematic:schematic-compiler:0.6.4'
+    compile 'com.venmo.cursor:library:0.4'
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'com.google.dagger:dagger:2.0.2'
+    apt "com.google.dagger:dagger-compiler:2.0.2"
+
     compile 'net.simonvt.schematic:schematic:0.6.4'
+    apt 'net.simonvt.schematic:schematic-compiler:0.6.4'
 
     debugCompile 'com.facebook.stetho:stetho:1.2.0'
     debugCompile 'com.facebook.stetho:stetho-okhttp:1.2.0'
