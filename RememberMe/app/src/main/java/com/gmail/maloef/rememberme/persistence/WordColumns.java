@@ -15,10 +15,10 @@ public interface WordColumns {
     String _ID = "_id";
 
     @DataType(TEXT)
-    String NATIVE_LANGUAGE = "nativeLanguage";
+    String NATIVE_WORD = "nativeWord";
 
     @DataType(TEXT)
-    String FOREIGN_LANGUAGE = "foreignLanguage";
+    String FOREIGN_WORD = "foreignWord";
 
     @DataType(INTEGER) @References(table = VocabularyBoxDatabase.COMPARTMENT, column = CompartmentColumns._ID)
     String COMPARTMENT = "compartment";

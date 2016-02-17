@@ -7,8 +7,8 @@ public class Word implements Parcelable {
 
     int _id;
 
-    String foreignLanguage;
-    String nativeLanguage;
+    String foreignWord;
+    String nativeWord;
     int compartment;
 
     long creationDate;
@@ -24,8 +24,8 @@ public class Word implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this._id);
-        dest.writeString(this.foreignLanguage);
-        dest.writeString(this.nativeLanguage);
+        dest.writeString(this.foreignWord);
+        dest.writeString(this.nativeWord);
         dest.writeInt(this.compartment);
         dest.writeLong(this.creationDate);
         dest.writeLong(this.updateDate);
@@ -36,8 +36,8 @@ public class Word implements Parcelable {
 
     private Word(Parcel in) {
         this._id = in.readInt();
-        this.foreignLanguage = in.readString();
-        this.nativeLanguage = in.readString();
+        this.foreignWord = in.readString();
+        this.nativeWord = in.readString();
         this.compartment = in.readInt();
         this.creationDate = in.readLong();
         this.updateDate = in.readLong();

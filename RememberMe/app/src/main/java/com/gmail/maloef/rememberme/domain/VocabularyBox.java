@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 public class VocabularyBox implements Parcelable {
 
-    static final int TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE = 0;
-    static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
-    static final int TRANSLATION_DIRECTION_MIXED = 2;
+    public static final int TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE = 0;
+    public static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
+    public static final int TRANSLATION_DIRECTION_MIXED = 2;
 
     int _id;
 

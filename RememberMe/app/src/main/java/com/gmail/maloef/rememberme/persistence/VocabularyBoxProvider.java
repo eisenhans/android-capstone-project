@@ -99,8 +99,8 @@ public class VocabularyBoxProvider {
          * Example: ...rememberme/vocabularyBoxes/123/compartments
          */
         @InexactContentUri(
-                path = "/#/" + Path.COMPARTMENTS,
-                name = "COMPARTMENTS",
+                path = Path.VOCABULARY_BOXES + "/#/" + Path.COMPARTMENTS,
+                name = "COMPARTMENTS_BY_VOCABULARY_BOX",
                 type = "vnd.android.cursor.dir/compartments",
                 whereColumn = CompartmentColumns.VOCABULARY_BOX,
                 pathSegment = 0,
