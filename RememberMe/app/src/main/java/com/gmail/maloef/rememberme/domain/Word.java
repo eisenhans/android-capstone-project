@@ -5,16 +5,15 @@ import android.os.Parcelable;
 
 public class Word implements Parcelable {
 
-    int _id;
+    public int _id;
 
-    String foreignWord;
-    String nativeWord;
-    int compartment;
+    public String foreignWord;
+    public String nativeWord;
+    public int compartment;
 
-    long creationDate;
-    long updateDate;
-    long lastRepeatDate;
-
+    public long creationDate;
+    public long updateDate;
+    public long lastRepeatDate;
 
     @Override
     public int describeContents() {

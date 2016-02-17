@@ -5,10 +5,10 @@ import android.os.Parcelable;
 
 public class Compartment implements Parcelable {
 
-    int _id;
+    public int _id;
 
-    int vocabularyBox;
-    int number;
+    public int vocabularyBox;
+    public int number;
 
     @Override
     public int describeContents() {

@@ -9,12 +9,12 @@ public class VocabularyBox implements Parcelable {
     public static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
     public static final int TRANSLATION_DIRECTION_MIXED = 2;
 
-    int _id;
+    public int _id;
 
-    String name;
-    String nativeLanguage;
-    String foreignLanguage;
-    int translationDirection;
+    public String name;
+    public String nativeLanguage;
+    public String foreignLanguage;
+    public int translationDirection;
 
     @Override
     public int describeContents() {

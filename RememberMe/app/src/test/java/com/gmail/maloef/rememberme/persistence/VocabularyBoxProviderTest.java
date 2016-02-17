@@ -2,10 +2,11 @@ package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.database.Cursor;
 
 import com.gmail.maloef.rememberme.AbstractRobolectricTest;
+import com.gmail.maloef.rememberme.domain.Compartment;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.generated.VocabularyBoxDatabase;
 
 import org.junit.Before;
@@ -50,87 +51,98 @@ public class VocabularyBoxProviderTest extends AbstractRobolectricTest {
 
     @Test
     public void testVocabularyBox() {
-        Cursor cursor = contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null);
-        assertFalse(cursor.moveToFirst());
-        cursor.close();
+        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
+                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+        assertFalse(boxCursor.moveToFirst());
+        boxCursor.close();
 
         insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
-        cursor = contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        assertEquals("defaultBox", cursor.getString(cursor.getColumnIndex(VocabularyBoxColumns.NAME)));
-        assertEquals("English", cursor.getString(cursor.getColumnIndex(VocabularyBoxColumns.FOREIGN_LANGUAGE)));
-        assertEquals("German", cursor.getString(cursor.getColumnIndex(VocabularyBoxColumns.NATIVE_LANGUAGE)));
-        assertEquals(VocabularyBox.TRANSLATION_DIRECTION_MIXED,
-                cursor.getInt(cursor.getColumnIndex(VocabularyBoxColumns.TRANSLATION_DIRECTION)));
+        boxCursor = new VocabularyBoxCursor(
+                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+        assertTrue(boxCursor.moveToFirst());
+        VocabularyBox box = boxCursor.peek();
+        assertEquals("defaultBox", box.name);
+        assertEquals("English", box.foreignLanguage);
+        assertEquals("German", box.nativeLanguage);
+        assertEquals(VocabularyBox.TRANSLATION_DIRECTION_MIXED, box.translationDirection);
 
-        assertFalse(cursor.moveToNext());
-        cursor.close();
+        assertFalse(boxCursor.moveToNext());
+        boxCursor.close();
     }
 
     @Test
     public void testCompartment() {
-        Cursor cursor = contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null);
-        assertFalse(cursor.moveToFirst());
-        cursor.close();
+        CompartmentCursor compartmentCursor = new CompartmentCursor(
+                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+        assertFalse(compartmentCursor.moveToFirst());
+        compartmentCursor.close();
 
-        insertCompartment(1, 1);
+        insertCompartment(1, 2);
 
-        cursor = contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        cursor.close();
+        compartmentCursor = new CompartmentCursor(
+                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+        assertTrue(compartmentCursor.moveToFirst());
+        Compartment compartment = compartmentCursor.peek();
+        assertEquals(1, compartment.vocabularyBox);
+        assertEquals(2, compartment.number);
+        compartmentCursor.close();
     }
 
     @Test
     public void testWord() {
-        Cursor cursor = contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null);
-        assertFalse(cursor.moveToFirst());
-        cursor.close();
+        WordCursor wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        assertFalse(wordCursor.moveToFirst());
+        wordCursor.close();
 
         insertWord(1, "porcupine", "Stachelschwein");
 
-        cursor = contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        assertEquals("porcupine", cursor.getString(cursor.getColumnIndex(WordColumns.FOREIGN_WORD)));
-        assertEquals("Stachelschwein", cursor.getString(cursor.getColumnIndex(WordColumns.NATIVE_WORD)));
+        wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        assertTrue(wordCursor.moveToFirst());
+        Word word = wordCursor.peek();
+        assertEquals("porcupine", word.foreignWord);
+        assertEquals("Stachelschwein", word.nativeWord);
 
-        long creationDate = cursor.getLong(cursor.getColumnIndex(WordColumns.CREATION_DATE));
+        long creationDate = word.creationDate;
         long now = new Date().getTime();
         logInfo("word was created " + (now - creationDate) + " ms ago");
         assertTrue(creationDate < now);
         assertTrue(creationDate + 1000 > now);
 
-        cursor.close();
+        wordCursor.close();
     }
 
     @Test
     public void testCombined() {
         insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
-        Cursor cursor = contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        int vocabularyBoxId = cursor.getInt(cursor.getColumnIndex(VocabularyBoxColumns._ID));
-        cursor.close();
+        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
+                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+        assertTrue(boxCursor.moveToFirst());
+        int vocabularyBoxId = boxCursor.peek()._id;
+        boxCursor.close();
 
         insertCompartment(vocabularyBoxId, 1);
-        cursor = contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        int compartmentId = cursor.getInt(cursor.getColumnIndex(CompartmentColumns._ID));
-        cursor.close();
+        CompartmentCursor compartmentCursor = new CompartmentCursor(
+                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+        assertTrue(compartmentCursor.moveToFirst());
+        int compartmentId = compartmentCursor.peek()._id;
+        compartmentCursor.close();
 
         insertWord(compartmentId, "porcupine", "Stachelschwein");
-        cursor = contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        int wordId = cursor.getInt(cursor.getColumnIndex(WordColumns._ID));
-        cursor.close();
+        WordCursor wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        assertTrue(wordCursor.moveToFirst());
+        int wordId = wordCursor.peek()._id;
+        wordCursor.close();
 
-        cursor = contentProvider.query(VocabularyBoxProvider.Word.findById(wordId), null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        assertEquals(compartmentId, cursor.getInt(cursor.getColumnIndex(WordColumns.COMPARTMENT)));
-        cursor.close();
+        wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.findById(wordId), null, null, null, null));
+        assertTrue(wordCursor.moveToFirst());
+        assertEquals(compartmentId, wordCursor.peek().compartment);
+        wordCursor.close();
 
-        cursor = contentProvider.query(VocabularyBoxProvider.Compartment.findById(compartmentId), null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        assertEquals(vocabularyBoxId, cursor.getInt(cursor.getColumnIndex(CompartmentColumns.VOCABULARY_BOX)));
-        cursor.close();
+        compartmentCursor = new CompartmentCursor(
+                contentProvider.query(VocabularyBoxProvider.Compartment.findById(compartmentId), null, null, null, null));
+        assertTrue(compartmentCursor.moveToFirst());
+        assertEquals(vocabularyBoxId, compartmentCursor.peek().vocabularyBox);
+        compartmentCursor.close();
     }
 
     private void insertVocabularyBox(String name, String foreignLanguage, String nativeLanguage, int translationDirection) {
