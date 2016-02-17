@@ -13,6 +13,10 @@ public class DebugRememberMeApplication extends RememberMeApplication {
             Log.i(DebugRememberMeApplication.class.getSimpleName(), "Robolectric found on classpath - Stetho will not be initialized");
         } else {
             Stetho.initializeWithDefaults(this);
+
+//            OkHttpClient client = new OkHttpClient();
+//            client.networkInterceptors().add(new StethoInterceptor());
+
             Log.i(DebugRememberMeApplication.class.getSimpleName(), "Stetho initialized");
         }
     }

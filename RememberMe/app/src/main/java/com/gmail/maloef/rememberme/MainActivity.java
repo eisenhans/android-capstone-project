@@ -1,13 +1,19 @@
 package com.gmail.maloef.rememberme;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
+import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +33,19 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        insertVocabularyBox();
+    }
+
+    void insertVocabularyBox() {
+        ContentValues values = new ContentValues();
+        values.put(VocabularyBoxColumns.NAME, "defaultBox");
+        values.put(VocabularyBoxColumns.FOREIGN_LANGUAGE, "Spanish");
+        values.put(VocabularyBoxColumns.NATIVE_LANGUAGE, "German");
+        values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+
+        getContentResolver().insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        logInfo("inserted vocabularyBox");
     }
 
     @Override
@@ -49,5 +68,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void logInfo(String message) {
+        Log.i(getClass().getSimpleName(), message);
     }
 }
