@@ -1,21 +1,25 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base application theme - will be used by v21 and older phones -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- used in manifest as theme for MainActivity -->
+    <!-- used in manifest as theme for MainActivity - will be used by older phones -->
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- used in activity_main.xml to set up Toolbar -->
+    <!-- used in activity_main.xml to set up AppBarLayout -->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!-- used in activity_main.xml to set up Toolbar -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

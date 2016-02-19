@@ -1,9 +1,15 @@
 <resources>>
 
+    <!-- used in manifest as theme for MainActivity - will be used by v21 phones -->
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+
+        <!-- if this is commented in, the color of the status bar is primary (instead of primaryDark) -->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 </resources>
+
+

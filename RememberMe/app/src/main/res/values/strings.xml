@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Remember me</string>
     <string name="action_settings">Settings</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="vocabulary_box">Vocabulary box</string>
 </resources>
