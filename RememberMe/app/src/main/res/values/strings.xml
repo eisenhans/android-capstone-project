@@ -6,4 +6,6 @@
     <string name="drawer_close">Close navigation drawer</string>
 
     <string name="vocabulary_box">Vocabulary box</string>
+    <string name="current_box">Current box</string>
+    <string name="default_name">Default</string>
 </resources>

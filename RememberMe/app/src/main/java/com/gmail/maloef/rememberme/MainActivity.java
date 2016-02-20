@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
+import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
 import java.util.Date;
 
@@ -45,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        insertVocabularyBox();
+        VocabularyBoxService boxService = new VocabularyBoxService(this);
+        if (!boxService.isOneBoxSaved()) {
+            boxService.createDefaultBox();
+        }
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
