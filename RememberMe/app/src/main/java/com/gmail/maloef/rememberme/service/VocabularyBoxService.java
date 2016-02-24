@@ -10,6 +10,10 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
+import com.venmo.cursor.IterableCursor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VocabularyBoxService {
 
@@ -38,21 +42,31 @@ public class VocabularyBoxService {
         values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, VocabularyBox.TRANSLATION_DIRECTION_MIXED);
 
         contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+
+        // ToDo: remove
+        values.put(VocabularyBoxColumns.NAME, "English");
+        contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        values.put(VocabularyBoxColumns.NAME, "Spanish");
+        contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+
         logInfo("created default vocabulary box");
     }
 
-    public String[] getBoxNames() {
-        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
+    public List<String> getBoxNames() {
+        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
                 contentResolver.query(
                         VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
                         new String[] {VocabularyBoxColumns.NAME},
                         null, null, null));
 
-        String[] boxNames = new String[boxCursor.getCount()];
-        for (int i = 0; i < boxNames.length; i++) {
-            boxCursor.moveToNext();
-            boxNames[i] = boxCursor.peek().name;
+        int count = boxes.getCount();
+        logInfo("found " + count + " boxes");
+
+        List<String> boxNames = new ArrayList<String>(count);
+        for (VocabularyBox box : boxes) {
+            boxNames.add(box.name);
         }
+        boxes.close();
         return boxNames;
     }
 

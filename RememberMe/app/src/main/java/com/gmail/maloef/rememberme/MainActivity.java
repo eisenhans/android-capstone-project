@@ -1,6 +1,5 @@
 package com.gmail.maloef.rememberme;
 
-import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -11,19 +10,20 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
-import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawer;
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
+
+    private Spinner vocabularyBoxSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +50,23 @@ public class MainActivity extends AppCompatActivity {
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
+
+        vocabularyBoxSpinner = (Spinner) findViewById(R.id.vocabularyBoxSpinner);
+        List<String> boxNames = boxService.getBoxNames();
+        logInfo("vocabulary boxes: " + boxNames.size());
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, boxNames);
+        // Specify the layout to use when the list of choices appears
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        vocabularyBoxSpinner.setAdapter(spinnerAdapter);
+
+        Spinner foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
+
+
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
-    }
-
-    void insertVocabularyBox() {
-        ContentValues values = new ContentValues();
-        long now = new Date().getTime();
-        values.put(VocabularyBoxColumns.NAME, "defaultBox" + now);
-        values.put(VocabularyBoxColumns.FOREIGN_LANGUAGE, "Spanish");
-        values.put(VocabularyBoxColumns.NATIVE_LANGUAGE, "German");
-        values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, VocabularyBox.TRANSLATION_DIRECTION_MIXED);
-
-        getContentResolver().insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
-        logInfo("inserted vocabularyBox");
     }
 
     @Override
