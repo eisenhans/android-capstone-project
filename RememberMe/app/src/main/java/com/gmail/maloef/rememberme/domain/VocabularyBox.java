@@ -15,36 +15,41 @@ public class VocabularyBox implements Parcelable {
     public String nativeLanguage;
     public String foreignLanguage;
     public int translationDirection;
+    public boolean isCurrent;
+
+    public VocabularyBox() {}
+
+    protected VocabularyBox(Parcel in) {
+        _id = in.readInt();
+        name = in.readString();
+        nativeLanguage = in.readString();
+        foreignLanguage = in.readString();
+        translationDirection = in.readInt();
+        isCurrent = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(_id);
+        dest.writeString(name);
+        dest.writeString(nativeLanguage);
+        dest.writeString(foreignLanguage);
+        dest.writeInt(translationDirection);
+        dest.writeByte((byte) (isCurrent ? 1 : 0));
+    }
 
     @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this._id);
-        dest.writeString(this.name);
-        dest.writeString(this.nativeLanguage);
-        dest.writeString(this.foreignLanguage);
-        dest.writeInt(this.translationDirection);
-    }
-
-    public VocabularyBox() {}
-
-    private VocabularyBox(Parcel in) {
-        this._id = in.readInt();
-        this.name = in.readString();
-        this.nativeLanguage = in.readString();
-        this.foreignLanguage = in.readString();
-        this.translationDirection = in.readInt();
-    }
-
-    public static final Parcelable.Creator<VocabularyBox> CREATOR = new Parcelable.Creator<VocabularyBox>() {
-        public VocabularyBox createFromParcel(Parcel source) {
-            return new VocabularyBox(source);
+    public static final Creator<VocabularyBox> CREATOR = new Creator<VocabularyBox>() {
+        @Override
+        public VocabularyBox createFromParcel(Parcel in) {
+            return new VocabularyBox(in);
         }
 
+        @Override
         public VocabularyBox[] newArray(int size) {
             return new VocabularyBox[size];
         }

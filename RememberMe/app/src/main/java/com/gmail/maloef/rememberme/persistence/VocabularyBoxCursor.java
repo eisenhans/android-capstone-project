@@ -19,6 +19,7 @@ public class VocabularyBoxCursor extends IterableCursorWrapper<VocabularyBox> {
         vocabularyBox.foreignLanguage = getString(VocabularyBoxColumns.FOREIGN_LANGUAGE, "");
         vocabularyBox.nativeLanguage = getString(VocabularyBoxColumns.NATIVE_LANGUAGE, "");
         vocabularyBox.translationDirection = getInteger(VocabularyBoxColumns.TRANSLATION_DIRECTION, -1);
+        vocabularyBox.isCurrent = getBoolean(VocabularyBoxColumns.IS_CURRENT, false);
 
         return vocabularyBox;
     }

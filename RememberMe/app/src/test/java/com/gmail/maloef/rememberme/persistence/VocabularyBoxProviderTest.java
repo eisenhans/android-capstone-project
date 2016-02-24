@@ -65,6 +65,7 @@ public class VocabularyBoxProviderTest extends AbstractRobolectricTest {
         assertEquals("English", box.foreignLanguage);
         assertEquals("German", box.nativeLanguage);
         assertEquals(VocabularyBox.TRANSLATION_DIRECTION_MIXED, box.translationDirection);
+        assertFalse(box.isCurrent);
 
         assertFalse(boxCursor.moveToNext());
         boxCursor.close();

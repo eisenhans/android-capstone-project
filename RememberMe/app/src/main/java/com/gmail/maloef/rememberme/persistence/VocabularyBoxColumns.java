@@ -24,4 +24,7 @@ public interface VocabularyBoxColumns {
 
     @DataType(INTEGER)
     String TRANSLATION_DIRECTION = "translationDirection";
+
+    @DataType(INTEGER)
+    String IS_CURRENT = "isCurrent";
 }

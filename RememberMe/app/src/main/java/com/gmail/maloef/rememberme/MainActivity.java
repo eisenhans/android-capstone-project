@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
 import java.util.List;
@@ -60,9 +61,10 @@ public class MainActivity extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vocabularyBoxSpinner.setAdapter(spinnerAdapter);
 
+        VocabularyBox currentBox = boxService.getCurrentBox();
         Spinner foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
 
-
+        // ToDo: array mit gültigen Sprachen auslesen
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

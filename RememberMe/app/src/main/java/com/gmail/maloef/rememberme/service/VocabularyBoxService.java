@@ -40,10 +40,12 @@ public class VocabularyBoxService {
         // ToDo: look up language from phone settings
         values.put(VocabularyBoxColumns.NATIVE_LANGUAGE, "German");
         values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+        values.put(VocabularyBoxColumns.IS_CURRENT, 1);
 
         contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
 
         // ToDo: remove
+        values.put(VocabularyBoxColumns.IS_CURRENT, 0);
         values.put(VocabularyBoxColumns.NAME, "English");
         contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
         values.put(VocabularyBoxColumns.NAME, "Spanish");
@@ -68,6 +70,16 @@ public class VocabularyBoxService {
         }
         boxes.close();
         return boxNames;
+    }
+
+    public VocabularyBox getCurrentBox() {
+        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
+                contentResolver.query(
+                        VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null,
+                        VocabularyBoxColumns.IS_CURRENT + " = 1", null,
+                        null));
+
+        return boxes.moveToFirst() ? boxes.peek() : null;
     }
 
     void logInfo(String message) {
