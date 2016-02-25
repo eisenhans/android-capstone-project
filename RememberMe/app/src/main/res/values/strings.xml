@@ -10,4 +10,16 @@
     <string name="default_name">Default</string>
     <string name="rename_box">Rename box</string>
     <string name="foreign_language">Foreign language</string>
+    <string name="native_language">Native language</string>
+
+    <string name="translation_direction">Translation direction</string>
+    <string name="foreign_to_native">Foreign to native</string>
+    <string name="native_to_foreign">Native to foreign</string>
+    <string name="mixed">Mixed</string>
+
+    <string name="en">English</string>
+    <string name="fr">French</string>
+    <string name="de">German</string>
+    <string name="es">Spanish</string>
+
 </resources>

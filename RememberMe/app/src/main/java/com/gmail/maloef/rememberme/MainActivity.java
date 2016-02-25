@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,9 +63,29 @@ public class MainActivity extends AppCompatActivity {
         vocabularyBoxSpinner.setAdapter(spinnerAdapter);
 
         VocabularyBox currentBox = boxService.getCurrentBox();
-        Spinner foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
 
-        // ToDo: array mit gültigen Sprachen auslesen
+        Spinner foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
+        String[] languages = getResources().getStringArray(R.array.languages);
+        ArrayAdapter<String> languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Arrays.asList(languages));
+        languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        foreignLanguageSpinner.setAdapter(languageAdapter);
+        foreignLanguageSpinner.setSelection(0);
+
+        Spinner nativeLanguageSpinner = (Spinner) findViewById(R.id.nativeLanguageSpinner);
+        nativeLanguageSpinner.setAdapter(languageAdapter);
+        nativeLanguageSpinner.setSelection(1);
+
+        Spinner translationDirectionSpinner = (Spinner) findViewById(R.id.translationDirectionSpinner);
+        String[] translationDirections = new String[] {
+                getResources().getString(R.string.foreign_to_native),
+                getResources().getString(R.string.native_to_foreign),
+                getResources().getString(R.string.mixed),
+        };
+        ArrayAdapter<String> translationDirectionAdapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
+        translationDirectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        translationDirectionSpinner.setAdapter(translationDirectionAdapter);
+        translationDirectionSpinner.setSelection(currentBox.translationDirection);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

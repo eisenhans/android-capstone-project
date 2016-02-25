@@ -68,6 +68,40 @@
             app:layout_column="1"
             />
 
+        <TextView
+            app:layout_columnWeight="1"
+            app:layout_gravity="left"
+            app:layout_row="3"
+            app:layout_column="0"
+            style="@android:style/TextAppearance.Medium"
+            android:text="@string/native_language"
+            />
+
+        <Spinner
+            android:id="@+id/nativeLanguageSpinner"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill_horizontal"
+            app:layout_row="3"
+            app:layout_column="1"
+            />
+
+        <TextView
+            app:layout_columnWeight="1"
+            app:layout_gravity="left"
+            app:layout_row="4"
+            app:layout_column="0"
+            style="@android:style/TextAppearance.Medium"
+            android:text="@string/translation_direction"
+            />
+
+        <Spinner
+            android:id="@+id/translationDirectionSpinner"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill_horizontal"
+            app:layout_row="4"
+            app:layout_column="1"
+            />
+
     </android.support.v7.widget.GridLayout>
     
     <TextView

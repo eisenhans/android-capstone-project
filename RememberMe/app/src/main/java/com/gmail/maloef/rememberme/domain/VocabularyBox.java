@@ -9,6 +9,11 @@ public class VocabularyBox implements Parcelable {
     public static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
     public static final int TRANSLATION_DIRECTION_MIXED = 2;
 
+    public static final int LANGUAGE_ENGLISH = 0;
+    public static final int LANGUAGE_FRENCH = 1;
+    public static final int LANGUAGE_GERMAN = 2;
+    public static final int LANGUAGE_SPANISH = 3;
+
     public int _id;
 
     public String name;
