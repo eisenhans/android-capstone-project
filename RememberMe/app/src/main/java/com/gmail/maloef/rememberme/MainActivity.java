@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -17,7 +19,6 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     private Spinner vocabularyBoxSpinner;
+    private Spinner foreignLanguageSpinner;
+    private Spinner nativeLanguageSpinner;
+    private Spinner translationDirectionSpinner;
+
+    private String[] languageIsoCodes;
+    private String[] languages;
+    private String[] boxNames;
+    private VocabularyBox selectedBox;
+    private VocabularyBoxService boxService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,34 +58,81 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        VocabularyBoxService boxService = new VocabularyBoxService(this);
+        languageIsoCodes = getResources().getStringArray(R.array.languageIsoCodes);
+        languages = getResources().getStringArray(R.array.languages);
+
+        boxService = new VocabularyBoxService(this);
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
+        boxNames = boxService.getBoxNames();
+        selectedBox = boxService.getSelectedBox();
 
         vocabularyBoxSpinner = (Spinner) findViewById(R.id.vocabularyBoxSpinner);
-        List<String> boxNames = boxService.getBoxNames();
-        logInfo("vocabulary boxes: " + boxNames.size());
-
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, boxNames);
         // Specify the layout to use when the list of choices appears
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vocabularyBoxSpinner.setAdapter(spinnerAdapter);
 
-        VocabularyBox currentBox = boxService.getCurrentBox();
+        vocabularyBoxSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
+            }
 
-        Spinner foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
-        String[] languages = getResources().getStringArray(R.array.languages);
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
+        });
+
+        foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Arrays.asList(languages));
         languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         foreignLanguageSpinner.setAdapter(languageAdapter);
-        foreignLanguageSpinner.setSelection(0);
 
-        Spinner nativeLanguageSpinner = (Spinner) findViewById(R.id.nativeLanguageSpinner);
+        int foreignLanguagePos = languageAdapter.getPosition(selectedBox.foreignLanguage);
+        foreignLanguageSpinner.setSelection(foreignLanguagePos);
+
+        foreignLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int selectedItemPos = foreignLanguageSpinner.getSelectedItemPosition();
+                String selectedIso = languageIsoCodes[selectedItemPos];
+                if (!selectedIso.equals(selectedBox.foreignLanguage)) {
+                    selectedBox.foreignLanguage = selectedIso;
+                    boxService.updateForeignLanguage(selectedBox._id, selectedIso);
+                    logInfo("updated foreign language for box " + selectedBox.name + ": " + selectedIso);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        nativeLanguageSpinner = (Spinner) findViewById(R.id.nativeLanguageSpinner);
         nativeLanguageSpinner.setAdapter(languageAdapter);
-        nativeLanguageSpinner.setSelection(1);
 
-        Spinner translationDirectionSpinner = (Spinner) findViewById(R.id.translationDirectionSpinner);
+        int nativeLanguagePos = languageAdapter.getPosition(selectedBox.nativeLanguage);
+        nativeLanguageSpinner.setSelection(nativeLanguagePos);
+
+        nativeLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int selectedItemPos = nativeLanguageSpinner.getSelectedItemPosition();
+                String selectedIso = languageIsoCodes[selectedItemPos];
+                if (!selectedIso.equals(selectedBox.nativeLanguage)) {
+                    selectedBox.nativeLanguage = selectedIso;
+                    boxService.updateNativeLanguage(selectedBox._id, selectedIso);
+                    logInfo("updated native language for box " + selectedBox.name + ": " + selectedIso);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        translationDirectionSpinner = (Spinner) findViewById(R.id.translationDirectionSpinner);
         String[] translationDirections = new String[] {
                 getResources().getString(R.string.foreign_to_native),
                 getResources().getString(R.string.native_to_foreign),
@@ -85,7 +142,58 @@ public class MainActivity extends AppCompatActivity {
                 new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
         translationDirectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         translationDirectionSpinner.setAdapter(translationDirectionAdapter);
-        translationDirectionSpinner.setSelection(currentBox.translationDirection);
+        translationDirectionSpinner.setSelection(selectedBox.translationDirection);
+
+        translationDirectionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int selectedItemPos = translationDirectionSpinner.getSelectedItemPosition();
+                if (selectedItemPos != selectedBox.translationDirection) {
+                    selectedBox.translationDirection = selectedItemPos;
+                    boxService.updateTranslationDirection(selectedBox._id, selectedItemPos);
+                    logInfo("updated translation direction for box " + selectedBox.name + ": " + selectedItemPos);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+    }
+
+    void updateSelectedBox(String boxName) {
+        if (boxName.equals(selectedBox.name)) {
+            return;
+        }
+        selectedBox = boxService.selectBoxByName(boxName);
+
+        int foreignLanguagePos = languagePosition(selectedBox.foreignLanguage);
+        foreignLanguageSpinner.setSelection(foreignLanguagePos);
+
+        int nativeLanguagePos = languagePosition(selectedBox.nativeLanguage);
+        nativeLanguageSpinner.setSelection(nativeLanguagePos);
+
+        translationDirectionSpinner.setSelection(selectedBox.translationDirection);
+
+        logInfo("updated selected box: " + boxName);
+    }
+
+//    int boxNamePosition(String boxName) {
+//        for (int i = 0; i < boxNames.length; i++) {
+//            if (boxNames[i].equals(boxName)) {
+//                return i;
+//            }
+//        }
+//        throw new IllegalArgumentException("unknown box name: " + boxName);
+//    }
+
+    int languagePosition(String isoCode) {
+        for (int i = 0; i < languageIsoCodes.length; i++) {
+            if (languageIsoCodes[i].equals(isoCode)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("unknown iso code: " + isoCode);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="languageIsoCodes">
+        <item>undefined</item>
+        <item>en</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>es</item>
+    </string-array>
+
     <string-array name="languages">
+        <item>@string/undefined</item>
         <item>@string/en</item>
         <item>@string/fr</item>
         <item>@string/de</item>

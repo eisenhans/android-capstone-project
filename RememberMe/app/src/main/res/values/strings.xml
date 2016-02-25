@@ -17,6 +17,7 @@
     <string name="native_to_foreign">Native to foreign</string>
     <string name="mixed">Mixed</string>
 
+    <string name="undefined">Undefined</string>
     <string name="en">English</string>
     <string name="fr">French</string>
     <string name="de">German</string>

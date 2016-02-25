@@ -1,53 +1,20 @@
 package com.gmail.maloef.rememberme.persistence;
 
-import android.content.ContentProvider;
 import android.content.ContentValues;
 
-import com.gmail.maloef.rememberme.AbstractRobolectricTest;
 import com.gmail.maloef.rememberme.domain.Compartment;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
-import com.gmail.maloef.rememberme.persistence.generated.VocabularyBoxDatabase;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.robolectric.shadows.ShadowContentResolver;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class VocabularyBoxProviderTest extends AbstractRobolectricTest {
-
-    ContentProvider contentProvider;
-
-    @Before
-    public void before() throws Exception {
-        super.before();
-        // The generated class VocabularyBoxDatabase has a field named instance. This has to be set to null. Otherwise
-        // it is not possible to run several tests - Robolectric problem.
-        resetSingleton(VocabularyBoxDatabase.class, "instance");
-
-        if (contentProvider == null) {
-            contentProvider = new com.gmail.maloef.rememberme.persistence.generated.VocabularyBoxProvider();
-            contentProvider.onCreate();
-            ShadowContentResolver.registerProvider(VocabularyBoxProvider.AUTHORITY, contentProvider);
-            logInfo("contentProvider: " + contentProvider);
-        }
-
-        contentProvider.delete(VocabularyBoxProvider.Word.WORDS, null, null);
-        contentProvider.delete(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null);
-        contentProvider.delete(VocabularyBoxProvider.Word.WORDS, null, null);
-    }
-
-    private void resetSingleton(Class clazz, String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field instance = clazz.getDeclaredField(fieldName);
-        instance.setAccessible(true);
-        instance.set(null, null);
-    }
+public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
 
     @Test
     public void testVocabularyBox() {
