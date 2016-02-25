@@ -45,28 +45,16 @@ public class VocabularyBoxService {
         return !boxCursor.isEmpty();
     }
     
-    public void createDefaultBox() {
-        ContentValues values = new ContentValues();
-        values.put(VocabularyBoxColumns.NAME, context.getResources().getString(R.string.default_name));
-        values.put(VocabularyBoxColumns.FOREIGN_LANGUAGE, "undefined");
-
+    public int createDefaultBox() {
         // ToDo: look up language from phone settings
-        values.put(VocabularyBoxColumns.NATIVE_LANGUAGE, "de");
-        values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, VocabularyBox.TRANSLATION_DIRECTION_MIXED);
-        values.put(VocabularyBoxColumns.IS_CURRENT, 1);
-
-        contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        String boxName = context.getResources().getString(R.string.default_name);
+        int defaultBoxId = createBox(boxName, "undefined", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
 
         // ToDo: remove
-        values.put(VocabularyBoxColumns.IS_CURRENT, 0);
-        values.put(VocabularyBoxColumns.NAME, "English");
-        values.put(VocabularyBoxColumns.FOREIGN_LANGUAGE, "en");
-        contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
-        values.put(VocabularyBoxColumns.NAME, "Spanish");
-        values.put(VocabularyBoxColumns.FOREIGN_LANGUAGE, "es");
-        contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        createBox("English", "en", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+        createBox("Spanish", "es", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
 
-        logInfo("created default vocabulary box");
+        return defaultBoxId;
     }
 
     public int createBox(String boxName, String foreignLanguage, String nativeLanguage, int translationDirection, boolean select) {

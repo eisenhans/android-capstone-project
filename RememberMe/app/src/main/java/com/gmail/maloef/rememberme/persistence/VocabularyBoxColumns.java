@@ -17,10 +17,10 @@ public interface VocabularyBoxColumns {
     String NAME = "name";
 
     @DataType(TEXT)
-    String NATIVE_LANGUAGE = "nativeLanguage";
+    String FOREIGN_LANGUAGE = "foreignLanguage";
 
     @DataType(TEXT)
-    String FOREIGN_LANGUAGE = "foreignLanguage";
+    String NATIVE_LANGUAGE = "nativeLanguage";
 
     @DataType(INTEGER)
     String TRANSLATION_DIRECTION = "translationDirection";

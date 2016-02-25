@@ -12,8 +12,8 @@ public class VocabularyBox implements Parcelable {
     public int _id;
 
     public String name;
-    public String nativeLanguage;
     public String foreignLanguage;
+    public String nativeLanguage;
     public int translationDirection;
     public boolean isCurrent;
 
@@ -22,8 +22,8 @@ public class VocabularyBox implements Parcelable {
     protected VocabularyBox(Parcel in) {
         _id = in.readInt();
         name = in.readString();
-        nativeLanguage = in.readString();
         foreignLanguage = in.readString();
+        nativeLanguage = in.readString();
         translationDirection = in.readInt();
         isCurrent = in.readByte() != 0;
     }
@@ -32,8 +32,8 @@ public class VocabularyBox implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(_id);
         dest.writeString(name);
-        dest.writeString(nativeLanguage);
         dest.writeString(foreignLanguage);
+        dest.writeString(nativeLanguage);
         dest.writeInt(translationDirection);
         dest.writeByte((byte) (isCurrent ? 1 : 0));
     }
