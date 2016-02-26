@@ -1,4 +1,12 @@
 <resources>
+
+    <!-- Languages -->
+    <string name="undefined">Undefined</string>
+    <string name="en">English</string>
+    <string name="fr">French</string>
+    <string name="de">German</string>
+    <string name="es">Spanish</string>
+
     <string name="app_name">Remember me</string>
     <string name="action_settings">Settings</string>
 
@@ -17,10 +25,8 @@
     <string name="native_to_foreign">Native to foreign</string>
     <string name="mixed">Mixed</string>
 
-    <string name="undefined">Undefined</string>
-    <string name="en">English</string>
-    <string name="fr">French</string>
-    <string name="de">German</string>
-    <string name="es">Spanish</string>
+    <string name="enter_new_name_here">Enter new name here</string>
+    <string name="box_exists">A box with this name already exists</string>
+    <string name="enter_new_name_for_box">Enter a new name for box</string>
 
 </resources>

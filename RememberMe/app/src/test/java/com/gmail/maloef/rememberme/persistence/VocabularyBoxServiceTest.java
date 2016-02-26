@@ -41,4 +41,35 @@ public class VocabularyBoxServiceTest extends AbstractPersistenceTest {
         assertEquals("box1", selectedBox.name);
     }
 
+    @Test
+    public void testGetBoxNames() {
+        boxService.createBox("English", "en", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+        boxService.createBox("Italian", "it", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
+        boxService.createBox("Hungarian", "hu", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+
+        String[] boxNames = boxService.getBoxNames();
+        assertEquals(3, boxNames.length);
+        assertEquals("English", boxNames[0]);
+        assertEquals("Hungarian", boxNames[1]);
+        assertEquals("Italian", boxNames[2]);
+
+        assertEquals("Italian", boxService.getSelectedBox().name);
+        boxService.selectBoxByName("English");
+        assertEquals("English", boxService.getSelectedBox().name);
+
+        boxNames = boxService.getBoxNames();
+        assertEquals(3, boxNames.length);
+        assertEquals("English", boxNames[0]);
+        assertEquals("Hungarian", boxNames[1]);
+        assertEquals("Italian", boxNames[2]);
+
+        VocabularyBox hungarianBox = boxService.findBoxByName("Hungarian");
+        boxService.updateBoxName(hungarianBox._id, "HungarianXXL");
+
+        boxNames = boxService.getBoxNames();
+        assertEquals(3, boxNames.length);
+        assertEquals("English", boxNames[0]);
+        assertEquals("HungarianXXL", boxNames[1]);
+        assertEquals("Italian", boxNames[2]);
+    }
 }

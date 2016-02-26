@@ -1,12 +1,15 @@
 package com.gmail.maloef.rememberme;
 
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +17,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
@@ -67,27 +72,8 @@ public class MainActivity extends AppCompatActivity {
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
-        boxNames = boxService.getBoxNames();
-        selectedBox = boxService.getSelectedBox();
-
         vocabularyBoxSpinner = (Spinner) findViewById(R.id.vocabularyBoxSpinner);
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, boxNames);
-        // Specify the layout to use when the list of choices appears
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        vocabularyBoxSpinner.setAdapter(spinnerAdapter);
-
-        vocabularyBoxSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
-
-        //renameBoxButton = (Button) findViewById(R.id.renameBoxButton);
+        updateBoxSpinner();
 
         foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Arrays.asList(languages));
@@ -110,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
         nativeLanguageSpinner = (Spinner) findViewById(R.id.nativeLanguageSpinner);
@@ -133,16 +118,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
         translationDirectionSpinner = (Spinner) findViewById(R.id.translationDirectionSpinner);
         String[] translationDirections = new String[] {
                 getResources().getString(R.string.foreign_to_native),
                 getResources().getString(R.string.native_to_foreign),
-                getResources().getString(R.string.mixed),
-        };
+                getResources().getString(R.string.mixed)};
+
         ArrayAdapter<String> translationDirectionAdapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
         translationDirectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -162,6 +146,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
+    }
+
+    void updateBoxSpinner() {
+        boxNames = boxService.getBoxNames();
+        selectedBox = boxService.getSelectedBox();
+
+        logInfo("updating spinner, boxNames: " + Arrays.asList(boxNames));
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, boxNames);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        vocabularyBoxSpinner.setAdapter(spinnerAdapter);
+
+        int selectedBoxPos = selectedBoxPosition();
+        vocabularyBoxSpinner.setSelection(selectedBoxPos);
+
+        vocabularyBoxSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
+        });
+    }
+
+    int selectedBoxPosition() {
+        for (int i = 0; i < boxNames.length; i++) {
+            if (boxNames[i].equals(selectedBox.name)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("cannot find selected box: boxNames = " + Arrays.asList(boxNames) +
+                ", selectedBox = " + selectedBox.name);
     }
 
     void updateSelectedBox(String boxName) {
@@ -233,8 +250,55 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public void renameBox() {
+    public void showRenameBoxDialog(final View parentView) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setTitle(getResources().getString(R.string.rename_box));
+        CharSequence message = Html.fromHtml(
+                getResources().getString(R.string.enter_new_name_for_box) + " <i>" + selectedBox.name + "</i>" + ":");
+        alertDialogBuilder.setMessage(message);
 
+        final EditText editText = new EditText(this);
+        alertDialogBuilder.setView(editText);
+
+        String ok = getResources().getString(android.R.string.ok);
+        alertDialogBuilder.setPositiveButton(ok, null);
+        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                         @Override
+                         public void onClick(View view) {
+                             String newBoxName = editText.getText().toString();
+                             if (newBoxName == null || newBoxName.isEmpty()) {
+                                 return;
+                             }
+                             if (newBoxName.equals(selectedBox.name)) {
+                                 // user entered the same name again - just ignore this
+                                 alertDialog.dismiss();
+                                 return;
+                             }
+                             if (boxService.isBoxSaved(newBoxName)) {
+                                 // user entered a name that already exists - just keep the dialog open
+                                 String boxExists = getResources().getString(R.string.box_exists);
+                                 Toast.makeText(getApplicationContext(), boxExists, Toast.LENGTH_SHORT).show();
+                                 return;
+                             }
+                             boxService.updateBoxName(selectedBox._id, newBoxName);
+                             logInfo("updated box name: " + newBoxName);
+                             updateBoxSpinner();
+                             alertDialog.dismiss();
+                         }
+                     }
+                );
+            }
+        });
+
+        alertDialog.show();
     }
 
     void logInfo(String message) {

@@ -3,6 +3,7 @@ package com.gmail.maloef.rememberme.service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -12,6 +13,8 @@ import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 import com.venmo.cursor.IterableCursor;
+
+import java.util.Arrays;
 
 public class VocabularyBoxService {
 
@@ -36,6 +39,34 @@ public class VocabularyBoxService {
         boxCursor.close();
 
         return box;
+    }
+
+    public VocabularyBox findBoxByName(String boxName) {
+        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
+                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                null,
+                VocabularyBoxColumns.NAME + " = ?",
+                new String[]{boxName},
+                null));
+
+        VocabularyBox box = boxCursor.moveToFirst() ? boxCursor.peek() : null;
+        boxCursor.close();
+
+        return box;
+    }
+
+    public boolean isBoxSaved(String boxName) {
+        Cursor cursor = contentResolver.query(
+                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                new String[]{VocabularyBoxColumns._ID},
+                VocabularyBoxColumns.NAME + " = ?",
+                new String[]{boxName},
+                null);
+
+        boolean result = cursor.moveToFirst();
+        cursor.close();
+
+        return result;
     }
 
     public boolean isOneBoxSaved() {
@@ -73,26 +104,34 @@ public class VocabularyBoxService {
         Uri uri = contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
         String lastPathSegment = uri.getLastPathSegment();
 
+        logInfo("created box: " + values + ", uri: " + uri);
+
         return Integer.valueOf(lastPathSegment);
     }
 
     public String[] getBoxNames() {
-        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
-                contentResolver.query(
-                        VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
-                        new String[] {VocabularyBoxColumns.NAME},
-                        null, null, null));
+//        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
+//                contentResolver.query(
+//                        VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+//                        new String[] {VocabularyBoxColumns.NAME},
+//                        null, null, "lower(" + VocabularyBoxColumns.NAME + ")"));
 
-        int count = boxes.getCount();
+        Cursor boxCursor = contentResolver.query(
+                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                new String[]{VocabularyBoxColumns.NAME},
+                null, null, VocabularyBoxColumns.NAME + " collate nocase");
+
+        int count = boxCursor.getCount();
         logInfo("found " + count + " boxes");
 
         String[] boxNames = new String[count];
         int i = 0;
-        for (VocabularyBox box : boxes) {
-            boxNames[i] = box.name;
+        while (boxCursor.moveToNext()) {
+            boxNames[i] = boxCursor.getString(boxCursor.getColumnIndex(VocabularyBoxColumns.NAME));
             i++;
         }
-        boxes.close();
+        boxCursor.close();
+        logInfo("box names found: " + Arrays.asList(boxNames));
         return boxNames;
     }
 
@@ -103,7 +142,10 @@ public class VocabularyBoxService {
                         VocabularyBoxColumns.IS_CURRENT + " = 1", null,
                         null));
 
-        return boxes.moveToFirst() ? boxes.peek() : null;
+        VocabularyBox box = boxes.moveToFirst() ? boxes.peek() : null;
+        boxes.close();
+
+        return box;
     }
 
     public VocabularyBox selectBoxByName(String boxName) {
@@ -116,11 +158,11 @@ public class VocabularyBoxService {
 
         if (!idCursor.moveToFirst()) {
             logWarn("no box found with name " + boxName);
+            idCursor.close();
             return null;
         }
         int id = idCursor.peek()._id;
         idCursor.close();
-
         selectBox(id);
 
         return findBox(id);
