@@ -12,7 +12,6 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
-import com.venmo.cursor.IterableCursor;
 
 import java.util.Arrays;
 
@@ -136,7 +135,7 @@ public class VocabularyBoxService {
     }
 
     public VocabularyBox getSelectedBox() {
-        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
+        VocabularyBoxCursor boxes = new VocabularyBoxCursor(
                 contentResolver.query(
                         VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null,
                         VocabularyBoxColumns.IS_CURRENT + " = 1", null,

@@ -7,9 +7,11 @@ public class Word implements Parcelable {
 
     public int _id;
 
+    public int boxId;
+    public int compartment;
+
     public String foreignWord;
     public String nativeWord;
-    public int compartment;
 
     public long creationDate;
     public long updateDate;
@@ -23,9 +25,10 @@ public class Word implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this._id);
+        dest.writeInt(this.boxId);
+        dest.writeInt(this.compartment);
         dest.writeString(this.foreignWord);
         dest.writeString(this.nativeWord);
-        dest.writeInt(this.compartment);
         dest.writeLong(this.creationDate);
         dest.writeLong(this.updateDate);
         dest.writeLong(this.lastRepeatDate);
@@ -35,9 +38,10 @@ public class Word implements Parcelable {
 
     private Word(Parcel in) {
         this._id = in.readInt();
+        this.boxId = in.readInt();
+        this.compartment = in.readInt();
         this.foreignWord = in.readString();
         this.nativeWord = in.readString();
-        this.compartment = in.readInt();
         this.creationDate = in.readLong();
         this.updateDate = in.readLong();
         this.lastRepeatDate = in.readLong();

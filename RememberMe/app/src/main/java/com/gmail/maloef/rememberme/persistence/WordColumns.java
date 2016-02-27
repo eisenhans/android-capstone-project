@@ -14,14 +14,17 @@ public interface WordColumns {
     @DataType(INTEGER) @PrimaryKey @AutoIncrement
     String _ID = "_id";
 
+    @DataType(INTEGER) @NotNull @References(table = VocabularyBoxDatabase.VOCABULARY_BOX, column = VocabularyBoxColumns._ID)
+    String BOX_ID = "boxId";
+
+    @DataType(INTEGER) @NotNull
+    String COMPARTMENT = "compartment";
+
     @DataType(TEXT)
     String NATIVE_WORD = "nativeWord";
 
     @DataType(TEXT)
     String FOREIGN_WORD = "foreignWord";
-
-    @DataType(INTEGER) @References(table = VocabularyBoxDatabase.COMPARTMENT, column = CompartmentColumns._ID)
-    String COMPARTMENT = "compartment";
 
     @DataType(INTEGER) @NotNull
     String CREATION_DATE = "creationDate";
