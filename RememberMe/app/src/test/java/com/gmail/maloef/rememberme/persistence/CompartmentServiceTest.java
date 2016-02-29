@@ -47,17 +47,20 @@ public class CompartmentServiceTest extends AbstractPersistenceTest {
     @Test
     public void testGetBoxOverview() {
         wordService.createWord(boxId, "porcupine", "Stachelschwein");
-        wordService.createWord(boxId, "ointment", "Salbe");
+
+        int ointmentId = wordService.createWord(boxId, "ointment", "Salbe");
+        wordService.updateRepeatDate(ointmentId);
 
         int biasId = wordService.createWord(boxId, "bias", "Tendenz, Neigung");
         wordService.updateRepeatDate(biasId);
-        Long now = new Date().getTime();
+        Long timestamp = new Date().getTime();
 
         wordService.createWord(boxId, 2, "emissary", "Abgesandter");
+
         BoxOverview boxOverview = compartmentService.getBoxOverview(boxId);
 
         assertEquals(3, boxOverview.getWordCount(1));
-        assertEquals(now, boxOverview.getEarliestLastRepeatDate(1));
+        assertAlmostEqual(timestamp, boxOverview.getEarliestLastRepeatDate(1), 100);
 
         assertEquals(1, boxOverview.getWordCount(2));
         assertNull(boxOverview.getEarliestLastRepeatDate(2));
@@ -70,6 +73,12 @@ public class CompartmentServiceTest extends AbstractPersistenceTest {
     void assertCompartmentEmpty(BoxOverview boxOverview, int compartment) {
         assertEquals(0, boxOverview.getWordCount(compartment));
         assertNull(boxOverview.getEarliestLastRepeatDate(compartment));
+    }
+
+    void assertAlmostEqual(long first, long second, long deltaAllowed) {
+        if (Math.abs(first - second) > deltaAllowed) {
+            throw new AssertionError("difference between values should at most " + deltaAllowed + ", but first is " + first + ", second is " + second);
+        }
     }
 
 }

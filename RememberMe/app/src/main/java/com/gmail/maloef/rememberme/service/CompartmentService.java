@@ -39,11 +39,21 @@ public class CompartmentService {
 
         int wordCount = wordCursor.getCount();
         Long earliestLastRepeatDate = null;
-        if (wordCursor.moveToFirst()) {
-            earliestLastRepeatDate = wordCursor.peek().lastRepeatDate;
+        while (wordCursor.moveToNext()) {
+            earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, wordCursor.peek().lastRepeatDate);
         }
         wordCursor.close();
 
         return new CompartmentOverview(wordCount, earliestLastRepeatDate);
+    }
+
+    private Long earlierRepeatDate(Long first, Long second) {
+        if (first == null) {
+            return second;
+        }
+        if (second == null) {
+            return first;
+        }
+        return Math.min(first, second);
     }
 }

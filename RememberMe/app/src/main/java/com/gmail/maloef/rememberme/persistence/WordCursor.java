@@ -18,10 +18,26 @@ public class WordCursor extends IterableCursorWrapper<Word> {
         word.compartment = getInteger(WordColumns.COMPARTMENT, -1);
         word.foreignWord = getString(WordColumns.FOREIGN_WORD, "");
         word.nativeWord = getString(WordColumns.NATIVE_WORD, "");
-        word.creationDate = getLong(WordColumns.CREATION_DATE, -1);
-        word.updateDate = getLong(WordColumns.UPDATE_DATE, -1);
-        word.lastRepeatDate = getLong(WordColumns.LAST_REPEAT_DATE, -1);
+        word.creationDate = getLongOrNull(WordColumns.CREATION_DATE);
+        word.updateDate = getLongOrNull(WordColumns.UPDATE_DATE);
+        word.lastRepeatDate = getLongOrNull(WordColumns.LAST_REPEAT_DATE);
 
         return word;
+    }
+
+    private Long getLongOrNull(String columnName) {
+        int index = getColumnIndex(columnName);
+        if (!isValidIndex(index)) {
+            return null;
+        }
+        // getLong(index) returns a long (not a Long). If the database value is null, 0 is returned. Therefore we handle this case separately.
+        if (isNull(index)) {
+            return null;
+        }
+        return getLong(index);
+    }
+
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < getColumnCount();
     }
 }

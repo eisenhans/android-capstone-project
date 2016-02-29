@@ -13,9 +13,10 @@ public class Word implements Parcelable {
     public String foreignWord;
     public String nativeWord;
 
-    public long creationDate;
-    public long updateDate;
-    public long lastRepeatDate;
+    // creationDate must not be null in database, but can be null for entity (because creation date was not fetched from database)
+    public Long creationDate;
+    public Long updateDate;
+    public Long lastRepeatDate;
 
     @Override
     public int describeContents() {
@@ -56,4 +57,18 @@ public class Word implements Parcelable {
             return new Word[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Word{" +
+                "_id=" + _id +
+                ", boxId=" + boxId +
+                ", compartment=" + compartment +
+                ", foreignWord='" + foreignWord + '\'' +
+                ", nativeWord='" + nativeWord + '\'' +
+                ", creationDate=" + creationDate +
+                ", updateDate=" + updateDate +
+                ", lastRepeatDate=" + lastRepeatDate +
+                '}';
+    }
 }
