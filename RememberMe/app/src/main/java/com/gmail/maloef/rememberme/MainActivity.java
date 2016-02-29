@@ -19,12 +19,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.service.CompartmentService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
+import com.gmail.maloef.rememberme.service.WordService;
+import com.gmail.maloef.rememberme.util.DateUtils;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     private Spinner vocabularyBoxSpinner;
-    private Button renameBoxButton;
     private Spinner foreignLanguageSpinner;
     private Spinner nativeLanguageSpinner;
     private Spinner translationDirectionSpinner;
@@ -43,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
     private String[] boxNames;
     private VocabularyBox selectedBox;
     private VocabularyBoxService boxService;
+
+    private TextView wordsCompartment1View;
+    private TextView notRepeatedCompartment1View;
+
+    private CompartmentService compartmentService;
+    private WordService wordService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +155,34 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
         });
+
+        wordService = new WordService(this);
+        createTestData();
+
+        compartmentService = new CompartmentService(this);
+        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
+
+        wordsCompartment1View = (TextView) findViewById(R.id.wordsCompartment1);
+        int words = boxOverview.getWordCount(1);
+        wordsCompartment1View.setText(String.valueOf(words));
+
+        notRepeatedCompartment1View = (TextView) findViewById(R.id.notRepeatedCompartment1);
+        Long repeatDate = boxOverview.getEarliestLastRepeatDate(1);
+        String notRepeatedSince = calculateNotRepeatedSinceDays(repeatDate);
+
+        notRepeatedCompartment1View.setText(notRepeatedSince);
+    }
+
+    String calculateNotRepeatedSinceDays(Long repeatDate) {
+        if (repeatDate == null) {
+            return "-";
+        }
+        Date now = new Date();
+        long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
+        return String.valueOf(days);
     }
 
     void updateBoxSpinner() {
@@ -271,29 +308,29 @@ public class MainActivity extends AppCompatActivity {
             public void onShow(DialogInterface dialog) {
                 Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 okButton.setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View view) {
-                             String newBoxName = editText.getText().toString();
-                             if (newBoxName == null || newBoxName.isEmpty()) {
-                                 return;
-                             }
-                             if (newBoxName.equals(selectedBox.name)) {
-                                 // user entered the same name again - just ignore this
-                                 alertDialog.dismiss();
-                                 return;
-                             }
-                             if (boxService.isBoxSaved(newBoxName)) {
-                                 // user entered a name that already exists - just keep the dialog open
-                                 String boxExists = getResources().getString(R.string.box_exists);
-                                 Toast.makeText(getApplicationContext(), boxExists, Toast.LENGTH_SHORT).show();
-                                 return;
-                             }
-                             boxService.updateBoxName(selectedBox._id, newBoxName);
-                             logInfo("updated box name: " + newBoxName);
-                             updateBoxSpinner();
-                             alertDialog.dismiss();
-                         }
-                     }
+                                                @Override
+                                                public void onClick(View view) {
+                                                    String newBoxName = editText.getText().toString();
+                                                    if (newBoxName == null || newBoxName.isEmpty()) {
+                                                        return;
+                                                    }
+                                                    if (newBoxName.equals(selectedBox.name)) {
+                                                        // user entered the same name again - just ignore this
+                                                        alertDialog.dismiss();
+                                                        return;
+                                                    }
+                                                    if (boxService.isBoxSaved(newBoxName)) {
+                                                        // user entered a name that already exists - just keep the dialog open
+                                                        String boxExists = getResources().getString(R.string.box_exists);
+                                                        Toast.makeText(getApplicationContext(), boxExists, Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+                                                    boxService.updateBoxName(selectedBox._id, newBoxName);
+                                                    logInfo("updated box name: " + newBoxName);
+                                                    updateBoxSpinner();
+                                                    alertDialog.dismiss();
+                                                }
+                                            }
                 );
             }
         });
@@ -301,7 +338,24 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    public void memorizeWordsFromCompartment1(View parentView) {
+        logInfo("showing memorize activity");
+    }
+
     void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);
+    }
+
+    void createTestData() {
+        int boxId = selectedBox._id;
+        wordService.createWord(boxId, "porcupine", "Stachelschwein");
+
+        int ointmentId = wordService.createWord(boxId, "ointment", "Salbe");
+        wordService.updateRepeatDate(ointmentId);
+
+        int biasId = wordService.createWord(boxId, "bias", "Tendenz, Neigung");
+        wordService.updateRepeatDate(biasId);
+
+        wordService.createWord(boxId, 2, "emissary", "Abgesandter");
     }
 }

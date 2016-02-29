@@ -29,4 +29,9 @@
     <string name="box_exists">A box with this name already exists</string>
     <string name="enter_new_name_for_box">Enter a new name for box</string>
 
+    <string name="compartment">Compartment</string>
+    <string name="words">Words</string>
+    <string name="not_repeated_since">Not repeated\nsince (days)</string>
+    <string name="memorize_compartment_1">Memorize words from compartment 1</string>
+
 </resources>
