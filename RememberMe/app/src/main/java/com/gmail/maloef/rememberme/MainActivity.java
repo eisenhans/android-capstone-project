@@ -35,28 +35,44 @@ import com.gmail.maloef.rememberme.util.DateUtils;
 import java.util.Arrays;
 import java.util.Date;
 
+import butterknife.Bind;
+import butterknife.BindColor;
+import butterknife.BindString;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout drawer;
-    private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
+    @Bind(R.id.drawer_layout) DrawerLayout drawer;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
-    private Spinner vocabularyBoxSpinner;
-    private Spinner foreignLanguageSpinner;
-    private Spinner nativeLanguageSpinner;
-    private Spinner translationDirectionSpinner;
+    @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
+    @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
+    @Bind(R.id.nativeLanguageSpinner) Spinner nativeLanguageSpinner;
+    @Bind(R.id.translationDirectionSpinner) Spinner translationDirectionSpinner;
+
+    @Bind(R.id.vocabularyBoxOverviewTable) TableLayout vocabularyBoxOverviewTable;
+
+    @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
+
+    @BindString(R.string.rename_box) String renameBoxString;
+    @BindString(R.string.enter_new_name_for_box) String enterNewNameForBoxString;
+    @BindString(android.R.string.ok) String okString;
+    @BindString(R.string.box_exists) String boxExistsString;
+
+    @BindString(R.string.foreign_to_native) String foreignToNativeString;
+    @BindString(R.string.native_to_foreign) String nativeToForeignString;
+    @BindString(R.string.mixed) String mixedString;
 
     private String[] languageIsoCodes;
+
     private String[] languages;
     private String[] boxNames;
+
     private VocabularyBox selectedBox;
+
     private VocabularyBoxService boxService;
-
-//    private TextView wordsCompartment1View;
-//    private TextView notRepeatedCompartment1View;
-
-    private TableLayout vocabularyBoxOverviewTable;
-
     private CompartmentService compartmentService;
     private WordService wordService;
 
@@ -65,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
         drawer.setDrawerListener(drawerToggle);
 
@@ -88,10 +104,8 @@ public class MainActivity extends AppCompatActivity {
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
-        vocabularyBoxSpinner = (Spinner) findViewById(R.id.vocabularyBoxSpinner);
         updateBoxSpinner();
 
-        foreignLanguageSpinner = (Spinner) findViewById(R.id.foreignLanguageSpinner);
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Arrays.asList(languages));
         languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         foreignLanguageSpinner.setAdapter(languageAdapter);
@@ -115,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        nativeLanguageSpinner = (Spinner) findViewById(R.id.nativeLanguageSpinner);
         nativeLanguageSpinner.setAdapter(languageAdapter);
 
         int nativeLanguagePos = languagePosition(selectedBox.nativeLanguage);
@@ -124,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         nativeLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                int selectedItemPos = nativeLanguageSpinner.getSelectedItemPosition();
                 String selectedIso = languageIsoCodes[position];
                 if (!selectedIso.equals(selectedBox.nativeLanguage)) {
                     selectedBox.nativeLanguage = selectedIso;
@@ -137,11 +149,7 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        translationDirectionSpinner = (Spinner) findViewById(R.id.translationDirectionSpinner);
-        String[] translationDirections = new String[] {
-                getResources().getString(R.string.foreign_to_native),
-                getResources().getString(R.string.native_to_foreign),
-                getResources().getString(R.string.mixed)};
+        String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, mixedString };
 
         ArrayAdapter<String> translationDirectionAdapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
@@ -170,8 +178,6 @@ public class MainActivity extends AppCompatActivity {
         compartmentService = new CompartmentService(this);
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
 
-        vocabularyBoxOverviewTable = (TableLayout) findViewById(R.id.vocabularyBoxOverviewTable);
-
         for (int compartment = 1; compartment <= 5; compartment++) {
             addOverviewRow(compartment, boxOverview);
         }
@@ -183,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         row.setPadding(0, 16, 0, 16);
 
         if (compartment % 2 == 1) {
-            row.setBackgroundColor(getResources().getColor(R.color.colorTableRowDark));
+            row.setBackgroundColor(colorTableRowDark);
 //            row.setBackgroundColor(getResources().getColor(R.color.blue100));
         }
 
@@ -336,17 +342,17 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @OnClick(R.id.renameBoxButton)
     public void showRenameBoxDialog(final View parentView) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle(getResources().getString(R.string.rename_box));
-        CharSequence message = Html.fromHtml(
-                getResources().getString(R.string.enter_new_name_for_box) + " <i>" + selectedBox.name + "</i>" + ":");
+        alertDialogBuilder.setTitle(renameBoxString);
+        CharSequence message = Html.fromHtml(enterNewNameForBoxString + " <i>" + selectedBox.name + "</i>" + ":");
         alertDialogBuilder.setMessage(message);
 
         final EditText editText = new EditText(this);
         alertDialogBuilder.setView(editText);
 
-        String ok = getResources().getString(android.R.string.ok);
+        String ok = okString;
         alertDialogBuilder.setPositiveButton(ok, null);
         alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
 
@@ -370,8 +376,7 @@ public class MainActivity extends AppCompatActivity {
                                                     }
                                                     if (boxService.isBoxSaved(newBoxName)) {
                                                         // user entered a name that already exists - just keep the dialog open
-                                                        String boxExists = getResources().getString(R.string.box_exists);
-                                                        Toast.makeText(getApplicationContext(), boxExists, Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
                                                         return;
                                                     }
                                                     boxService.updateBoxName(selectedBox._id, newBoxName);
@@ -387,6 +392,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    @OnClick(R.id.memorizeButton)
     public void memorizeWordsFromCompartment1(View parentView) {
         logInfo("showing memorize activity");
     }

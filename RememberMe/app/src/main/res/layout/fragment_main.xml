@@ -47,7 +47,6 @@
                 app:layout_row="1"
                 app:layout_column="1"
                 android:text="@string/rename_box"
-                android:onClick="showRenameBoxDialog"
                 />
 
             <TextView
@@ -153,7 +152,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/memorize_compartment_1"
-            android:onClick="memorizeWordsFromCompartment1"
             />
 
         <View
