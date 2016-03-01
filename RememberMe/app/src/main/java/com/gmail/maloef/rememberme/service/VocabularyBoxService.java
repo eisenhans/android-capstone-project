@@ -72,7 +72,10 @@ public class VocabularyBoxService {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
                 contentResolver.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
 
-        return !boxCursor.isEmpty();
+        boolean empty = boxCursor.isEmpty();
+        boxCursor.close();
+
+        return !empty;
     }
     
     public int createDefaultBox() {
@@ -109,11 +112,12 @@ public class VocabularyBoxService {
     }
 
     public String[] getBoxNames() {
-//        IterableCursor<VocabularyBox> boxes = new VocabularyBoxCursor(
+        // alphabetical order does not work - problem in IterableCursorWrapper implementation?
+//        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
 //                contentResolver.query(
 //                        VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
 //                        new String[] {VocabularyBoxColumns.NAME},
-//                        null, null, "lower(" + VocabularyBoxColumns.NAME + ")"));
+//                        null, null, VocabularyBoxColumns.NAME + " collate nocase"));
 
         Cursor boxCursor = contentResolver.query(
                 VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
@@ -126,6 +130,7 @@ public class VocabularyBoxService {
         String[] boxNames = new String[count];
         int i = 0;
         while (boxCursor.moveToNext()) {
+            //boxNames[i] = boxCursor.peek().name;
             boxNames[i] = boxCursor.getString(boxCursor.getColumnIndex(VocabularyBoxColumns.NAME));
             i++;
         }

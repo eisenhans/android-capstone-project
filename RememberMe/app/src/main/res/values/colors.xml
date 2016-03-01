@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">@color/blue700</color>
     <color name="colorAccent">@color/deepOrangeA400</color>
 
+    <color name="colorTableHeader">@color/grey400</color>
+    <color name="colorTableRowDark">@color/grey300</color>
+
     <color name="blue100">#BBDEFB</color>
     <color name="blue500">#2196F3</color>
     <color name="blue700">#1976D2</color>
@@ -15,8 +18,12 @@
     <color name="lightGreenA200">#B2FF59</color>
     <color name="greenA400">#00E676</color>
 
-    <!--<color name="primary_text">#212121</color>-->
-    <!--<color name="secondary_text">#727272</color>-->
+    <color name="grey100">#F5F5F5</color>
+    <color name="grey200">#EEEEEE</color>
+    <color name="grey300">#E0E0E0</color>
+    <color name="grey400">#BDBDBD</color>
+    <color name="grey500">#9E9E9E</color>
+
     <!--<color name="icons">#FFFFFF</color>-->
     <!--<color name="divider">#B6B6B6</color>-->
 

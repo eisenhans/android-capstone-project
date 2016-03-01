@@ -50,6 +50,5 @@ public class WordService {
         values.put(WordColumns.LAST_REPEAT_DATE, now);
 
         contentResolver.update(VocabularyBoxProvider.Word.WORDS, values, WordColumns._ID + " = ?", new String[]{String.valueOf(id)});
-
     }
 }

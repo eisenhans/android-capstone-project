@@ -34,6 +34,7 @@
                 android:id="@+id/vocabularyBoxSpinner"
                 app:layout_columnWeight="1"
                 app:layout_gravity="fill_horizontal"
+                android:gravity="center_vertical"
                 app:layout_row="0"
                 app:layout_column="1"
                 />
@@ -105,21 +106,22 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <!--<android.support.v7.widget.GridLayout-->
-            <!--android:id="@+id/vocabularyBoxOverviewTable"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:columnCount="3">-->
+            android:layout_weight="2"/>
 
         <TableLayout
             android:id="@+id/vocabularyBoxOverviewTable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            >
 
-            <TableRow>
+            <TableRow
+                android:background="@color/colorTableHeader"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+            <!--<TableRow android:background="@color/blue500">-->
 
+                <!--android:textColor="?android:attr/textColorPrimaryInverse"-->
                 <TextView
                     style="@style/AppTheme.VocabularyBoxTableCell"
                     android:text="@string/compartment"
@@ -138,9 +140,7 @@
             </TableRow>
 
             <!-- content is added programmatically -->
-
         </TableLayout>
-        <!--</android.support.v7.widget.GridLayout>-->
 
         <View
             android:layout_width="match_parent"

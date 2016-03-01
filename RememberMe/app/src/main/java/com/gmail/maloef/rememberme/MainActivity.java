@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -170,46 +171,27 @@ public class MainActivity extends AppCompatActivity {
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
 
         vocabularyBoxOverviewTable = (TableLayout) findViewById(R.id.vocabularyBoxOverviewTable);
-//        vocabularyBoxOverviewTable.setClickable(true);
 
         for (int compartment = 1; compartment <= 5; compartment++) {
-            TableRow row = new TableRow(this);
-
-            addCompartmentCell(row, compartment);
-            addWordsCell(row, compartment, boxOverview);
-            addNotRepeatedSinceCell(row, compartment, boxOverview);
-
-            vocabularyBoxOverviewTable.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            addOverviewRow(compartment, boxOverview);
         }
 
     }
 
-    private void addCompartmentCell(TableRow row, int compartment) {
-        addBoxOverviewCell(row, compartment, 0, String.valueOf(compartment));
-    }
+    private void addOverviewRow(final int compartment, BoxOverview boxOverview) {
+        TableRow row = new TableRow(this);
+        row.setPadding(0, 16, 0, 16);
 
-    private void addWordsCell(TableRow row, int compartment, BoxOverview boxOverview) {
-        int words = boxOverview.getWordCount(compartment);
-        addBoxOverviewCell(row, compartment, 1, String.valueOf(words));
-    }
+        if (compartment % 2 == 1) {
+            row.setBackgroundColor(getResources().getColor(R.color.colorTableRowDark));
+//            row.setBackgroundColor(getResources().getColor(R.color.blue100));
+        }
 
-    private void addNotRepeatedSinceCell(TableRow row, int compartment, BoxOverview boxOverview) {
-        Long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
-        String notRepeatedSince = calculateNotRepeatedSinceDays(repeatDate);
-        addBoxOverviewCell(row, compartment, 2, notRepeatedSince);
-    }
+        addCompartmentCell(row, compartment);
+        addWordsCell(row, compartment, boxOverview);
+        addNotRepeatedSinceCell(row, compartment, boxOverview);
 
-    private void addBoxOverviewCell(TableRow row, final int compartment, int column, String content) {
-        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        TextView textView = new TextView(this);
-        textView.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        textView.setTextAppearance(this, R.style.AppTheme_VocabularyBoxTableCell);
-        textView.setText(content);
-
-        row.addView(textView);
-        row.setClickable(true);
+        vocabularyBoxOverviewTable.addView(row);
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,11 +199,30 @@ public class MainActivity extends AppCompatActivity {
                 logInfo("clicked: " + v + ", compartment: " + compartment);
             }
         });
+    }
 
-//        row.addView(textView, new GridLayout.LayoutParams(
-//                GridLayout.spec(compartment),
-//                GridLayout.spec(column, GridLayout.CENTER)
-//        ));
+    private void addCompartmentCell(TableRow row, int compartment) {
+        addOverviewCell(row, String.valueOf(compartment));
+    }
+
+    private void addWordsCell(TableRow row, int compartment, BoxOverview boxOverview) {
+        int words = boxOverview.getWordCount(compartment);
+        addOverviewCell(row, String.valueOf(words));
+    }
+
+    private void addNotRepeatedSinceCell(TableRow row, int compartment, BoxOverview boxOverview) {
+        Long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
+        String notRepeatedSince = calculateNotRepeatedSinceDays(repeatDate);
+        addOverviewCell(row, notRepeatedSince);
+    }
+
+    private void addOverviewCell(TableRow row, String content) {
+        TextView textView = new TextView(this);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextAppearance(this, R.style.AppTheme_VocabularyBoxTableCell);
+        textView.setText(content);
+
+        row.addView(textView);
     }
 
     String calculateNotRepeatedSinceDays(Long repeatDate) {
