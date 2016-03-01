@@ -2,12 +2,15 @@ package com.gmail.maloef.rememberme.service;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.Log;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 import com.gmail.maloef.rememberme.persistence.WordColumns;
 import com.gmail.maloef.rememberme.persistence.WordCursor;
+
+import java.util.Date;
 
 public class CompartmentService {
 
@@ -54,6 +57,11 @@ public class CompartmentService {
         if (second == null) {
             return first;
         }
+        logInfo("first: " + new Date(first) + ", second: " + new Date(second));
         return Math.min(first, second);
+    }
+
+    void logInfo(String message) {
+        Log.i(getClass().getSimpleName(), message);
     }
 }

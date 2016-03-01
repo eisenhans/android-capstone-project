@@ -19,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private VocabularyBox selectedBox;
     private VocabularyBoxService boxService;
 
-    private TextView wordsCompartment1View;
-    private TextView notRepeatedCompartment1View;
+//    private TextView wordsCompartment1View;
+//    private TextView notRepeatedCompartment1View;
+
+    private TableLayout vocabularyBoxOverviewTable;
 
     private CompartmentService compartmentService;
     private WordService wordService;
@@ -165,15 +169,59 @@ public class MainActivity extends AppCompatActivity {
         compartmentService = new CompartmentService(this);
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
 
-        wordsCompartment1View = (TextView) findViewById(R.id.wordsCompartment1);
-        int words = boxOverview.getWordCount(1);
-        wordsCompartment1View.setText(String.valueOf(words));
+        vocabularyBoxOverviewTable = (TableLayout) findViewById(R.id.vocabularyBoxOverviewTable);
+//        vocabularyBoxOverviewTable.setClickable(true);
 
-        notRepeatedCompartment1View = (TextView) findViewById(R.id.notRepeatedCompartment1);
-        Long repeatDate = boxOverview.getEarliestLastRepeatDate(1);
+        for (int compartment = 1; compartment <= 5; compartment++) {
+            TableRow row = new TableRow(this);
+
+            addCompartmentCell(row, compartment);
+            addWordsCell(row, compartment, boxOverview);
+            addNotRepeatedSinceCell(row, compartment, boxOverview);
+
+            vocabularyBoxOverviewTable.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        }
+
+    }
+
+    private void addCompartmentCell(TableRow row, int compartment) {
+        addBoxOverviewCell(row, compartment, 0, String.valueOf(compartment));
+    }
+
+    private void addWordsCell(TableRow row, int compartment, BoxOverview boxOverview) {
+        int words = boxOverview.getWordCount(compartment);
+        addBoxOverviewCell(row, compartment, 1, String.valueOf(words));
+    }
+
+    private void addNotRepeatedSinceCell(TableRow row, int compartment, BoxOverview boxOverview) {
+        Long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
         String notRepeatedSince = calculateNotRepeatedSinceDays(repeatDate);
+        addBoxOverviewCell(row, compartment, 2, notRepeatedSince);
+    }
 
-        notRepeatedCompartment1View.setText(notRepeatedSince);
+    private void addBoxOverviewCell(TableRow row, final int compartment, int column, String content) {
+        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        TextView textView = new TextView(this);
+        textView.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        textView.setTextAppearance(this, R.style.AppTheme_VocabularyBoxTableCell);
+        textView.setText(content);
+
+        row.addView(textView);
+        row.setClickable(true);
+
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logInfo("clicked: " + v + ", compartment: " + compartment);
+            }
+        });
+
+//        row.addView(textView, new GridLayout.LayoutParams(
+//                GridLayout.spec(compartment),
+//                GridLayout.spec(column, GridLayout.CENTER)
+//        ));
     }
 
     String calculateNotRepeatedSinceDays(Long repeatDate) {
@@ -348,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
     void createTestData() {
         int boxId = selectedBox._id;
+
         wordService.createWord(boxId, "porcupine", "Stachelschwein");
 
         int ointmentId = wordService.createWord(boxId, "ointment", "Salbe");
