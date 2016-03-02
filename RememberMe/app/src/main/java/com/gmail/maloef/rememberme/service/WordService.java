@@ -11,11 +11,14 @@ import com.gmail.maloef.rememberme.persistence.WordColumns;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 public class WordService {
 
     private Context context;
     private ContentResolver contentResolver;
 
+    @Inject
     public WordService(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();

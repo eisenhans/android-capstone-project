@@ -15,11 +15,14 @@ import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 public class VocabularyBoxService {
 
     private Context context;
     private ContentResolver contentResolver;
 
+    @Inject
     public VocabularyBoxService(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();

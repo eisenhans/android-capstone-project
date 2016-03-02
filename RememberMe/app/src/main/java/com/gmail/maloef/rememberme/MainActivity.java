@@ -35,6 +35,8 @@ import com.gmail.maloef.rememberme.util.DateUtils;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindString;
@@ -72,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     private VocabularyBox selectedBox;
 
-    private VocabularyBoxService boxService;
-    private CompartmentService compartmentService;
-    private WordService wordService;
+    @Inject VocabularyBoxService boxService;
+    @Inject CompartmentService compartmentService;
+    @Inject WordService wordService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        RememberMeApplication.injector().inject(this);
+//        RememberMeApplication rememberMeApp = (RememberMeApplication) getApplication();
+//        rememberMeApp.getInjector().inject(this);
 
         setSupportActionBar(toolbar);
 
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         languageIsoCodes = getResources().getStringArray(R.array.languageIsoCodes);
         languages = getResources().getStringArray(R.array.languages);
 
-        boxService = new VocabularyBoxService(this);
+//        boxService = new VocabularyBoxService(this);
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
@@ -172,10 +177,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        wordService = new WordService(this);
+//        wordService = new WordService(this);
         createTestData();
 
-        compartmentService = new CompartmentService(this);
+//        compartmentService = new CompartmentService(this);
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
 
         for (int compartment = 1; compartment <= 5; compartment++) {

@@ -12,11 +12,14 @@ import com.gmail.maloef.rememberme.persistence.WordCursor;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 public class CompartmentService {
 
     private Context context;
     private ContentResolver contentResolver;
 
+    @Inject
     public CompartmentService(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
