@@ -31,6 +31,7 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 
+    // There seems to be a client lib from google, but the documentation is bad, and maybe it's not even official.
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 

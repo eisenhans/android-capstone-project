@@ -34,4 +34,6 @@
     <string name="not_repeated_since">Not repeated\nsince (days)</string>
     <string name="memorize_compartment_1">Memorize words from compartment 1</string>
 
+    <string name="add_word">Add word</string>
+
 </resources>

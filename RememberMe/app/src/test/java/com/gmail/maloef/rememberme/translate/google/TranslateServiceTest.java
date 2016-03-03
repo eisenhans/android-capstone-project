@@ -13,7 +13,7 @@ public class TranslateServiceTest extends AbstractRobolectricTest {
 
     @Test
     public void testTranslate() {
-        String hallo = service.translate("hello", "en", "de");
-        assertEquals("Hallo", hallo);
+        String translation = service.translate("porcupine", "en", "de");
+        assertEquals("Stachelschwein", translation);
     }
 }
