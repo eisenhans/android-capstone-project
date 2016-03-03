@@ -14,6 +14,6 @@ public class TranslateServiceTest extends AbstractRobolectricTest {
     @Test
     public void testTranslate() {
         String hallo = service.translate("hello", "en", "de");
-        assertEquals("hallo", hallo);
+        assertEquals("Hallo", hallo);
     }
 }
