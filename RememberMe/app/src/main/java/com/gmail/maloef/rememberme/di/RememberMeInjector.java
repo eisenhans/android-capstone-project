@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme.di;
 
 import com.gmail.maloef.rememberme.AddWordActivity;
+import com.gmail.maloef.rememberme.AddWordFragment;
 import com.gmail.maloef.rememberme.MainActivity;
 
 import javax.inject.Singleton;
@@ -14,4 +15,6 @@ public interface RememberMeInjector {
     void inject(MainActivity mainActivity);
 
     void inject(AddWordActivity addWordActivity);
+
+    void inject(AddWordFragment addWordFragment);
 }
