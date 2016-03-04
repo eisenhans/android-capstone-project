@@ -31,12 +31,22 @@ public class AddWordActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_word);
 
-//        setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) {
+            return;
+        }
+
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
 
         selectedBox = boxService.getSelectedBox();
+
+        AddWordFragment fragment = new AddWordFragment();
+        fragment.setArguments(getIntent().getExtras());
+
+        // add the fragment to the FrameLayout add_word_container defined in activity_add_word.xml
+        getFragmentManager().beginTransaction().add(R.id.add_word_container, fragment).commit();
     }
 
     @Override
