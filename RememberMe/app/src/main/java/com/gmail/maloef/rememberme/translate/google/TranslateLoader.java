@@ -14,22 +14,19 @@ public class TranslateLoader extends AsyncTaskLoader<String> {
 
     GoogleTranslateService translateService;
 
-    public TranslateLoader(Context context, String foreignWord, String foreignLanguage, String nativeLanguage, GoogleTranslateService translateService) {
+    public TranslateLoader(Context context, GoogleTranslateService translateService, String foreignWord, String foreignLanguage, String nativeLanguage) {
         super(context);
 
         this.foreignWord = foreignWord;
         this.foreignLanguage = foreignLanguage;
         this.nativeLanguage = nativeLanguage;
 
-        // TODO: 03.03.2016 inject
         this.translateService = translateService;
     }
 
     @Override
     public String loadInBackground() {
         translation = translateService.translate(foreignWord, foreignLanguage, nativeLanguage);
-
-        logInfo("loaded translation for " + foreignWord + ": " + translation);
 
         return translation;
     }
