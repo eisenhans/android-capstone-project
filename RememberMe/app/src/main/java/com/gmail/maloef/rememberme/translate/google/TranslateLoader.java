@@ -1,7 +1,7 @@
 package com.gmail.maloef.rememberme.translate.google;
 
+import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 public class TranslateLoader extends AsyncTaskLoader<String> {
