@@ -14,6 +14,7 @@ import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -84,11 +85,14 @@ public class VocabularyBoxService {
     public int createDefaultBox() {
         // ToDo: look up language from phone settings
         String boxName = context.getResources().getString(R.string.default_name);
-        int defaultBoxId = createBox(boxName, "undefined", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
+        String nativeLanguage = Locale.getDefault().getLanguage();
+        String foreignLanguage = "detect_language";
+        logInfo("default language of device: " + nativeLanguage + ", foreign language: " + foreignLanguage);
+        int defaultBoxId = createBox(boxName, foreignLanguage, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
 
         // ToDo: remove
-        createBox("English", "en", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
-        createBox("Spanish", "es", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+        createBox("English", "en", nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+        createBox("Spanish", "es", nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
 
         return defaultBoxId;
     }

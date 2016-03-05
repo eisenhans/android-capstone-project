@@ -5,11 +5,10 @@ import java.util.Map;
 
 public class TranslateTextResponse extends GoogleTranslateResponse<Map<String, List<Map<String, String>>>> {
 
-    public String getTranslation() {
+    public Translation getTranslation() {
         List<Map<String, String>> translations = data.get("translations");
-        Map<String, String> translation = translations.get(0);
-        String translatedText = translation.get("translatedText");
+        Map<String, String> translationMap = translations.get(0);
 
-        return translatedText;
+        return Translation.create(translationMap.get("detectedSourceLanguage"), translationMap.get("translatedText"));
     }
 }

@@ -368,28 +368,28 @@ public class MainActivity extends AppCompatActivity {
             public void onShow(DialogInterface dialog) {
                 Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 okButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    String newBoxName = editText.getText().toString();
-                                                    if (newBoxName == null || newBoxName.isEmpty()) {
-                                                        return;
-                                                    }
-                                                    if (newBoxName.equals(selectedBox.name)) {
-                                                        // user entered the same name again - just ignore this
-                                                        alertDialog.dismiss();
-                                                        return;
-                                                    }
-                                                    if (boxService.isBoxSaved(newBoxName)) {
-                                                        // user entered a name that already exists - just keep the dialog open
-                                                        Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
-                                                        return;
-                                                    }
-                                                    boxService.updateBoxName(selectedBox._id, newBoxName);
-                                                    logInfo("updated box name: " + newBoxName);
-                                                    updateBoxSpinner();
-                                                    alertDialog.dismiss();
-                                                }
-                                            }
+                        @Override
+                        public void onClick(View view) {
+                            String newBoxName = editText.getText().toString();
+                            if (newBoxName == null || newBoxName.isEmpty()) {
+                                return;
+                            }
+                            if (newBoxName.equals(selectedBox.name)) {
+                                // user entered the same name again - just ignore this
+                                alertDialog.dismiss();
+                                return;
+                            }
+                            if (boxService.isBoxSaved(newBoxName)) {
+                                // user entered a name that already exists - just keep the dialog open
+                                Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            boxService.updateBoxName(selectedBox._id, newBoxName);
+                            logInfo("updated box name: " + newBoxName);
+                            updateBoxSpinner();
+                            alertDialog.dismiss();
+                        }
+                    }
                 );
             }
         });

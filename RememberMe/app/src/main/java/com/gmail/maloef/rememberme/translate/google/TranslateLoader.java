@@ -4,15 +4,19 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
-public class TranslateLoader extends AsyncTaskLoader<String> {
+public class TranslateLoader extends AsyncTaskLoader<Translation> {
 
     String foreignWord;
     String foreignLanguage;
     String nativeLanguage;
 
-    String translation;
+    Translation translation;
 
     GoogleTranslateService translateService;
+
+    public TranslateLoader(Context context, GoogleTranslateService translateService, String foreignWord, String nativeLanguage) {
+        this(context, translateService, foreignWord, null, nativeLanguage);
+    }
 
     public TranslateLoader(Context context, GoogleTranslateService translateService, String foreignWord, String foreignLanguage, String nativeLanguage) {
         super(context);
@@ -25,7 +29,7 @@ public class TranslateLoader extends AsyncTaskLoader<String> {
     }
 
     @Override
-    public String loadInBackground() {
+    public Translation loadInBackground() {
         translation = translateService.translate(foreignWord, foreignLanguage, nativeLanguage);
 
         return translation;

@@ -35,7 +35,11 @@ public class GoogleTranslateService {
         restApi = retrofit.create(GoogleTranslateRestApi.class);
     }
 
-    public String translate(String foreignWord, String foreignLanguage, String nativeLanguage) {
+    public Translation translate(String foreignWord, String nativeLanguage) {
+        return translate(foreignWord, null, nativeLanguage);
+    }
+
+    public Translation translate(String foreignWord, String foreignLanguage, String nativeLanguage) {
         logInfo("translating word " + foreignWord + " from " + foreignLanguage + " to " + nativeLanguage + ", using apiKey " + apiKey);
         Call<TranslateTextResponse> translateCall = restApi.translate(foreignWord, foreignLanguage, nativeLanguage, "text", apiKey);
         try {
@@ -49,15 +53,36 @@ public class GoogleTranslateService {
             TranslateTextResponse translateTextResponse = response.body();
 
             if (translateTextResponse == null) {
-                return "Google doesn't know";
+                return Translation.create("Google doesn't know");
             }
 
-            return translateTextResponse.getTranslation();
+            Translation translation = translateTextResponse.getTranslation();
+            logInfo("received translation: " + translation);
+            return translation;
         } catch (IOException e) {
             e.printStackTrace();
+            return Translation.create(e.getMessage());
         }
+    }
 
-        return "";
+    public String detectLanguage(String foreignWord) {
+        logInfo("detecting language for word " + foreignWord + ", using apiKey " + apiKey);
+        Call<DetectLanguageResponse> detectCall = restApi.detect(foreignWord, "text", apiKey);
+        try {
+            // ToDo: exception handling
+            Response<DetectLanguageResponse> response = detectCall.execute();
+            logInfo("response error body: " + response.errorBody());
+            logInfo("raw response: " + response.raw());
+            DetectLanguageResponse detectLanguageResponse = response.body();
+
+            if (detectLanguageResponse == null) {
+                return "Google doesn't know";
+            }
+            return detectLanguageResponse.getDetectedLanguage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
     }
 
     void logInfo(String message) {

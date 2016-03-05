@@ -1,7 +1,8 @@
 <resources>
 
     <!-- Languages -->
-    <string name="undefined">Undefined</string>
+    <string name="detect_language">Will be detected</string>
+    <!--<string name="detect_language">Detect</string>-->
     <string name="en">English</string>
     <string name="fr">French</string>
     <string name="de">German</string>
@@ -35,5 +36,7 @@
     <string name="memorize_compartment_1">Memorize words from compartment 1</string>
 
     <string name="add_word">Add word</string>
+
+    <string name="confirm_language_settings">We tried to guess your language settings. Please confirm or update.</string>
 
 </resources>

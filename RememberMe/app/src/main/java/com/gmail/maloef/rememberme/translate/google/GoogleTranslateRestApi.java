@@ -4,11 +4,11 @@ import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-/**
- * Example: GET https://www.googleapis.com/language/translate/v2?q=hello&target=de&source=en&key={YOUR_API_KEY}
- */
 public interface GoogleTranslateRestApi {
 
+    /**
+     * Example: GET https://www.googleapis.com/language/translate/v2?q=hello&target=de&source=en&format=text&key={YOUR_API_KEY}
+     */
     @GET("/language/translate/v2")
     Call<TranslateTextResponse> translate(
             @Query("q") String word,
@@ -16,4 +16,24 @@ public interface GoogleTranslateRestApi {
             @Query("target") String nativeLanguage,
             @Query("format") String format,
             @Query("key") String apiKey);
+
+    /**
+     * Example: GET https://www.googleapis.com/language/translate/v2?q=hello&target=de&format=text&key={YOUR_API_KEY}
+     */
+    @GET("/language/translate/v2")
+    Call<TranslateTextResponse> translate(
+            @Query("q") String word,
+            @Query("target") String nativeLanguage,
+            @Query("format") String format,
+            @Query("key") String apiKey);
+
+    /**
+     * Example: https://www.googleapis.com/language/translate/v2/detect?q=hello&format=textkey={YOUR_API_KEY}
+     */
+    @GET("/language/translate/v2/detect")
+    Call<DetectLanguageResponse> detect(
+            @Query("q") String word,
+            @Query("format") String format,
+            @Query("key") String apiKey);
+
 }
