@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
@@ -100,7 +101,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
         anotherTranslationNeeded = false;
         if (translation.detectedSourceLanguage != null) {
-            showConfirmLanguageSettingsDialog();
+            showConfirmLanguageSettingsDialog(translation.detectedSourceLanguage);
         }
         if (!anotherTranslationNeeded) {
             nativeWord = translation.translatedText;
@@ -108,17 +109,19 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-    private void showConfirmLanguageSettingsDialog() {
+    private void showConfirmLanguageSettingsDialog(String detectedSourceLanguage) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle(confirmLanguageSettingsTitle);
         alertDialogBuilder.setMessage(confirmLanguageSettingsMessage);
 
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
 
-//        Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
-//        Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
-//
-//        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
+        Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
+        Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
+
+        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, detectedSourceLanguage);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
@@ -129,49 +132,10 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         });
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+
         alertDialog.show();
-//
-//        final EditText editText = new EditText(this);
-//        alertDialogBuilder.setView(editText);
-//
-//        String ok = okString;
-//        alertDialogBuilder.setPositiveButton(ok, null);
-//        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
-//
-//        final AlertDialog alertDialog = alertDialogBuilder.create();
-//
-//        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//            @Override
-//            public void onShow(DialogInterface dialog) {
-//                Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                okButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            String newBoxName = editText.getText().toString();
-//                            if (newBoxName == null || newBoxName.isEmpty()) {
-//                                return;
-//                            }
-//                            if (newBoxName.equals(selectedBox.name)) {
-//                                // user entered the same name again - just ignore this
-//                                alertDialog.dismiss();
-//                                return;
-//                            }
-//                            if (boxService.isBoxSaved(newBoxName)) {
-//                                // user entered a name that already exists - just keep the dialog open
-//                                Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
-//                            boxService.updateBoxName(selectedBox._id, newBoxName);
-//                            logInfo("updated box name: " + newBoxName);
-//                            updateBoxSpinner();
-//                            alertDialog.dismiss();
-//                        }
-//                    }
-//                );
-//            }
-//        });
-//
-//        alertDialog.show();
+
     }
 
     @Override

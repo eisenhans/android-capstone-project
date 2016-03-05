@@ -32,6 +32,10 @@ public class LanguageSettingsManager {
     }
 
     public void configureForeignLanguageSpinner(final Spinner spinner) {
+        configureForeignLanguageSpinner(spinner, null);
+    }
+
+    public void configureForeignLanguageSpinner(final Spinner spinner, String selectLanguage) {
         List<String> languagesPlusDetect = new ArrayList<String>();
         languagesPlusDetect.add("Will be detected");
         languagesPlusDetect.addAll(Arrays.asList(languages));
@@ -39,11 +43,17 @@ public class LanguageSettingsManager {
         spinner.setAdapter(createLanguageAdapter(languagesPlusDetect));
 
         int languagePos;
-        if (getSelectedBox().foreignLanguage == null) {
-            languagePos = 0;
+        if (selectLanguage == null) {
+            if (getSelectedBox().foreignLanguage == null) {
+                languagePos = 0;
+            } else {
+                languagePos = languagePosition(getSelectedBox().foreignLanguage) + 1;
+            }
         } else {
-            languagePos = languagePosition(getSelectedBox().foreignLanguage) + 1;
+            languagePos = languagePosition(selectLanguage) + 1;
+            boxService.updateForeignLanguage(getSelectedBox()._id, selectLanguage);
         }
+        logInfo("selected language " + selectLanguage + ", selection is position " + languagePos);
         spinner.setSelection(languagePos);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
