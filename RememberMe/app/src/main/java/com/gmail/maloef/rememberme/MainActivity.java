@@ -85,74 +85,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
-//        RememberMeApplication rememberMeApp = (RememberMeApplication) getApplication();
-//        rememberMeApp.getInjector().inject(this);
 
         setSupportActionBar(toolbar);
 
         drawerToggle = setupDrawerToggle();
         drawer.setDrawerListener(drawerToggle);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         languageIsoCodes = getResources().getStringArray(R.array.languageIsoCodes);
         languages = getResources().getStringArray(R.array.languages);
 
-//        boxService = new VocabularyBoxService(this);
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
         updateBoxSpinner();
 
-        ArrayAdapter<String> languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Arrays.asList(languages));
-        languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        foreignLanguageSpinner.setAdapter(languageAdapter);
-
-        int foreignLanguagePos = languagePosition(selectedBox.foreignLanguage);
-        foreignLanguageSpinner.setSelection(foreignLanguagePos);
-
-        foreignLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                int selectedItemPos = foreignLanguageSpinner.getSelectedItemPosition();
-                String selectedIso = languageIsoCodes[selectedItemPos];
-                if (!selectedIso.equals(selectedBox.foreignLanguage)) {
-                    selectedBox.foreignLanguage = selectedIso;
-                    boxService.updateForeignLanguage(selectedBox._id, selectedIso);
-                    logInfo("updated foreign language for box " + selectedBox.name + ": " + selectedIso);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
-        });
-
-        nativeLanguageSpinner.setAdapter(languageAdapter);
-
-        int nativeLanguagePos = languagePosition(selectedBox.nativeLanguage);
-        nativeLanguageSpinner.setSelection(nativeLanguagePos);
-
-        nativeLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                String selectedIso = languageIsoCodes[position];
-                if (!selectedIso.equals(selectedBox.nativeLanguage)) {
-                    selectedBox.nativeLanguage = selectedIso;
-                    boxService.updateNativeLanguage(selectedBox._id, selectedIso);
-                    logInfo("updated native language for box " + selectedBox.name + ": " + selectedIso);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
-        });
+        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService);
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, mixedString };
 

@@ -2,9 +2,11 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.gmail.maloef.rememberme.translate.google.Translation;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 
 public class AddWordFragment extends Fragment implements LoaderManager.LoaderCallbacks<Translation> {
@@ -27,7 +30,9 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @Inject VocabularyBoxService boxService;
     @Inject GoogleTranslateService translateService;
 
-//    @BindString(R.string.detect_language) String detectLanguageStringResource;
+    @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
+    @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessage;
+    @BindString(android.R.string.ok) String okString;
 
     @Bind(R.id.foreign_word_textview) TextView foreignWordTextView;
     @Bind(R.id.native_word_textview) TextView nativeWordTextView;
@@ -86,11 +91,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Translation> onCreateLoader(int id, Bundle args) {
-        String foreignLanguage = selectedBox.foreignLanguage;
-        if (foreignLanguage.equals("detect_language")) {
-            return new TranslateLoader(getActivity(), translateService, foreignWord, selectedBox.nativeLanguage);
-        }
-        return new TranslateLoader(getActivity(), translateService, foreignWord, foreignLanguage, selectedBox.nativeLanguage);
+        return new TranslateLoader(getActivity(), translateService, foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
     }
 
     @Override
@@ -108,10 +109,27 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void showConfirmLanguageSettingsDialog() {
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-//        alertDialogBuilder.setTitle(renameBoxString);
-//        CharSequence message = Html.fromHtml(enterNewNameForBoxString + " <i>" + selectedBox.name + "</i>" + ":");
-//        alertDialogBuilder.setMessage(message);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle(confirmLanguageSettingsTitle);
+        alertDialogBuilder.setMessage(confirmLanguageSettingsMessage);
+
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
+
+//        Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
+//        Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
+//
+//        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
+
+        alertDialogBuilder.setView(dialogView);
+        alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logInfo("ok button clicked: dialog = " + dialog + ", which = " + which);
+            }
+        });
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
 //
 //        final EditText editText = new EditText(this);
 //        alertDialogBuilder.setView(editText);

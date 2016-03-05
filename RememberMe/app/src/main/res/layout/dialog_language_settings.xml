@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/languageSettingsDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:columnCount="2">
+
+    <TextView
+        app:layout_columnWeight="1"
+        app:layout_gravity="left"
+        app:layout_row="0"
+        app:layout_column="0"
+        style="@android:style/TextAppearance.Medium"
+        android:text="@string/foreign_language"
+        />
+
+    <Spinner
+        android:id="@+id/foreignLanguageSpinner"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        app:layout_row="0"
+        app:layout_column="1"
+        />
+
+    <TextView
+        app:layout_columnWeight="1"
+        app:layout_gravity="left"
+        app:layout_row="1"
+        app:layout_column="0"
+        style="@android:style/TextAppearance.Medium"
+        android:text="@string/native_language"
+        />
+
+    <Spinner
+        android:id="@+id/nativeLanguageSpinner"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        app:layout_row="1"
+        app:layout_column="1"
+        />
+
+</android.support.v7.widget.GridLayout>

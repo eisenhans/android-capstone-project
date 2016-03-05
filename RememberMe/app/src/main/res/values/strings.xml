@@ -2,7 +2,6 @@
 
     <!-- Languages -->
     <string name="detect_language">Will be detected</string>
-    <!--<string name="detect_language">Detect</string>-->
     <string name="en">English</string>
     <string name="fr">French</string>
     <string name="de">German</string>
@@ -37,6 +36,7 @@
 
     <string name="add_word">Add word</string>
 
-    <string name="confirm_language_settings">We tried to guess your language settings. Please confirm or update.</string>
+    <string name="confirm_language_settings_title">Confirm language settings</string>
+    <string name="confirm_language_settings_message">We tried to guess your language settings. Please confirm or update.</string>
 
 </resources>

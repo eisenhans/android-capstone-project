@@ -86,9 +86,8 @@ public class VocabularyBoxService {
         // ToDo: look up language from phone settings
         String boxName = context.getResources().getString(R.string.default_name);
         String nativeLanguage = Locale.getDefault().getLanguage();
-        String foreignLanguage = "detect_language";
-        logInfo("default language of device: " + nativeLanguage + ", foreign language: " + foreignLanguage);
-        int defaultBoxId = createBox(boxName, foreignLanguage, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
+        logInfo("default language of device: " + nativeLanguage + ", foreign language to be detected");
+        int defaultBoxId = createBox(boxName, null, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
 
         // ToDo: remove
         createBox("English", "en", nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);

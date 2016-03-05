@@ -19,7 +19,6 @@ public class RememberMeModule {
         return context;
     }
 
-
 //    @Provides @Singleton
 //    public VocabularyBoxService provideVocabularyBoxService() {
 //        return new VocabularyBoxService(context);
