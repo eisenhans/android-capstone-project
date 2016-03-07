@@ -33,6 +33,10 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
     @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessage;
+    @BindString(R.string.select_language_settings_title) String selectLanguageSettingsTitle;
+    @BindString(R.string.select_language_settings_message) String selectLanguageSettingsMessage;
+
+    @BindString(R.string.no_translation_found) String noTranslationFound;
     @BindString(android.R.string.ok) String okString;
 
     @Bind(R.id.foreign_word_textview) TextView foreignWordTextView;
@@ -41,7 +45,6 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     VocabularyBox selectedBox;
     String foreignWord;
     String nativeWord;
-    boolean anotherTranslationNeeded;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,11 +90,12 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     void loadTranslation() {
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
     public Loader<Translation> onCreateLoader(int id, Bundle args) {
+        logInfo("loading translation for word " + foreignWord + " from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
         return new TranslateLoader(getActivity(), translateService, foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
     }
 
@@ -99,27 +103,38 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Translation> translateLoader, Translation translation) {
         logInfo("translation returned by loader: " + translation);
 
-        anotherTranslationNeeded = false;
         if (translation.detectedSourceLanguage != null) {
             showConfirmLanguageSettingsDialog(translation.detectedSourceLanguage);
         }
-        if (!anotherTranslationNeeded) {
-            nativeWord = translation.translatedText;
+        nativeWord = translation.translatedText;
+        if (nativeWord.equals(foreignWord)) {
+            //Toast.makeText(getActivity(), noTranslationFound, Toast.LENGTH_SHORT).show();
+        } else {
             nativeWordTextView.setText(nativeWord);
         }
     }
 
     private void showConfirmLanguageSettingsDialog(String detectedSourceLanguage) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle(confirmLanguageSettingsTitle);
-        alertDialogBuilder.setMessage(confirmLanguageSettingsMessage);
+        if (detectedSourceLanguage != null) {
+            selectedBox.foreignLanguage = detectedSourceLanguage;
+        }
+        final String foreignLanguageUsedForTranslation = selectedBox.foreignLanguage;
+        final String nativeLanguageUsedForTranslation = selectedBox.nativeLanguage;
 
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        if (foreignLanguageUsedForTranslation.equals(nativeLanguageUsedForTranslation)) {
+            alertDialogBuilder.setTitle(selectLanguageSettingsTitle);
+            alertDialogBuilder.setMessage(selectLanguageSettingsMessage);
+        } else {
+            alertDialogBuilder.setTitle(confirmLanguageSettingsTitle);
+            alertDialogBuilder.setMessage(confirmLanguageSettingsMessage);
+        }
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
 
-        Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
+        final Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
         Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
 
-        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
+        final LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, detectedSourceLanguage);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
@@ -127,15 +142,34 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                logInfo("ok button clicked: dialog = " + dialog + ", which = " + which);
+                selectedBox = boxService.getSelectedBox();
+                logInfo("checking if word needs to be translated again: " +
+                        "translated from " + foreignLanguageUsedForTranslation + " to " + nativeLanguageUsedForTranslation +
+                        ", need translation from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
+
+                if (foreignLanguageUsedForTranslation.equals(selectedBox.foreignLanguage) &&
+                        nativeLanguageUsedForTranslation.equals(selectedBox.nativeLanguage)) {
+                    logInfo("no re-translation necessary");
+                    return;
+                }
+                logInfo("re-translation needed");
+                loadTranslation();
             }
         });
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.setCanceledOnTouchOutside(false);
 
-        alertDialog.show();
+        languageSettingsManager.setLanguageSelectionListener(new LanguageSettingsManager.LanguageSelectionListener() {
+            @Override
+            public void selectionChanged(boolean isSelectionOk) {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isSelectionOk);
+            }
+        });
 
+        alertDialog.show();
+        boolean enableOkButton = !nativeLanguageUsedForTranslation.equals(foreignLanguageUsedForTranslation);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(enableOkButton);
     }
 
     @Override

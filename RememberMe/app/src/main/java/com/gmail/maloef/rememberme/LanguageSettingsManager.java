@@ -17,11 +17,17 @@ import java.util.List;
 
 public class LanguageSettingsManager {
 
+    interface LanguageSelectionListener {
+        void selectionChanged(boolean isSelectionOk);
+    }
+
     private Context context;
     private VocabularyBoxService boxService;
 
     private String[] languageIsoCodes;
     private String[] languages;
+
+    private LanguageSelectionListener languageSelectionListener;
 
     public LanguageSettingsManager(Context context, VocabularyBoxService boxService) {
         this.context = context;
@@ -37,7 +43,10 @@ public class LanguageSettingsManager {
 
     public void configureForeignLanguageSpinner(final Spinner spinner, String selectLanguage) {
         List<String> languagesPlusDetect = new ArrayList<String>();
-        languagesPlusDetect.add("Will be detected");
+
+        // ToDo 07.03.16: remove string or create resource
+        String detectedLabel = (selectLanguage == null ? "Will be detected" : "");
+        languagesPlusDetect.add(detectedLabel);
         languagesPlusDetect.addAll(Arrays.asList(languages));
 
         spinner.setAdapter(createLanguageAdapter(languagesPlusDetect));
@@ -72,12 +81,14 @@ public class LanguageSettingsManager {
                     }
                     getSelectedBox().foreignLanguage = null;
                     boxService.updateForeignLanguage(getSelectedBox()._id, null);
+                    informListeners();
                     logInfo("removed foreign language setting from box " + getSelectedBox().name);
                     return;
                 }
                 if (!selectedIso.equals(getSelectedBox().foreignLanguage)) {
                     getSelectedBox().foreignLanguage = selectedIso;
                     boxService.updateForeignLanguage(getSelectedBox()._id, selectedIso);
+                    informListeners();
                     logInfo("updated foreign language for box " + getSelectedBox().name + ": " + selectedIso);
                 }
             }
@@ -102,6 +113,7 @@ public class LanguageSettingsManager {
                 if (!selectedIso.equals(getSelectedBox().nativeLanguage)) {
                     getSelectedBox().nativeLanguage = selectedIso;
                     boxService.updateNativeLanguage(getSelectedBox()._id, selectedIso);
+                    informListeners();
                     logInfo("updated native language for box " + getSelectedBox().name + ": " + selectedIso);
                 }
             }
@@ -111,6 +123,24 @@ public class LanguageSettingsManager {
         });
     }
 
+    public void setLanguageSelectionListener(LanguageSelectionListener languageSelectionListener) {
+        this.languageSelectionListener = languageSelectionListener;
+    }
+
+    private void informListeners() {
+        if (languageSelectionListener == null) {
+            return;
+        }
+        String foreignLanguage = getSelectedBox().foreignLanguage;
+        if (foreignLanguage == null) {
+            languageSelectionListener.selectionChanged(false);
+            return;
+        }
+        String nativeLanguage = getSelectedBox().nativeLanguage;
+        languageSelectionListener.selectionChanged(!nativeLanguage.equals(foreignLanguage));
+    }
+
+    // ToDo 07.03.16: cache this
     private VocabularyBox getSelectedBox() {
         return boxService.getSelectedBox();
     }
