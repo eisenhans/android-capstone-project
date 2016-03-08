@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.service.LanguageService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.TranslateLoader;
@@ -30,6 +31,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Inject VocabularyBoxService boxService;
     @Inject GoogleTranslateService translateService;
+    @Inject LanguageService languageService;
 
     @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
     @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessage;
@@ -134,7 +136,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         final Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
         Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
 
-        final LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService);
+        final LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService, languageService);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, detectedSourceLanguage);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 

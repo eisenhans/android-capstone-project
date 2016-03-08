@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.CompartmentService;
+import com.gmail.maloef.rememberme.service.LanguageService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.service.WordService;
 import com.gmail.maloef.rememberme.util.DateUtils;
@@ -67,16 +69,17 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.native_to_foreign) String nativeToForeignString;
     @BindString(R.string.mixed) String mixedString;
 
-    private String[] languageIsoCodes;
+    private Pair<String, String>[] codeLanguagePairs;
+    private String[] languageCodes;
+    private String[] languageNames;
 
-    private String[] languages;
     private String[] boxNames;
 
     private VocabularyBox selectedBox;
-
     @Inject VocabularyBoxService boxService;
     @Inject CompartmentService compartmentService;
     @Inject WordService wordService;
+    @Inject LanguageService languageService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,15 +94,21 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         drawer.setDrawerListener(drawerToggle);
 
-        languageIsoCodes = getResources().getStringArray(R.array.languageIsoCodes);
-        languages = getResources().getStringArray(R.array.languages);
+        codeLanguagePairs = languageService.getCodeLanguagePairs("en");
+        languageCodes = new String[codeLanguagePairs.length];
+        languageNames = new String[codeLanguagePairs.length];
+
+        for (int i = 0; i < codeLanguagePairs.length; i++) {
+            languageCodes[i] = codeLanguagePairs[i].first;
+            languageNames[i] = codeLanguagePairs[i].second;
+        }
 
         if (!boxService.isOneBoxSaved()) {
             boxService.createDefaultBox();
         }
         updateBoxSpinner();
 
-        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService);
+        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService, languageService);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
@@ -245,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int languagePosition(String isoCode) {
-        for (int i = 0; i < languageIsoCodes.length; i++) {
-            if (languageIsoCodes[i].equals(isoCode)) {
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equals(isoCode)) {
                 return i;
             }
         }

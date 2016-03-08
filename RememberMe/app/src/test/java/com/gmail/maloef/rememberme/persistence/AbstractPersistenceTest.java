@@ -18,18 +18,18 @@ public abstract class AbstractPersistenceTest extends AbstractRobolectricTest {
         super.before();
         // The generated class VocabularyBoxDatabase has a field named instance. This has to be set to null. Otherwise
         // it is not possible to run several tests - Robolectric problem.
-        resetSingleton(com.gmail.maloef.rememberme.persistence.generated.VocabularyBoxDatabase.class, "instance");
+        resetSingleton(com.gmail.maloef.rememberme.persistence.generated.RememberMeDatabase.class, "instance");
 
         if (contentProvider == null) {
-            contentProvider = new com.gmail.maloef.rememberme.persistence.generated.VocabularyBoxProvider();
+            contentProvider = new com.gmail.maloef.rememberme.persistence.generated.RememberMeProvider();
             contentProvider.onCreate();
-            ShadowContentResolver.registerProvider(VocabularyBoxProvider.AUTHORITY, contentProvider);
+            ShadowContentResolver.registerProvider(RememberMeProvider.AUTHORITY, contentProvider);
             logInfo("contentProvider: " + contentProvider);
         }
 
-        contentProvider.delete(VocabularyBoxProvider.Word.WORDS, null, null);
-        contentProvider.delete(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null);
-        contentProvider.delete(VocabularyBoxProvider.Word.WORDS, null, null);
+        contentProvider.delete(RememberMeProvider.Word.WORDS, null, null);
+        contentProvider.delete(RememberMeProvider.Compartment.COMPARTMENTS, null, null);
+        contentProvider.delete(RememberMeProvider.Word.WORDS, null, null);
     }
 
     private void resetSingleton(Class clazz, String fieldName) throws NoSuchFieldException, IllegalAccessException {

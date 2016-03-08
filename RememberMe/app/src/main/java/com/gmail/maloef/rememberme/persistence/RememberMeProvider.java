@@ -7,8 +7,8 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
-@ContentProvider(authority = VocabularyBoxProvider.AUTHORITY, database = VocabularyBoxDatabase.class)
-public class VocabularyBoxProvider {
+@ContentProvider(authority = RememberMeProvider.AUTHORITY, database = RememberMeDatabase.class)
+public class RememberMeProvider {
 
     public static final String AUTHORITY = "com.gmail.maloef.rememberme";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
@@ -17,9 +17,10 @@ public class VocabularyBoxProvider {
         String VOCABULARY_BOXES = "vocabularyBoxes";
         String COMPARTMENTS = "compartments";
         String WORDS = "words";
+        String LANGUAGES = "languages";
     }
 
-    @TableEndpoint(table = VocabularyBoxDatabase.VOCABULARY_BOX)
+    @TableEndpoint(table = RememberMeDatabase.VOCABULARY_BOX)
     public static class VocabularyBox {
 
         /**
@@ -64,7 +65,7 @@ public class VocabularyBoxProvider {
 //        }
     }
 
-    @TableEndpoint(table = VocabularyBoxDatabase.COMPARTMENT)
+    @TableEndpoint(table = RememberMeDatabase.COMPARTMENT)
     public static class Compartment {
 
         /**
@@ -110,7 +111,7 @@ public class VocabularyBoxProvider {
         }
     }
 
-    @TableEndpoint(table = VocabularyBoxDatabase.WORD)
+    @TableEndpoint(table = RememberMeDatabase.WORD)
     public static class Word {
 
         /**
@@ -153,6 +154,36 @@ public class VocabularyBoxProvider {
                 defaultSort = WordColumns._ID)
         public static final Uri findWords(int compartmentId) {
             return Compartment.findById(compartmentId).buildUpon().appendPath(Path.WORDS).build();
+        }
+    }
+
+    @TableEndpoint(table = RememberMeDatabase.LANGUAGE)
+    public static class Language {
+
+        /**
+         * Finds all languages.
+         * <p/>
+         * Example: ...rememberme/languages
+         */
+        @ContentUri(
+                path = Path.LANGUAGES,
+                type = "vnd.android.cursor.dir/language",
+                defaultSort = LanguageColumns.NAME)
+        public static final Uri LANGUAGES = BASE_CONTENT_URI.buildUpon().appendPath(Path.LANGUAGES).build();
+
+        /**
+         * Finds all languages with language names defined by the last path segment.
+         * <p/>
+         * Example: ...rememberme/languages/en
+         */
+        @InexactContentUri(
+                path = Path.LANGUAGES + "/#",
+                name = "LANGUAGES_BY_NAME_CODE",
+                type = "vnd.android.cursor.dir/language",
+                whereColumn = LanguageColumns.NAME_CODE,
+                pathSegment = 1)
+        public static Uri findByNameCode(String nameCode) {
+            return LANGUAGES.buildUpon().appendPath(nameCode).build();
         }
     }
 }

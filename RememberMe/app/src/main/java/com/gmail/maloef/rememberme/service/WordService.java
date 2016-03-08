@@ -6,7 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
+import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 import com.gmail.maloef.rememberme.persistence.WordColumns;
 
 import java.util.Date;
@@ -36,7 +36,7 @@ public class WordService {
         values.put(WordColumns.NATIVE_WORD, nativeWord);
         values.put(WordColumns.CREATION_DATE, new Date().getTime());
 
-        Uri uri = contentResolver.insert(VocabularyBoxProvider.Word.WORDS, values);
+        Uri uri = contentResolver.insert(RememberMeProvider.Word.WORDS, values);
         String lastPathSegment = uri.getLastPathSegment();
         logInfo("created word: " + values + ", uri: " + uri);
 
@@ -52,6 +52,6 @@ public class WordService {
         long now = new Date().getTime();
         values.put(WordColumns.LAST_REPEAT_DATE, now);
 
-        contentResolver.update(VocabularyBoxProvider.Word.WORDS, values, WordColumns._ID + " = ?", new String[]{String.valueOf(id)});
+        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns._ID + " = ?", new String[]{String.valueOf(id)});
     }
 }

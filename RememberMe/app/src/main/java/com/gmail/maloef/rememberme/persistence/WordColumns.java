@@ -14,7 +14,7 @@ public interface WordColumns {
     @DataType(INTEGER) @PrimaryKey @AutoIncrement
     String _ID = "_id";
 
-    @DataType(INTEGER) @NotNull @References(table = VocabularyBoxDatabase.VOCABULARY_BOX, column = VocabularyBoxColumns._ID)
+    @DataType(INTEGER) @NotNull @References(table = RememberMeDatabase.VOCABULARY_BOX, column = VocabularyBoxColumns._ID)
     String BOX_ID = "boxId";
 
     @DataType(INTEGER) @NotNull

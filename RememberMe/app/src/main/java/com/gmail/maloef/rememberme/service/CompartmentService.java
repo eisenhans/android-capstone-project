@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
+import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 import com.gmail.maloef.rememberme.persistence.WordColumns;
 import com.gmail.maloef.rememberme.persistence.WordCursor;
 
@@ -37,7 +37,7 @@ public class CompartmentService {
     public CompartmentOverview getCompartmentOverview(int boxId, int compartment) {
         WordCursor wordCursor = new WordCursor(
                 contentResolver.query(
-                        VocabularyBoxProvider.Word.WORDS,
+                        RememberMeProvider.Word.WORDS,
                         new String[] {WordColumns.LAST_REPEAT_DATE},
                         WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
                         new String[] {String.valueOf(boxId), String.valueOf(compartment)},

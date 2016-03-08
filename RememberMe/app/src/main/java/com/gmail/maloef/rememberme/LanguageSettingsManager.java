@@ -2,6 +2,7 @@ package com.gmail.maloef.rememberme;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -9,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.service.LanguageService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
 import java.util.ArrayList;
@@ -24,17 +26,26 @@ public class LanguageSettingsManager {
     private Context context;
     private VocabularyBoxService boxService;
 
-    private String[] languageIsoCodes;
-    private String[] languages;
+    private String[] languageCodes;
+    private String[] languageNames;
+
+    private Pair<String, String>[] codeLanguagePairs;
 
     private LanguageSelectionListener languageSelectionListener;
 
-    public LanguageSettingsManager(Context context, VocabularyBoxService boxService) {
+    public LanguageSettingsManager(Context context, VocabularyBoxService boxService, LanguageService languageService) {
         this.context = context;
         this.boxService = boxService;
 
-        languageIsoCodes = context.getResources().getStringArray(R.array.languageIsoCodes);
-        languages = context.getResources().getStringArray(R.array.languages);
+        // ToDo 07.03.16: simplify
+        codeLanguagePairs = languageService.getCodeLanguagePairs("en");
+        languageCodes = new String[codeLanguagePairs.length];
+        languageNames = new String[codeLanguagePairs.length];
+
+        for (int i = 0; i < codeLanguagePairs.length; i++) {
+            languageCodes[i] = codeLanguagePairs[i].first;
+            languageNames[i] = codeLanguagePairs[i].second;
+        }
     }
 
     public void configureForeignLanguageSpinner(final Spinner spinner) {
@@ -47,7 +58,7 @@ public class LanguageSettingsManager {
         // ToDo 07.03.16: remove string or create resource
         String detectedLabel = (selectLanguage == null ? "Will be detected" : "");
         languagesPlusDetect.add(detectedLabel);
-        languagesPlusDetect.addAll(Arrays.asList(languages));
+        languagesPlusDetect.addAll(Arrays.asList(languageNames));
 
         spinner.setAdapter(createLanguageAdapter(languagesPlusDetect));
 
@@ -73,7 +84,7 @@ public class LanguageSettingsManager {
                 if (selectedItemPos == 0) {
                     selectedIso = null;
                 } else {
-                    selectedIso = languageIsoCodes[selectedItemPos - 1];
+                    selectedIso = languageCodes[selectedItemPos - 1];
                 }
                 if (selectedIso == null) {
                     if (getSelectedBox().foreignLanguage == null) {
@@ -100,7 +111,7 @@ public class LanguageSettingsManager {
     }
 
     public void configureNativeLanguageSpinner(final Spinner spinner) {
-        spinner.setAdapter(createLanguageAdapter(Arrays.asList(languages)));
+        spinner.setAdapter(createLanguageAdapter(Arrays.asList(languageNames)));
 
         int languagePos = languagePosition(getSelectedBox().nativeLanguage);
         spinner.setSelection(languagePos);
@@ -109,7 +120,7 @@ public class LanguageSettingsManager {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 int selectedItemPos = spinner.getSelectedItemPosition();
-                String selectedIso = languageIsoCodes[selectedItemPos];
+                String selectedIso = languageCodes[selectedItemPos];
                 if (!selectedIso.equals(getSelectedBox().nativeLanguage)) {
                     getSelectedBox().nativeLanguage = selectedIso;
                     boxService.updateNativeLanguage(getSelectedBox()._id, selectedIso);
@@ -154,8 +165,8 @@ public class LanguageSettingsManager {
 
     // ToDo 05.03.2016: simplify this?
     private int languagePosition(String isoCode) {
-        for (int i = 0; i < languageIsoCodes.length; i++) {
-            if (languageIsoCodes[i].equals(isoCode)) {
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equals(isoCode)) {
                 return i;
             }
         }

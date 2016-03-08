@@ -2,10 +2,6 @@
 
     <!-- Languages -->
     <string name="detect_language">Will be detected</string>
-    <string name="en">English</string>
-    <string name="fr">French</string>
-    <string name="de">German</string>
-    <string name="es">Spanish</string>
 
     <string name="app_name">Remember me</string>
     <string name="action_settings">Settings</string>

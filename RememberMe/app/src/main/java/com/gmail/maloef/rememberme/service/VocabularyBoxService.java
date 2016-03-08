@@ -11,7 +11,7 @@ import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxProvider;
+import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -31,7 +31,7 @@ public class VocabularyBoxService {
 
     public VocabularyBox findBox(int id) {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 null,
                 VocabularyBoxColumns._ID + " = ?",
                 new String[]{String.valueOf(id)},
@@ -46,7 +46,7 @@ public class VocabularyBoxService {
 
     public VocabularyBox findBoxByName(String boxName) {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 null,
                 VocabularyBoxColumns.NAME + " = ?",
                 new String[]{boxName},
@@ -60,7 +60,7 @@ public class VocabularyBoxService {
 
     public boolean isBoxSaved(String boxName) {
         Cursor cursor = contentResolver.query(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 new String[]{VocabularyBoxColumns._ID},
                 VocabularyBoxColumns.NAME + " = ?",
                 new String[]{boxName},
@@ -74,7 +74,7 @@ public class VocabularyBoxService {
 
     public boolean isOneBoxSaved() {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
-                contentResolver.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+                contentResolver.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
 
         boolean empty = boxCursor.isEmpty();
         boxCursor.close();
@@ -109,7 +109,7 @@ public class VocabularyBoxService {
         if (select) {
             unselectAllBoxes();
         }
-        Uri uri = contentResolver.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        Uri uri = contentResolver.insert(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, values);
         String lastPathSegment = uri.getLastPathSegment();
 
         logInfo("created box: " + values + ", uri: " + uri);
@@ -126,7 +126,7 @@ public class VocabularyBoxService {
 //                        null, null, VocabularyBoxColumns.NAME + " collate nocase"));
 
         Cursor boxCursor = contentResolver.query(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 new String[]{VocabularyBoxColumns.NAME},
                 null, null, VocabularyBoxColumns.NAME + " collate nocase");
 
@@ -148,7 +148,7 @@ public class VocabularyBoxService {
     public VocabularyBox getSelectedBox() {
         VocabularyBoxCursor boxes = new VocabularyBoxCursor(
                 contentResolver.query(
-                        VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null,
+                        RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null,
                         VocabularyBoxColumns.IS_CURRENT + " = 1", null,
                         null));
 
@@ -160,7 +160,7 @@ public class VocabularyBoxService {
 
     public VocabularyBox selectBoxByName(String boxName) {
         VocabularyBoxCursor idCursor = new VocabularyBoxCursor(contentResolver.query(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 new String[]{"_id"},
                 VocabularyBoxColumns.NAME + " = ?",
                 new String[]{boxName},
@@ -184,7 +184,7 @@ public class VocabularyBoxService {
         ContentValues select = new ContentValues();
         select.put(VocabularyBoxColumns.IS_CURRENT, 1);
         contentResolver.update(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 select,
                 "_id = ?",
                 new String[]{String.valueOf(id)});
@@ -194,7 +194,7 @@ public class VocabularyBoxService {
         ContentValues unselect = new ContentValues();
         unselect.put(VocabularyBoxColumns.IS_CURRENT, 0);
         contentResolver.update(
-                VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES,
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 unselect,
                 null,
                 null);
@@ -226,7 +226,7 @@ public class VocabularyBoxService {
 
     private int update(int id, ContentValues newValues) {
         String[] idStringArray = new String[] {String.valueOf(id)};
-        return contentResolver.update(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, newValues, "_id = ?", idStringArray);
+        return contentResolver.update(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, newValues, "_id = ?", idStringArray);
     }
 
     void logInfo(String message) {

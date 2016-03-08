@@ -15,18 +15,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
+public class RememberMeProviderTest extends AbstractPersistenceTest {
 
     @Test
     public void testVocabularyBox() {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
-                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+                contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertFalse(boxCursor.moveToFirst());
         boxCursor.close();
 
         insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
         boxCursor = new VocabularyBoxCursor(
-                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+                contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertTrue(boxCursor.moveToFirst());
         VocabularyBox box = boxCursor.peek();
         assertEquals("defaultBox", box.name);
@@ -42,14 +42,14 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
     @Test
     public void testCompartment() {
         CompartmentCursor compartmentCursor = new CompartmentCursor(
-                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
         assertFalse(compartmentCursor.moveToFirst());
         compartmentCursor.close();
 
         insertCompartment(1, 2);
 
         compartmentCursor = new CompartmentCursor(
-                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
         assertTrue(compartmentCursor.moveToFirst());
         Compartment compartment = compartmentCursor.peek();
         assertEquals(1, compartment.vocabularyBox);
@@ -59,14 +59,14 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
 
     @Test
     public void testWord() {
-        WordCursor wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        WordCursor wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertFalse(wordCursor.moveToFirst());
         wordCursor.close();
 
         int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
 
-        wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
         Word word = wordCursor.peek();
         assertEquals("porcupine", word.foreignWord);
@@ -85,31 +85,31 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
     public void testCombined() {
         int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
-                contentProvider.query(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
+                contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertTrue(boxCursor.moveToFirst());
         assertEquals(boxId, boxCursor.peek()._id);
         boxCursor.close();
 
         insertCompartment(boxId, 1);
         CompartmentCursor compartmentCursor = new CompartmentCursor(
-                contentProvider.query(VocabularyBoxProvider.Compartment.COMPARTMENTS, null, null, null, null));
+                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
         assertTrue(compartmentCursor.moveToFirst());
         int compartmentId = compartmentCursor.peek()._id;
         compartmentCursor.close();
 
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
-        WordCursor wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.WORDS, null, null, null, null));
+        WordCursor wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
         int wordId = wordCursor.peek()._id;
         wordCursor.close();
 
-        wordCursor = new WordCursor(contentProvider.query(VocabularyBoxProvider.Word.findById(wordId), null, null, null, null));
+        wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.findById(wordId), null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
         assertEquals(compartmentId, wordCursor.peek().compartment);
         wordCursor.close();
 
         compartmentCursor = new CompartmentCursor(
-                contentProvider.query(VocabularyBoxProvider.Compartment.findById(compartmentId), null, null, null, null));
+                contentProvider.query(RememberMeProvider.Compartment.findById(compartmentId), null, null, null, null));
         assertTrue(compartmentCursor.moveToFirst());
         assertEquals(boxId, compartmentCursor.peek().vocabularyBox);
         compartmentCursor.close();
@@ -122,7 +122,7 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
         values.put(VocabularyBoxColumns.NATIVE_LANGUAGE, nativeLanguage);
         values.put(VocabularyBoxColumns.TRANSLATION_DIRECTION, translationDirection);
 
-        Uri uri = contentProvider.insert(VocabularyBoxProvider.VocabularyBox.VOCABULARY_BOXES, values);
+        Uri uri = contentProvider.insert(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, values);
         String boxIdString = uri.getLastPathSegment();
         return Integer.valueOf(boxIdString);
     }
@@ -132,7 +132,7 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
         values.put(CompartmentColumns.VOCABULARY_BOX, boxId);
         values.put(CompartmentColumns.NUMBER, number);
 
-        contentProvider.insert(VocabularyBoxProvider.Compartment.COMPARTMENTS, values);
+        contentProvider.insert(RememberMeProvider.Compartment.COMPARTMENTS, values);
     }
 
     private void insertWord(int boxId, int compartment, String foreignWord, String nativeWord) {
@@ -145,6 +145,6 @@ public class VocabularyBoxProviderTest extends AbstractPersistenceTest {
         Date now = new Date();
         values.put(WordColumns.CREATION_DATE, now.getTime());
 
-        contentProvider.insert(VocabularyBoxProvider.Word.WORDS, values);
+        contentProvider.insert(RememberMeProvider.Word.WORDS, values);
     }
 }

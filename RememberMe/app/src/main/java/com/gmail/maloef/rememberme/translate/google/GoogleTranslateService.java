@@ -1,8 +1,10 @@
 package com.gmail.maloef.rememberme.translate.google;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.gmail.maloef.rememberme.BuildConfig;
+import com.gmail.maloef.rememberme.domain.Language;
 
 import java.io.IOException;
 
@@ -13,7 +15,7 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class GoogleTranslateService {
+public class GoogleTranslateService implements LanguageProvider {
 
     private static final String BASE_URL = "https://www.googleapis.com";
 
@@ -82,6 +84,36 @@ public class GoogleTranslateService {
         } catch (IOException e) {
             e.printStackTrace();
             return e.getMessage();
+        }
+    }
+
+    // ToDo 07.03.16: delete this
+    public Language[] getLanguages(String nameCode) {
+        logInfo("looking up available language with name in language " + nameCode + ", using apiKey " + apiKey);
+        Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
+
+        try {
+            Response<AvailableLanguageResponse> response = languageCall.execute();
+            AvailableLanguageResponse availableLanguageResponse = response.body();
+            return availableLanguageResponse.getLanguages();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Language[0];
+        }
+    }
+
+    @Override
+    public Pair<String, String>[] getCodeLanguagePairs(String nameCode) {
+        logInfo("looking up available language with name in language " + nameCode + ", using apiKey " + apiKey);
+        Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
+
+        try {
+            Response<AvailableLanguageResponse> response = languageCall.execute();
+            AvailableLanguageResponse availableLanguageResponse = response.body();
+            return availableLanguageResponse.getCodeLanguagePairs();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair[0];
         }
     }
 
