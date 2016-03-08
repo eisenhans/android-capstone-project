@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         drawer.setDrawerListener(drawerToggle);
 
-        codeLanguagePairs = languageService.getCodeLanguagePairs("en");
+        codeLanguagePairs = languageService.getLanguages("en");
         languageCodes = new String[codeLanguagePairs.length];
         languageNames = new String[codeLanguagePairs.length];
 

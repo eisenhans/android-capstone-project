@@ -4,5 +4,5 @@ import android.util.Pair;
 
 public interface LanguageProvider {
 
-    Pair<String, String>[] getCodeLanguagePairs(String nameCode);
+    Pair<String, String>[] getLanguages(String nameCode);
 }

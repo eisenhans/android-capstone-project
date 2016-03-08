@@ -4,9 +4,9 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.gmail.maloef.rememberme.BuildConfig;
-import com.gmail.maloef.rememberme.domain.Language;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 
@@ -61,6 +61,8 @@ public class GoogleTranslateService implements LanguageProvider {
             Translation translation = translateTextResponse.getTranslation();
             logInfo("received translation: " + translation);
             return translation;
+        } catch (UnknownHostException e) {
+            return Translation.create("No internet connection");
         } catch (IOException e) {
             e.printStackTrace();
             return Translation.create(e.getMessage());
@@ -87,23 +89,8 @@ public class GoogleTranslateService implements LanguageProvider {
         }
     }
 
-    // ToDo 07.03.16: delete this
-    public Language[] getLanguages(String nameCode) {
-        logInfo("looking up available language with name in language " + nameCode + ", using apiKey " + apiKey);
-        Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
-
-        try {
-            Response<AvailableLanguageResponse> response = languageCall.execute();
-            AvailableLanguageResponse availableLanguageResponse = response.body();
-            return availableLanguageResponse.getLanguages();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Language[0];
-        }
-    }
-
     @Override
-    public Pair<String, String>[] getCodeLanguagePairs(String nameCode) {
+    public Pair<String, String>[] getLanguages(String nameCode) {
         logInfo("looking up available language with name in language " + nameCode + ", using apiKey " + apiKey);
         Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
 

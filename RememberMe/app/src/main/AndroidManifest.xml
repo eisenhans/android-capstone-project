@@ -35,7 +35,7 @@
         </activity>
         <provider
             android:authorities="com.gmail.maloef.rememberme"
-            android:name=".persistence.generated.VocabularyBoxProvider"
+            android:name=".persistence.generated.RememberMeProvider"
             android:exported="false" />
     </application>
 

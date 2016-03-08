@@ -4,10 +4,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Pair;
 
+import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.persistence.LanguageColumns;
 import com.gmail.maloef.rememberme.persistence.LanguageCursor;
 import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
-import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
 
 import javax.inject.Inject;
 
@@ -17,27 +17,13 @@ public class LanguageService {
     private Context context;
     private ContentResolver contentResolver;
 
-    LanguageProvider languageProvider;
-//    Language[] languages;
-
     @Inject
-    public LanguageService(Context context, LanguageProvider languageProvider) {
+    public LanguageService(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
-        this.languageProvider = languageProvider;
     }
 
-    // ToDo 07.03.16: use a ScnyAdapter to keep contentProvider in sync with languages provided by Google? Or another mechanism?
-    public Pair<String, String>[] getCodeLanguagePairs(String nameCode) {
-        Pair<String, String>[] pairs = getCodeLangugePairsFromContentResolver(nameCode);
-        if (pairs.length == 0) {
-            pairs = getLanguagesFromExternal(nameCode);
-            insertLanguages(pairs);
-        }
-        return pairs;
-    }
-
-    private Pair<String, String>[] getCodeLangugePairsFromContentResolver(String nameCode) {
+    public Pair<String, String>[] getLanguages(String nameCode) {
         LanguageCursor languageCursor = new LanguageCursor(contentResolver.query(
                 RememberMeProvider.Language.LANGUAGES,
                 null,
@@ -45,32 +31,36 @@ public class LanguageService {
                 new String[]{nameCode},
                 null));
 
-        return new Pair[0];
+        Pair[] pairs = new Pair[languageCursor.getCount()];
+        int i = 0;
+        for (Language language : languageCursor) {
+            pairs[i++] = Pair.create(language.code, language.name);
+        }
+        languageCursor.close();
+
+        // ToDo 08.03.16: remove
+        if (pairs.length == 0 && !isRobelectricTest()) {
+            pairs = createDummyLanguages();
+        }
+
+        return pairs;
     }
 
-    private void insertLanguages(Pair<String, String>[] codeLanguagePairs) {
+    private Pair[] createDummyLanguages() {
+        final Pair<String, String>[] pairs = new Pair[3];
+        pairs[0] = Pair.create("en", "English");
+        pairs[1] = Pair.create("de", "German");
+        pairs[2] = Pair.create("es", "Spanish");
 
+        return pairs;
     }
 
-    private Pair<String, String>[] getLanguagesFromExternal(String nameCode) {
-        return languageProvider.getCodeLanguagePairs(nameCode);
+    private boolean isRobelectricTest() {
+        try {
+            Class.forName("org.robolectric.Robolectric");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
-
-//    public String[] getLanguageNames(String nameCode) {
-//        String[] names = new String[languages.length];
-//        for (int i = 0; i < names.length; i++) {
-//            names[i] = languages[i].name;
-//        }
-//        return names;
-//    }
-//
-//    public String[] getIsoCodes(String nameCode) {
-//        String[] isoCodes = new String[languages.length];
-//        for (int i = 0; i < isoCodes.length; i++) {
-//            isoCodes[i] = languages[i].code;
-//        }
-//        return isoCodes;
-//    }
-
-
 }

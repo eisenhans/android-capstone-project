@@ -38,7 +38,7 @@ public class LanguageSettingsManager {
         this.boxService = boxService;
 
         // ToDo 07.03.16: simplify
-        codeLanguagePairs = languageService.getCodeLanguagePairs("en");
+        codeLanguagePairs = languageService.getLanguages("en");
         languageCodes = new String[codeLanguagePairs.length];
         languageNames = new String[codeLanguagePairs.length];
 
