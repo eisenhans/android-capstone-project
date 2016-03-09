@@ -46,8 +46,10 @@ public class GoogleTranslateService implements LanguageProvider {
         Call<TranslateTextResponse> translateCall = restApi.translate(foreignWord, foreignLanguage, nativeLanguage, "text", apiKey);
         try {
             // ToDo: exception handling
+            long start = System.currentTimeMillis();
             Response<TranslateTextResponse> response = translateCall.execute();
-            logInfo("response: " + response);
+            long end = System.currentTimeMillis();
+            logInfo("response: " + response + ", duration " + (end - start) + " ms");
             logInfo("response message: " + response.message());
             logInfo("response body: " + response.body());
             logInfo("response error body: " + response.errorBody());
@@ -74,7 +76,10 @@ public class GoogleTranslateService implements LanguageProvider {
         Call<DetectLanguageResponse> detectCall = restApi.detect(foreignWord, "text", apiKey);
         try {
             // ToDo: exception handling
+            long start = System.currentTimeMillis();
             Response<DetectLanguageResponse> response = detectCall.execute();
+            long end = System.currentTimeMillis();
+            logInfo("response: " + response + ", duration " + (end - start) + " ms");
             logInfo("response error body: " + response.errorBody());
             logInfo("raw response: " + response.raw());
             DetectLanguageResponse detectLanguageResponse = response.body();
@@ -95,7 +100,10 @@ public class GoogleTranslateService implements LanguageProvider {
         Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
 
         try {
+            long start = System.currentTimeMillis();
             Response<AvailableLanguageResponse> response = languageCall.execute();
+            long end = System.currentTimeMillis();
+            logInfo("response: " + response + ", duration " + (end - start) + " ms");
             AvailableLanguageResponse availableLanguageResponse = response.body();
             return availableLanguageResponse.getCodeLanguagePairs();
         } catch (IOException e) {

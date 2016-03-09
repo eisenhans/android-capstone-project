@@ -1,40 +1,83 @@
 package com.gmail.maloef.rememberme.service;
 
-import android.content.ContentResolver;
+import android.app.IntentService;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
 
+import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.persistence.LanguageColumns;
 import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
 
 import javax.inject.Inject;
 
-// ToDo 08.03.16: SyncAdapter
-public class LanguageUpdateService {
+public class LanguageUpdateService extends IntentService {
 
-    private Context context;
-    private ContentResolver contentResolver;
-    private LanguageProvider languageProvider;
+    public static final String LANGUAGES_UPDATED = "languages_updated";
 
-    @Inject
-    public LanguageUpdateService(Context context, LanguageProvider languageProvider) {
-        this.context = context;
-        this.contentResolver = context.getContentResolver();
+    @Inject LanguageProvider languageProvider;
+
+    /**
+     * Used by android.
+     */
+    public LanguageUpdateService() {
+        super(LanguageUpdateService.class.getSimpleName());
+        logInfo("created service " + this);
+    }
+
+    /**
+     * Used for unit tests.
+     */
+    public LanguageUpdateService(LanguageProvider languageProvider) {
+        super(LanguageUpdateService.class.getSimpleName());
         this.languageProvider = languageProvider;
+        logInfo("created service " + this);
     }
 
-    public boolean isTimeForUpdate() {
-        return true;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        RememberMeApplication.injector().inject(this);
     }
 
-    public void updateLanguages() {
-        updateLanguages("en");
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        logInfo("handling intent " + intent);
+        String language = "en";
+
+        if (isTimeForUpdate(language)) {
+            updateLanguages(language);
+        }
+        Intent doneIntent = new Intent(LANGUAGES_UPDATED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(doneIntent);
     }
 
-    private void updateLanguages(String nameCode) {
+    public boolean isTimeForUpdate(String nameCode) {
+        // ToDo 09.03.16: read last update date from preferences, do update every week/month
+        int languages = countLanguages(nameCode);
+        logInfo("found " + languages + " for nameCode " + nameCode + " in db");
+
+        return languages < 10;
+    }
+
+    private int countLanguages(String nameCode) {
+        Cursor cursor = getContentResolver().query(
+                RememberMeProvider.Language.LANGUAGES,
+                null,
+                LanguageColumns.NAME_CODE + " = ?",
+                new String[]{"en"},
+                null);
+
+        int languages = cursor.getCount();
+        cursor.close();
+        return languages;
+    }
+
+    public void updateLanguages(String nameCode) {
         Pair<String, String>[] languages = languageProvider.getLanguages(nameCode);
         if (languages.length == 0) {
             return;
@@ -53,11 +96,14 @@ public class LanguageUpdateService {
             values[i].put("name", languages[i].second);
             values[i].put("nameCode", nameCode);
         }
-        return contentResolver.bulkInsert(RememberMeProvider.Language.LANGUAGES, values);
+        return getContentResolver().bulkInsert(RememberMeProvider.Language.LANGUAGES, values);
     }
 
     private int deleteLanguages(String nameCode) {
-        return contentResolver.delete(RememberMeProvider.Language.LANGUAGES, LanguageColumns.NAME_CODE + " = ?", new String[] {nameCode});
+        return getContentResolver().delete(
+                RememberMeProvider.Language.LANGUAGES,
+                LanguageColumns.NAME_CODE + " = ?",
+                new String[]{nameCode});
     }
 
     void logInfo(String message) {

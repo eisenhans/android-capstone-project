@@ -3,6 +3,7 @@ package com.gmail.maloef.rememberme.di;
 import com.gmail.maloef.rememberme.AddWordActivity;
 import com.gmail.maloef.rememberme.AddWordFragment;
 import com.gmail.maloef.rememberme.MainActivity;
+import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 
 import javax.inject.Singleton;
 
@@ -17,4 +18,6 @@ public interface RememberMeInjector {
     void inject(AddWordActivity addWordActivity);
 
     void inject(AddWordFragment addWordFragment);
+
+    void inject(LanguageUpdateService languageUpdateService);
 }

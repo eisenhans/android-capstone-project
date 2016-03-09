@@ -57,18 +57,31 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         compartmentCursor.close();
     }
 
+    private long time = System.currentTimeMillis();
+
+    private void logTime(String message) {
+        long newTime = System.currentTimeMillis();
+        logInfo(message + " (" + (newTime - time) + " ms)");
+        time = newTime;
+    }
+
     @Test
     public void testWord() {
+        logTime("inside testWord");
         WordCursor wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertFalse(wordCursor.moveToFirst());
         wordCursor.close();
+        logTime("checked no word in db");
 
         int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+        logTime("inserted voacabulary box");
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
+        logTime("inserted one word");
 
         wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
         Word word = wordCursor.peek();
+        logTime("read word");
         assertEquals("porcupine", word.foreignWord);
         assertEquals("Stachelschwein", word.nativeWord);
 
@@ -76,9 +89,10 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         long now = new Date().getTime();
         logInfo("word was created " + (now - creationDate) + " ms ago");
         assertTrue(creationDate < now);
-        assertTrue(creationDate + 1000 > now);
+        assertTrue(creationDate + 2000 > now);
 
         wordCursor.close();
+        logTime("end of testWord");
     }
 
     @Test

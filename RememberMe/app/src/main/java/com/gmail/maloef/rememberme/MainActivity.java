@@ -1,8 +1,13 @@
 package com.gmail.maloef.rememberme;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,6 +35,7 @@ import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.CompartmentService;
 import com.gmail.maloef.rememberme.service.LanguageService;
+import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.service.WordService;
 import com.gmail.maloef.rememberme.util.DateUtils;
@@ -108,10 +114,6 @@ public class MainActivity extends AppCompatActivity {
         }
         updateBoxSpinner();
 
-        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService, languageService);
-        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
-        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
-
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, mixedString };
 
         ArrayAdapter<String> translationDirectionAdapter =
@@ -135,16 +137,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        wordService = new WordService(this);
         createTestData();
 
-//        compartmentService = new CompartmentService(this);
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
 
         for (int compartment = 1; compartment <= 5; compartment++) {
             addOverviewRow(compartment, boxOverview);
         }
 
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                initLanguageSpinners();
+            }
+        };
+        IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, languagesUpdatedFilter);
+    }
+
+    private void initLanguageSpinners() {
+        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService, languageService);
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
     }
 
     private void addOverviewRow(final int compartment, BoxOverview boxOverview) {
@@ -153,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (compartment % 2 == 1) {
             row.setBackgroundColor(colorTableRowDark);
-//            row.setBackgroundColor(getResources().getColor(R.color.blue100));
         }
 
         addCompartmentCell(row, compartment);

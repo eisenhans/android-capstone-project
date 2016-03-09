@@ -34,15 +34,15 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     public void updateLanguages() {
         assertEquals(0, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(application, createLanguageProvider(0));
+        languageUpdateService = new LanguageUpdateService(createLanguageProvider(0));
         languageUpdateService.updateLanguages();
         assertEquals(0, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(application, createLanguageProvider(2));
+        languageUpdateService = new LanguageUpdateService(createLanguageProvider(2));
         languageUpdateService.updateLanguages();
         assertEquals(2, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(application, createLanguageProvider(1));
+        languageUpdateService = new LanguageUpdateService(createLanguageProvider(1));
         languageUpdateService.updateLanguages();
         assertEquals(1, countLanguagesInDatabase());
     }
