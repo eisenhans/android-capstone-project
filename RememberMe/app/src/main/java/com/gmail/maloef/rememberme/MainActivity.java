@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private Pair<String, String>[] codeLanguagePairs;
     private String[] languageCodes;
     private String[] languageNames;
+    private int languageCount;
 
     private String[] boxNames;
 
@@ -145,20 +146,27 @@ public class MainActivity extends AppCompatActivity {
             addOverviewRow(compartment, boxOverview);
         }
 
+        updateLanguageSpinners();
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                initLanguageSpinners();
+                updateLanguageSpinners();
             }
         };
         IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, languagesUpdatedFilter);
     }
 
-    private void initLanguageSpinners() {
+    private void updateLanguageSpinners() {
+        if (languageCount > 0 && languageCount == languageService.countLanguages("en")) {
+            // languages are up to date
+            return;
+        }
         LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService, languageService);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
+
+        languageCount = languageService.countLanguages("en");
     }
 
     private void addOverviewRow(final int compartment, BoxOverview boxOverview) {

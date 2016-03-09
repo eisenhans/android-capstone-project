@@ -10,8 +10,6 @@ import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 import com.gmail.maloef.rememberme.persistence.WordColumns;
 import com.gmail.maloef.rememberme.persistence.WordCursor;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 public class CompartmentService {
@@ -60,7 +58,6 @@ public class CompartmentService {
         if (second == null) {
             return first;
         }
-        logInfo("first: " + new Date(first) + ", second: " + new Date(second));
         return Math.min(first, second);
     }
 

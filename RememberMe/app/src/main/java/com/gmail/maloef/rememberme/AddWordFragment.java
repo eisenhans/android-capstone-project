@@ -2,10 +2,14 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.widget.TextView;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.LanguageService;
+import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.TranslateLoader;
@@ -32,6 +37,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @Inject VocabularyBoxService boxService;
     @Inject GoogleTranslateService translateService;
     @Inject LanguageService languageService;
+    LanguageSettingsManager languageSettingsManager;
 
     @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
     @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessage;
@@ -43,6 +49,11 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Bind(R.id.foreign_word_textview) TextView foreignWordTextView;
     @Bind(R.id.native_word_textview) TextView nativeWordTextView;
+
+    Spinner foreignLanguageSpinner;
+    Spinner nativeLanguageSpinner;
+
+    private int languageCount;
 
     VocabularyBox selectedBox;
     String foreignWord;
@@ -133,12 +144,20 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         }
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
 
-        final Spinner foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
-        Spinner nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
+        foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
+        nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
+        languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService, languageService);
 
-        final LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService, languageService);
-        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, detectedSourceLanguage);
-        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
+        updateLanguageSpinners(foreignLanguageUsedForTranslation);
+        // ToDo 09.03.16: necessary here? DRY?
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateLanguageSpinners(foreignLanguageUsedForTranslation);
+            }
+        };
+        IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, languagesUpdatedFilter);
 
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
@@ -172,6 +191,17 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         alertDialog.show();
         boolean enableOkButton = !nativeLanguageUsedForTranslation.equals(foreignLanguageUsedForTranslation);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(enableOkButton);
+    }
+
+    private void updateLanguageSpinners(String foreignLanguage) {
+        if (languageCount > 0 && languageCount == languageService.countLanguages("en")) {
+            // languages are up to date
+            return;
+        }
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
+
+        languageCount = languageService.countLanguages("en");
     }
 
     @Override

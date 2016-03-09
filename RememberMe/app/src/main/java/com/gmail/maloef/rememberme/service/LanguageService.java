@@ -2,6 +2,7 @@ package com.gmail.maloef.rememberme.service;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Pair;
 
 import com.gmail.maloef.rememberme.domain.Language;
@@ -21,6 +22,19 @@ public class LanguageService {
     public LanguageService(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
+    }
+
+    public int countLanguages(String nameCode) {
+        Cursor cursor = contentResolver.query(
+                RememberMeProvider.Language.LANGUAGES,
+                null,
+                LanguageColumns.NAME_CODE + " = ?",
+                new String[]{nameCode},
+                null);
+
+        int languages = cursor.getCount();
+        cursor.close();
+        return languages;
     }
 
     public Pair<String, String>[] getLanguages(String nameCode) {
