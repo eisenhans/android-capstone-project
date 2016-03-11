@@ -38,5 +38,8 @@
     <string name="select_language_settings_message">Select the languages for the current vocabulary box.</string>
 
     <string name="no_translation_found">No translation found.</string>
+    <string name="create_new_box">Create new vocabulary box</string>
+    <string name="enter_name_for_new_box">Enter a name for the new vocabulary box:</string>
+    <string name="create_box">Create box</string>
 
 </resources>

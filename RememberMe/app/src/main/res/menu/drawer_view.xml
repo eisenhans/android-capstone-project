@@ -4,15 +4,18 @@
     <group android:checkableBehavior="single">
         <!--android:icon="@drawable/ic_one"-->
         <item
-            android:id="@+id/nav_first_fragment"
-            android:title="First" />
+            android:id="@+id/create_new_box_item"
+            android:checkable="false"
+            android:title="@string/create_new_box" />
         <!--android:icon="@drawable/ic_two"-->
         <item
             android:id="@+id/nav_second_fragment"
+            android:checkable="false"
             android:title="Second" />
         <!--android:icon="@drawable/ic_three"-->
         <item
             android:id="@+id/nav_third_fragment"
+            android:checkable="false"
             android:title="Third" />
     </group>
 </menu>

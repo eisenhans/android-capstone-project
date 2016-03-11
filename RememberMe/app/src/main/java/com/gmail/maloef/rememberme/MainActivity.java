@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -55,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle drawerToggle;
     @Bind(R.id.drawer_layout) DrawerLayout drawer;
+    @Bind(R.id.navigationView) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.mainFragmentLayout) LinearLayout mainFragmentLayout;
 
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
     @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
@@ -70,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.enter_new_name_for_box) String enterNewNameForBoxString;
     @BindString(android.R.string.ok) String okString;
     @BindString(R.string.box_exists) String boxExistsString;
+
+    @BindString(R.string.create_box) String createBoxString;
+    @BindString(R.string.enter_name_for_new_box) String enterNameForNewBoxString;
 
     @BindString(R.string.foreign_to_native) String foreignToNativeString;
     @BindString(R.string.native_to_foreign) String nativeToForeignString;
@@ -100,6 +107,18 @@ public class MainActivity extends AppCompatActivity {
 
         drawerToggle = setupDrawerToggle();
         drawer.setDrawerListener(drawerToggle);
+
+        logInfo("navigationView: " + navigationView);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                logInfo("navigationItem selected: " + item);
+                if (item.getItemId() == R.id.create_new_box_item) {
+                    showNewBoxNameDialog(mainFragmentLayout);
+                }
+                return true;
+            }
+        });
 
         codeLanguagePairs = languageService.getLanguages("en");
         languageCodes = new String[codeLanguagePairs.length];
@@ -275,6 +294,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int languagePosition(String isoCode) {
+        if (isoCode == null) {
+            return 0;
+        }
         for (int i = 0; i < languageCodes.length; i++) {
             if (languageCodes[i].equals(isoCode)) {
                 return i;
@@ -372,7 +394,48 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         });
+        alertDialog.show();
+    }
 
+    public void showNewBoxNameDialog(final View parentView) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setTitle(createBoxString);
+        alertDialogBuilder.setMessage(enterNameForNewBoxString);
+
+        final EditText editText = new EditText(this);
+        alertDialogBuilder.setView(editText);
+
+        alertDialogBuilder.setPositiveButton(okString, null);
+        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newBoxName = editText.getText().toString();
+                        if (newBoxName == null || newBoxName.isEmpty()) {
+                            return;
+                        }
+                        if (boxService.isBoxSaved(newBoxName)) {
+                            // user entered a name that already exists - just keep the dialog open
+                            Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        int boxId = boxService.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
+                        logInfo("created new box: " + newBoxName);
+                        updateBoxSpinner();
+                        logInfo("closing dialog and drawer");
+                        alertDialog.dismiss();
+                        drawer.closeDrawer(GravityCompat.START);
+                    }
+                });
+            }
+        });
         alertDialog.show();
     }
 
