@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Pair;
 
 import com.gmail.maloef.rememberme.persistence.AbstractPersistenceTest;
+import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
 
 import org.junit.Before;
@@ -19,7 +20,7 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     static final String EN = "en";
 
     Application application;
-    LanguageService languageService;
+    LanguageRepository languageService;
 
     LanguageUpdateService languageUpdateService;
 
@@ -27,7 +28,7 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     public void before() throws Exception {
         super.before();
         application = RuntimeEnvironment.application;
-        languageService = new LanguageService(application);
+        languageService = new LanguageRepository(application);
     }
 
     @Test

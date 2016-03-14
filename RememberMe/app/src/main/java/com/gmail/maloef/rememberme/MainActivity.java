@@ -30,11 +30,11 @@ import android.widget.TextView;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.service.CompartmentService;
-import com.gmail.maloef.rememberme.service.LanguageService;
+import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
+import com.gmail.maloef.rememberme.persistence.LanguageRepository;
+import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
+import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.gmail.maloef.rememberme.service.LanguageUpdateService;
-import com.gmail.maloef.rememberme.service.VocabularyBoxService;
-import com.gmail.maloef.rememberme.service.WordService;
 import com.gmail.maloef.rememberme.util.DateUtils;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
@@ -89,10 +89,14 @@ public class MainActivity extends AppCompatActivity {
     private String[] boxNames;
 
     private VocabularyBox selectedBox;
-    @Inject VocabularyBoxService boxService;
-    @Inject CompartmentService compartmentService;
-    @Inject WordService wordService;
-    @Inject LanguageService languageService;
+    @Inject
+    VocabularyBoxRepository boxService;
+    @Inject
+    CompartmentRepository compartmentService;
+    @Inject
+    WordRepository wordService;
+    @Inject
+    LanguageRepository languageService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

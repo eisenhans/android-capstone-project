@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.service;
+package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -6,20 +6,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
-import com.gmail.maloef.rememberme.persistence.WordColumns;
-
 import java.util.Date;
 
 import javax.inject.Inject;
 
-public class WordService {
+public class WordRepository {
 
     private Context context;
     private ContentResolver contentResolver;
 
     @Inject
-    public WordService(Context context) {
+    public WordRepository(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
     }

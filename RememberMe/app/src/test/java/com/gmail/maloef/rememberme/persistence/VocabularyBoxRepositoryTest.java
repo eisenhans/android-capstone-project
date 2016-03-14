@@ -3,7 +3,6 @@ package com.gmail.maloef.rememberme.persistence;
 import android.app.Application;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,16 +10,16 @@ import org.robolectric.RuntimeEnvironment;
 
 import static org.junit.Assert.assertEquals;
 
-public class VocabularyBoxServiceTest extends AbstractPersistenceTest {
+public class VocabularyBoxRepositoryTest extends AbstractPersistenceTest {
 
     private Application application;
-    private VocabularyBoxService boxService;
+    private VocabularyBoxRepository boxService;
 
     @Before
     public void before() throws Exception {
         super.before();
         application = RuntimeEnvironment.application;
-        boxService = new VocabularyBoxService(application);
+        boxService = new VocabularyBoxRepository(application);
     }
 
     @Test

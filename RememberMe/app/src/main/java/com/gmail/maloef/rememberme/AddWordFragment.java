@@ -19,14 +19,17 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.service.LanguageService;
+import com.gmail.maloef.rememberme.persistence.LanguageRepository;
+import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
+import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.gmail.maloef.rememberme.service.LanguageUpdateService;
-import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.TranslateLoader;
 import com.gmail.maloef.rememberme.translate.google.Translation;
+import com.gmail.maloef.rememberme.util.StringUtils;
 
 import javax.inject.Inject;
 
@@ -37,9 +40,11 @@ import butterknife.OnClick;
 
 public class AddWordFragment extends Fragment implements LoaderManager.LoaderCallbacks<Translation> {
 
-    @Inject VocabularyBoxService boxService;
+    @Inject VocabularyBoxRepository boxRepository;
+    @Inject WordRepository wordRepository;
+    @Inject LanguageRepository languageRepository;
     @Inject GoogleTranslateService translateService;
-    @Inject LanguageService languageService;
+
     LanguageSettingsManager languageSettingsManager;
 
     @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
@@ -74,7 +79,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this, rootView);
 
-        selectedBox = boxService.getSelectedBox();
+        selectedBox = boxRepository.getSelectedBox();
 
         configureEditBehavior(foreignWordEditText);
         configureEditBehavior(nativeWordEditText);
@@ -167,7 +172,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
         foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
         nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
-        languageSettingsManager = new LanguageSettingsManager(getActivity(), boxService, languageService);
+        languageSettingsManager = new LanguageSettingsManager(getActivity(), boxRepository, languageRepository);
 
         updateLanguageSpinners(foreignLanguageUsedForTranslation);
         // ToDo 09.03.16: necessary here? DRY?
@@ -184,7 +189,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                selectedBox = boxService.getSelectedBox();
+                selectedBox = boxRepository.getSelectedBox();
                 logInfo("checking if word needs to be translated again: " +
                         "translated from " + foreignLanguageUsedForTranslation + " to " + nativeLanguageUsedForTranslation +
                         ", need translation from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
@@ -215,14 +220,14 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateLanguageSpinners(String foreignLanguage) {
-        if (languageCount > 0 && languageCount == languageService.countLanguages("en")) {
+        if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
             // languages are up to date
             return;
         }
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
-        languageCount = languageService.countLanguages("en");
+        languageCount = languageRepository.countLanguages("en");
     }
 
     @Override
@@ -231,17 +236,41 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @OnClick(R.id.cancelAddWordButton)
     public void cancelAddWord(View view) {
         logInfo("cancelling add word");
+        // ToDo 14.03.16: go to mainActivity or back
     }
 
     @OnClick(R.id.translateAddWordButton)
     public void translateForeignWord(View view) {
         logInfo("translating foreign word");
+        String foreignWord = foreignWordEditText.getText().toString();
+        String message;
+        if (StringUtils.isBlank(foreignWord)) {
+            message = "No foreign word";
+        } else {
+            this.foreignWord = foreignWord;
+            loadTranslation();
+            message = "Re-translated text";
+        }
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        // ToDo 14.03.16: put keyboard away
     }
 
     @OnClick(R.id.saveAddWordButton)
     public void saveWord(View view) {
         logInfo("saving new word");
-
+        String foreignWord = foreignWordEditText.getText().toString();
+        String nativeWord = nativeWordEditText.getText().toString();
+        String message;
+        if (StringUtils.isBlank(foreignWord)) {
+            message = "No foreign word";
+        } else if (StringUtils.isBlank(nativeWord)) {
+            message = "No native word";
+        } else {
+            wordRepository.createWord(selectedBox._id, foreignWord, nativeWord);
+            message = "Word saved";
+        }
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        // ToDo 14.03.16: go to mainActivity
     }
 
 

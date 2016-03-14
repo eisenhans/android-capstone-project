@@ -3,9 +3,6 @@ package com.gmail.maloef.rememberme.persistence;
 import android.app.Application;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
-import com.gmail.maloef.rememberme.service.CompartmentService;
-import com.gmail.maloef.rememberme.service.VocabularyBoxService;
-import com.gmail.maloef.rememberme.service.WordService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,12 +13,12 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class CompartmentServiceTest extends AbstractPersistenceTest {
+public class CompartmentRepositoryTest extends AbstractPersistenceTest {
 
     Application application;
-    VocabularyBoxService boxService;
-    CompartmentService compartmentService;
-    WordService wordService;
+    VocabularyBoxRepository boxService;
+    CompartmentRepository compartmentService;
+    WordRepository wordService;
 
     int boxId;
 
@@ -29,9 +26,9 @@ public class CompartmentServiceTest extends AbstractPersistenceTest {
     public void before() throws Exception {
         super.before();
         application = RuntimeEnvironment.application;
-        boxService = new VocabularyBoxService(application);
-        compartmentService = new CompartmentService(application);
-        wordService = new WordService(application);
+        boxService = new VocabularyBoxRepository(application);
+        compartmentService = new CompartmentRepository(application);
+        wordService = new WordRepository(application);
 
         boxId = boxService.createDefaultBox();
     }

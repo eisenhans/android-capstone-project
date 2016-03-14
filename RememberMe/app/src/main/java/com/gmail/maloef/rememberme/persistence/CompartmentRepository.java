@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.service;
+package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -6,19 +6,16 @@ import android.util.Log;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
-import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
-import com.gmail.maloef.rememberme.persistence.WordColumns;
-import com.gmail.maloef.rememberme.persistence.WordCursor;
 
 import javax.inject.Inject;
 
-public class CompartmentService {
+public class CompartmentRepository {
 
     private Context context;
     private ContentResolver contentResolver;
 
     @Inject
-    public CompartmentService(Context context) {
+    public CompartmentRepository(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
     }

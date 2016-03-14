@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.service;
+package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -9,22 +9,19 @@ import android.util.Log;
 
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxColumns;
-import com.gmail.maloef.rememberme.persistence.VocabularyBoxCursor;
-import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 
 import java.util.Arrays;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-public class VocabularyBoxService {
+public class VocabularyBoxRepository {
 
     private Context context;
     private ContentResolver contentResolver;
 
     @Inject
-    public VocabularyBoxService(Context context) {
+    public VocabularyBoxRepository(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
     }

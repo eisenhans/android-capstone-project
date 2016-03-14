@@ -10,8 +10,8 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.service.LanguageService;
-import com.gmail.maloef.rememberme.service.VocabularyBoxService;
+import com.gmail.maloef.rememberme.persistence.LanguageRepository;
+import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ public class LanguageSettingsManager {
     }
 
     private Context context;
-    private VocabularyBoxService boxService;
+    private VocabularyBoxRepository boxService;
 
     private String[] languageCodes;
     private String[] languageNames;
@@ -33,7 +33,7 @@ public class LanguageSettingsManager {
 
     private LanguageSelectionListener languageSelectionListener;
 
-    public LanguageSettingsManager(Context context, VocabularyBoxService boxService, LanguageService languageService) {
+    public LanguageSettingsManager(Context context, VocabularyBoxRepository boxService, LanguageRepository languageService) {
         this.context = context;
         this.boxService = boxService;
 

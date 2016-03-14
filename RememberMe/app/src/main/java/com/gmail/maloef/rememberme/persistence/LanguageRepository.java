@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.service;
+package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -6,20 +6,16 @@ import android.database.Cursor;
 import android.util.Pair;
 
 import com.gmail.maloef.rememberme.domain.Language;
-import com.gmail.maloef.rememberme.persistence.LanguageColumns;
-import com.gmail.maloef.rememberme.persistence.LanguageCursor;
-import com.gmail.maloef.rememberme.persistence.RememberMeProvider;
 
 import javax.inject.Inject;
 
-// ToDo 07.03.16: move to persistence package (and other classes from this package too)?
-public class LanguageService {
+public class LanguageRepository {
 
     private Context context;
     private ContentResolver contentResolver;
 
     @Inject
-    public LanguageService(Context context) {
+    public LanguageRepository(Context context) {
         this.context = context;
         this.contentResolver = context.getContentResolver();
     }
