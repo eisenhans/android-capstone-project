@@ -42,4 +42,7 @@
     <string name="enter_name_for_new_box">Enter a name for the new vocabulary box:</string>
     <string name="create_box">Create box</string>
 
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

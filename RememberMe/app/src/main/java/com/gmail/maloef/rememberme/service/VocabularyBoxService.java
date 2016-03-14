@@ -59,6 +59,7 @@ public class VocabularyBoxService {
     }
 
     public boolean isBoxSaved(String boxName) {
+        long start = System.currentTimeMillis();
         Cursor cursor = contentResolver.query(
                 RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 new String[]{VocabularyBoxColumns._ID},
@@ -68,6 +69,9 @@ public class VocabularyBoxService {
 
         boolean result = cursor.moveToFirst();
         cursor.close();
+
+        long stop = System.currentTimeMillis();
+        logInfo("checking if box name already exists took " + (stop - start) + " ms");
 
         return result;
     }
@@ -83,15 +87,10 @@ public class VocabularyBoxService {
     }
     
     public int createDefaultBox() {
-        // ToDo: look up language from phone settings
         String boxName = context.getResources().getString(R.string.default_name);
         String nativeLanguage = Locale.getDefault().getLanguage();
         logInfo("default language of device: " + nativeLanguage + ", foreign language to be detected");
         int defaultBoxId = createBox(boxName, null, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
-
-        // ToDo: remove
-        createBox("English", "en", nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
-        createBox("Spanish", "es", nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
 
         return defaultBoxId;
     }

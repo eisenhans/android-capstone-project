@@ -2,7 +2,6 @@ package com.gmail.maloef.rememberme;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -12,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -24,14 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
@@ -41,6 +36,10 @@ import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.service.VocabularyBoxService;
 import com.gmail.maloef.rememberme.service.WordService;
 import com.gmail.maloef.rememberme.util.DateUtils;
+import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
+import com.gmail.maloef.rememberme.util.dialog.InputValidator;
+import com.gmail.maloef.rememberme.util.dialog.NotEmptyInputValidator;
+import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -350,93 +349,43 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.renameBoxButton)
     public void showRenameBoxDialog(final View parentView) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle(renameBoxString);
-        CharSequence message = Html.fromHtml(enterNewNameForBoxString + " <i>" + selectedBox.name + "</i>" + ":");
-        alertDialogBuilder.setMessage(message);
-
-        final EditText editText = new EditText(this);
-        alertDialogBuilder.setView(editText);
-
-        String ok = okString;
-        alertDialogBuilder.setPositiveButton(ok, null);
-        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
-
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        InputProcessor inputProcessor = new InputProcessor() {
             @Override
-            public void onShow(DialogInterface dialog) {
-                Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String newBoxName = editText.getText().toString();
-                            if (newBoxName == null || newBoxName.isEmpty()) {
-                                return;
-                            }
-                            if (newBoxName.equals(selectedBox.name)) {
-                                // user entered the same name again - just ignore this
-                                alertDialog.dismiss();
-                                return;
-                            }
-                            if (boxService.isBoxSaved(newBoxName)) {
-                                // user entered a name that already exists - just keep the dialog open
-                                Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            boxService.updateBoxName(selectedBox._id, newBoxName);
-                            logInfo("updated box name: " + newBoxName);
-                            updateBoxSpinner();
-                            alertDialog.dismiss();
-                        }
-                    }
-                );
+            public void process(String newBoxName) {
+                boxService.updateBoxName(selectedBox._id, newBoxName);
+                logInfo("updated box name: " + newBoxName);
+                updateBoxSpinner();
             }
-        });
-        alertDialog.show();
+        };
+        InputValidator inputValidator = createNewBoxNameInputValidator();
+        CharSequence message = Html.fromHtml(enterNewNameForBoxString + " <i>" + selectedBox.name + "</i>" + ":");
+        ValidatingInputDialog dialog = new ValidatingInputDialog(this, renameBoxString, message, inputValidator, inputProcessor);
+        dialog.show();
     }
 
     public void showNewBoxNameDialog(final View parentView) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle(createBoxString);
-        alertDialogBuilder.setMessage(enterNameForNewBoxString);
-
-        final EditText editText = new EditText(this);
-        alertDialogBuilder.setView(editText);
-
-        alertDialogBuilder.setPositiveButton(okString, null);
-        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null);
-
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        InputProcessor inputProcessor = new InputProcessor() {
             @Override
-            public void onShow(DialogInterface dialog) {
-                Button okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String newBoxName = editText.getText().toString();
-                        if (newBoxName == null || newBoxName.isEmpty()) {
-                            return;
-                        }
-                        if (boxService.isBoxSaved(newBoxName)) {
-                            // user entered a name that already exists - just keep the dialog open
-                            Toast.makeText(getApplicationContext(), boxExistsString, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        int boxId = boxService.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
-                        logInfo("created new box: " + newBoxName);
-                        updateBoxSpinner();
-                        logInfo("closing dialog and drawer");
-                        alertDialog.dismiss();
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                });
+            public void process(String newBoxName) {
+                boxService.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
+                logInfo("created new box: " + newBoxName);
+                updateBoxSpinner();
+                logInfo("closing dialog and drawer");
+                drawer.closeDrawer(GravityCompat.START);
             }
-        });
-        alertDialog.show();
+        };
+        InputValidator inputValidator = createNewBoxNameInputValidator();
+        ValidatingInputDialog dialog = new ValidatingInputDialog(this, createBoxString, enterNameForNewBoxString, inputValidator, inputProcessor);
+        dialog.show();
+    }
+
+    private InputValidator createNewBoxNameInputValidator() {
+        return new NotEmptyInputValidator() {
+            @Override
+            public boolean isValid(String input) {
+                return super.isValid(input) && !boxService.isBoxSaved(input);
+            }
+        };
     }
 
     @OnClick(R.id.memorizeButton)
