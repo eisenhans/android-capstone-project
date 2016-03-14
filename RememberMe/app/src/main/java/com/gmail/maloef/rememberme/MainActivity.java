@@ -175,6 +175,12 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, languagesUpdatedFilter);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
     private void updateLanguageSpinners() {
         if (languageCount > 0 && languageCount == languageService.countLanguages("en")) {
             // languages are up to date

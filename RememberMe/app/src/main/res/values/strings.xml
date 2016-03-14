@@ -44,5 +44,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="translate">Translate</string>
+    <string name="save">Save</string>
 
 </resources>

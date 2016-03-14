@@ -11,12 +11,14 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.service.LanguageService;
@@ -31,6 +33,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AddWordFragment extends Fragment implements LoaderManager.LoaderCallbacks<Translation> {
 
@@ -47,8 +50,8 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @BindString(R.string.no_translation_found) String noTranslationFound;
     @BindString(android.R.string.ok) String okString;
 
-    @Bind(R.id.foreign_word_textview) TextView foreignWordTextView;
-    @Bind(R.id.native_word_textview) TextView nativeWordTextView;
+    @Bind(R.id.foreign_word_edittext) EditText foreignWordEditText;
+    @Bind(R.id.native_word_edittext) EditText nativeWordEditText;
 
     Spinner foreignLanguageSpinner;
     Spinner nativeLanguageSpinner;
@@ -64,8 +67,8 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         View rootView = inflater.inflate(R.layout.fragment_add_word, container, false);
 
         if (savedInstanceState != null) {
-            // ToDo 04.03.2016: test this
-            return rootView;
+            // ToDo 14.03.16: can this information be used somehow?
+            logInfo("savedInstanceState exists: " + savedInstanceState + ", keys: " + savedInstanceState.keySet());
         }
 
         RememberMeApplication.injector().inject(this);
@@ -73,7 +76,25 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
         selectedBox = boxService.getSelectedBox();
 
+        configureEditBehavior(foreignWordEditText);
+        configureEditBehavior(nativeWordEditText);
+
         return rootView;
+    }
+
+    // this does not work via xml :-(
+    private void configureEditBehavior(EditText editText) {
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setSingleLine(true);
+        editText.setMaxLines(3);
+        editText.setHorizontallyScrolling(false);
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @Override
@@ -85,7 +106,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
             logInfo("nothing to translate");
             return;
         }
-        foreignWordTextView.setText(foreignWord);
+        foreignWordEditText.setText(foreignWord);
         loadTranslation();
     }
 
@@ -123,7 +144,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         if (nativeWord.equals(foreignWord)) {
             //Toast.makeText(getActivity(), noTranslationFound, Toast.LENGTH_SHORT).show();
         } else {
-            nativeWordTextView.setText(nativeWord);
+            nativeWordEditText.setText(nativeWord);
         }
     }
 
@@ -206,6 +227,23 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader<Translation> loader) {}
+
+    @OnClick(R.id.cancelAddWordButton)
+    public void cancelAddWord(View view) {
+        logInfo("cancelling add word");
+    }
+
+    @OnClick(R.id.translateAddWordButton)
+    public void translateForeignWord(View view) {
+        logInfo("translating foreign word");
+    }
+
+    @OnClick(R.id.saveAddWordButton)
+    public void saveWord(View view) {
+        logInfo("saving new word");
+
+    }
+
 
     void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);

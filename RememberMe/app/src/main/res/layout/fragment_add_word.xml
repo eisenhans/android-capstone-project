@@ -1,20 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/foreign_word_textview"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/native_word_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        <Button
+            android:id="@+id/cancelAddWordButton"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            />
+
+        <Button
+            android:id="@+id/translateAddWordButton"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/translate"
+            />
+
+        <Button
+            android:id="@+id/saveAddWordButton"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/save"
+            />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="280dp"
+        android:layout_height="160dp"
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="8dp">
+
+        <EditText
+            android:id="@+id/foreign_word_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="280dp"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        app:cardCornerRadius="8dp">
+
+        <EditText
+            android:id="@+id/native_word_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+
+    </android.support.v7.widget.CardView>
+
 
 </LinearLayout>
