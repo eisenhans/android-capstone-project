@@ -23,6 +23,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -52,14 +53,19 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
     LanguageSettingsManager languageSettingsManager;
 
-    @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitle;
-    @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessage;
-    @BindString(R.string.select_language_settings_title) String selectLanguageSettingsTitle;
-    @BindString(R.string.select_language_settings_message) String selectLanguageSettingsMessage;
-
-    @BindString(R.string.no_translation_found) String noTranslationFound;
+    @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitleString;
+    @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessageString;
+    @BindString(R.string.select_language_settings_title) String selectLanguageSettingsTitleString;
+    @BindString(R.string.select_language_settings_message) String selectLanguageSettingsMessageString;
+    @BindString(R.string.no_translation_found) String noTranslationFoundString;
     @BindString(android.R.string.ok) String okString;
+    @BindString(R.string.word_translated) String wordTranslatedString;
+    @BindString(R.string.no_foreign_word) String noForeignWordString;
+    @BindString(R.string.no_native_word) String noNativeWordString;
+    @BindString(R.string.word_already_exists_in_box) String wordAlreadyExistsInBoxString;
+    @BindString(R.string.word_saved) String wordSavedString;
 
+    @Bind(R.id.add_word_parent_layout) LinearLayout addWordParentLayout;
     @Bind(R.id.foreign_word_edittext) EditText foreignWordEditText;
     @Bind(R.id.native_word_edittext) EditText nativeWordEditText;
 
@@ -93,14 +99,28 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         configureEditBehavior(foreignWordEditText);
         configureEditBehavior(nativeWordEditText);
 
-        TextWatcher textWatcher = createEnableTranslateButtonTextWatcher();
-        foreignWordEditText.addTextChangedListener(textWatcher);
-        nativeWordEditText.addTextChangedListener(textWatcher);
+        foreignWordEditText.addTextChangedListener(createForeignWordWatcher());
+        nativeWordEditText.addTextChangedListener(createNativeWordWatcher());
 
         return rootView;
     }
 
-    private TextWatcher createEnableTranslateButtonTextWatcher() {
+    private TextWatcher createForeignWordWatcher() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                translateButton.setEnabled(s.length() > 0 && ! s.equals(foreignWord));
+            }
+        };
+    }
+
+    private TextWatcher createNativeWordWatcher() {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -173,13 +193,19 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         if (translation.detectedSourceLanguage != null) {
             showConfirmLanguageSettingsDialog(translation.detectedSourceLanguage);
         }
-        nativeWord = translation.translatedText;
-        if (nativeWord.equals(foreignWord)) {
-            //Toast.makeText(getActivity(), noTranslationFound, Toast.LENGTH_SHORT).show();
+        if (translation.translatedText.equalsIgnoreCase(foreignWord)) {
+            nativeWord = "";
+            Toast.makeText(getActivity(), noTranslationFoundString, Toast.LENGTH_SHORT).show();
         } else {
+            if (nativeWord != null) {
+                // there was a translation before, so we should inform the user that we translated again
+                Toast.makeText(getActivity(), wordTranslatedString, Toast.LENGTH_SHORT).show();
+            }
+            nativeWord = translation.translatedText;
             nativeWordEditText.setText(nativeWord);
         }
         translateButton.setEnabled(false);
+        addWordParentLayout.requestFocus();
     }
 
     private void showConfirmLanguageSettingsDialog(String detectedSourceLanguage) {
@@ -191,11 +217,11 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         if (foreignLanguageUsedForTranslation.equals(nativeLanguageUsedForTranslation)) {
-            alertDialogBuilder.setTitle(selectLanguageSettingsTitle);
-            alertDialogBuilder.setMessage(selectLanguageSettingsMessage);
+            alertDialogBuilder.setTitle(selectLanguageSettingsTitleString);
+            alertDialogBuilder.setMessage(selectLanguageSettingsMessageString);
         } else {
-            alertDialogBuilder.setTitle(confirmLanguageSettingsTitle);
-            alertDialogBuilder.setMessage(confirmLanguageSettingsMessage);
+            alertDialogBuilder.setTitle(confirmLanguageSettingsTitleString);
+            alertDialogBuilder.setMessage(confirmLanguageSettingsMessageString);
         }
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
 
@@ -265,7 +291,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @OnClick(R.id.cancelAddWordButton)
     public void cancelAddWord(View view) {
         logInfo("cancelling add word");
-        // ToDo 14.03.16: go to mainActivity or back
+        getActivity().finish();
     }
 
     @OnClick(R.id.translateAddWordButton)
@@ -273,17 +299,8 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         logInfo("translating foreign word");
 
         hideKeyboard();
-        String foreignWord = foreignWordEditText.getText().toString();
-        String message;
-        if (StringUtils.isBlank(foreignWord)) {
-            message = "No foreign word";
-        } else {
-            this.foreignWord = foreignWord;
-            loadTranslation();
-            message = "Re-translated text";
-        }
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-        // ToDo 14.03.16: put keyboard away
+        foreignWord = foreignWordEditText.getText().toString();
+        loadTranslation();
     }
 
     private void hideKeyboard() {
@@ -297,18 +314,24 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         String foreignWord = foreignWordEditText.getText().toString();
         String nativeWord = nativeWordEditText.getText().toString();
         String message;
+        boolean finish = false;
         if (StringUtils.isBlank(foreignWord)) {
-            message = "No foreign word";
+            message = noForeignWordString;
         } else if (StringUtils.isBlank(nativeWord)) {
-            message = "No native word";
+            message = noNativeWordString;
         } else if (wordRepository.doesWordExist(selectedBox.id, foreignWord, nativeWord)) {
-            message = "Word already exists in box " + selectedBox.name;
+            // ToDo 15.03.16: add parameter to strings.xml
+            message = wordAlreadyExistsInBoxString + selectedBox.name;
         } else {
             wordRepository.createWord(selectedBox.id, foreignWord, nativeWord);
-            message = "Word saved";
+            message = wordSavedString;
+            finish = true;
         }
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-        // ToDo 14.03.16: go to mainActivity
+
+        if (finish) {
+            getActivity().finish();
+        }
     }
 
     void logInfo(String message) {
