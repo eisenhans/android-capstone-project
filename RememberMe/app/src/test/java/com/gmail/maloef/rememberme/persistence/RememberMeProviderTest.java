@@ -101,20 +101,20 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
                 contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertTrue(boxCursor.moveToFirst());
-        assertEquals(boxId, boxCursor.peek()._id);
+        assertEquals(boxId, boxCursor.peek().id);
         boxCursor.close();
 
         insertCompartment(boxId, 1);
         CompartmentCursor compartmentCursor = new CompartmentCursor(
                 contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
         assertTrue(compartmentCursor.moveToFirst());
-        int compartmentId = compartmentCursor.peek()._id;
+        int compartmentId = compartmentCursor.peek().id;
         compartmentCursor.close();
 
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
         WordCursor wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
-        int wordId = wordCursor.peek()._id;
+        int wordId = wordCursor.peek().id;
         wordCursor.close();
 
         wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.findById(wordId), null, null, null, null));

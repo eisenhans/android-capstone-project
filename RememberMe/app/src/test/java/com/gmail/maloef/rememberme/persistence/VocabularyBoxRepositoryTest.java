@@ -63,7 +63,7 @@ public class VocabularyBoxRepositoryTest extends AbstractPersistenceTest {
         assertEquals("Italian", boxNames[2]);
 
         VocabularyBox hungarianBox = boxService.findBoxByName("Hungarian");
-        boxService.updateBoxName(hungarianBox._id, "HungarianXXL");
+        boxService.updateBoxName(hungarianBox.id, "HungarianXXL");
 
         boxNames = boxService.getBoxNames();
         assertEquals(3, boxNames.length);

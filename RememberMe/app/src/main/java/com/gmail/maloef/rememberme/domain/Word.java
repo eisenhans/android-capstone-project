@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class Word implements Parcelable {
 
-    public int _id;
+    public int id;
 
     public int boxId;
     public int compartment;
@@ -25,7 +25,7 @@ public class Word implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this._id);
+        dest.writeInt(this.id);
         dest.writeInt(this.boxId);
         dest.writeInt(this.compartment);
         dest.writeString(this.foreignWord);
@@ -38,7 +38,7 @@ public class Word implements Parcelable {
     public Word() {}
 
     private Word(Parcel in) {
-        this._id = in.readInt();
+        this.id = in.readInt();
         this.boxId = in.readInt();
         this.compartment = in.readInt();
         this.foreignWord = in.readString();
@@ -61,7 +61,7 @@ public class Word implements Parcelable {
     @Override
     public String toString() {
         return "Word{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", boxId=" + boxId +
                 ", compartment=" + compartment +
                 ", foreignWord='" + foreignWord + '\'' +

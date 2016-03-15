@@ -1,5 +1,6 @@
 package com.gmail.maloef.rememberme;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
@@ -11,12 +12,16 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -61,6 +66,10 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     Spinner foreignLanguageSpinner;
     Spinner nativeLanguageSpinner;
 
+    @Bind (R.id.cancelAddWordButton) Button cancelButton;
+    @Bind (R.id.translateAddWordButton) Button translateButton;
+    @Bind (R.id.saveAddWordButton) Button saveButton;
+
     private int languageCount;
 
     VocabularyBox selectedBox;
@@ -84,7 +93,26 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         configureEditBehavior(foreignWordEditText);
         configureEditBehavior(nativeWordEditText);
 
+        TextWatcher textWatcher = createEnableTranslateButtonTextWatcher();
+        foreignWordEditText.addTextChangedListener(textWatcher);
+        nativeWordEditText.addTextChangedListener(textWatcher);
+
         return rootView;
+    }
+
+    private TextWatcher createEnableTranslateButtonTextWatcher() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                translateButton.setEnabled(true);
+            }
+        };
     }
 
     // this does not work via xml :-(
@@ -151,6 +179,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         } else {
             nativeWordEditText.setText(nativeWord);
         }
+        translateButton.setEnabled(false);
     }
 
     private void showConfirmLanguageSettingsDialog(String detectedSourceLanguage) {
@@ -242,6 +271,8 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     @OnClick(R.id.translateAddWordButton)
     public void translateForeignWord(View view) {
         logInfo("translating foreign word");
+
+        hideKeyboard();
         String foreignWord = foreignWordEditText.getText().toString();
         String message;
         if (StringUtils.isBlank(foreignWord)) {
@@ -255,6 +286,11 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         // ToDo 14.03.16: put keyboard away
     }
 
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+    }
+
     @OnClick(R.id.saveAddWordButton)
     public void saveWord(View view) {
         logInfo("saving new word");
@@ -265,14 +301,15 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
             message = "No foreign word";
         } else if (StringUtils.isBlank(nativeWord)) {
             message = "No native word";
+        } else if (wordRepository.doesWordExist(selectedBox.id, foreignWord, nativeWord)) {
+            message = "Word already exists in box " + selectedBox.name;
         } else {
-            wordRepository.createWord(selectedBox._id, foreignWord, nativeWord);
+            wordRepository.createWord(selectedBox.id, foreignWord, nativeWord);
             message = "Word saved";
         }
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         // ToDo 14.03.16: go to mainActivity
     }
-
 
     void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);

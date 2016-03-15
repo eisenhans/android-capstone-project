@@ -14,7 +14,7 @@ public class WordCursor extends IterableCursorWrapper<Word> {
     @Override
     public Word peek() {
         Word word = new Word();
-        word._id = getInteger(WordColumns._ID, -1);
+        word.id = getInteger(WordColumns.ID, -1);
         word.compartment = getInteger(WordColumns.COMPARTMENT, -1);
         word.foreignWord = getString(WordColumns.FOREIGN_WORD, "");
         word.nativeWord = getString(WordColumns.NATIVE_WORD, "");

@@ -9,7 +9,7 @@ public class VocabularyBox implements Parcelable {
     public static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
     public static final int TRANSLATION_DIRECTION_MIXED = 2;
 
-    public int _id;
+    public int id;
 
     public String name;
     public String foreignLanguage;
@@ -20,7 +20,7 @@ public class VocabularyBox implements Parcelable {
     public VocabularyBox() {}
 
     protected VocabularyBox(Parcel in) {
-        _id = in.readInt();
+        id = in.readInt();
         name = in.readString();
         foreignLanguage = in.readString();
         nativeLanguage = in.readString();
@@ -30,7 +30,7 @@ public class VocabularyBox implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(_id);
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(foreignLanguage);
         dest.writeString(nativeLanguage);

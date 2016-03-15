@@ -14,7 +14,7 @@ public class VocabularyBoxCursor extends IterableCursorWrapper<VocabularyBox> {
     @Override
     public VocabularyBox peek() {
         VocabularyBox vocabularyBox = new VocabularyBox();
-        vocabularyBox._id = getInteger(VocabularyBoxColumns._ID, -1);
+        vocabularyBox.id = getInteger(VocabularyBoxColumns.ID, -1);
         vocabularyBox.name = getString(VocabularyBoxColumns.NAME, "");
         vocabularyBox.foreignLanguage = getString(VocabularyBoxColumns.FOREIGN_LANGUAGE, "");
         vocabularyBox.nativeLanguage = getString(VocabularyBoxColumns.NATIVE_LANGUAGE, "");

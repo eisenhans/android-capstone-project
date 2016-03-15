@@ -12,9 +12,9 @@ import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
 public interface WordColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement
-    String _ID = "_id";
+    String ID = "id";
 
-    @DataType(INTEGER) @NotNull @References(table = RememberMeDatabase.VOCABULARY_BOX, column = VocabularyBoxColumns._ID)
+    @DataType(INTEGER) @NotNull @References(table = RememberMeDatabase.VOCABULARY_BOX, column = VocabularyBoxColumns.ID)
     String BOX_ID = "boxId";
 
     @DataType(INTEGER) @NotNull

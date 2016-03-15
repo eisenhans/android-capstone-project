@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class Compartment implements Parcelable {
 
-    public int _id;
+    public int id;
 
     public int vocabularyBox;
     public int number;
@@ -17,7 +17,7 @@ public class Compartment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this._id);
+        dest.writeInt(this.id);
         dest.writeInt(this.vocabularyBox);
         dest.writeInt(this.number);
     }
@@ -25,7 +25,7 @@ public class Compartment implements Parcelable {
     public Compartment() {}
 
     private Compartment(Parcel in) {
-        this._id = in.readInt();
+        this.id = in.readInt();
         this.vocabularyBox = in.readInt();
         this.number = in.readInt();
     }

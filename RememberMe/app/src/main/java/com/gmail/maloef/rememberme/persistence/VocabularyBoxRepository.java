@@ -30,7 +30,7 @@ public class VocabularyBoxRepository {
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
                 RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 null,
-                VocabularyBoxColumns._ID + " = ?",
+                VocabularyBoxColumns.ID + " = ?",
                 new String[]{String.valueOf(id)},
                 null));
 
@@ -59,7 +59,7 @@ public class VocabularyBoxRepository {
         long start = System.currentTimeMillis();
         Cursor cursor = contentResolver.query(
                 RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
-                new String[]{VocabularyBoxColumns._ID},
+                new String[]{VocabularyBoxColumns.ID},
                 VocabularyBoxColumns.NAME + " = ?",
                 new String[]{boxName},
                 null);
@@ -157,7 +157,7 @@ public class VocabularyBoxRepository {
     public VocabularyBox selectBoxByName(String boxName) {
         VocabularyBoxCursor idCursor = new VocabularyBoxCursor(contentResolver.query(
                 RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
-                new String[]{"_id"},
+                new String[] {VocabularyBoxColumns.ID},
                 VocabularyBoxColumns.NAME + " = ?",
                 new String[]{boxName},
                 null));
@@ -167,7 +167,7 @@ public class VocabularyBoxRepository {
             idCursor.close();
             return null;
         }
-        int id = idCursor.peek()._id;
+        int id = idCursor.peek().id;
         idCursor.close();
         selectBox(id);
 
@@ -182,7 +182,7 @@ public class VocabularyBoxRepository {
         contentResolver.update(
                 RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
                 select,
-                "_id = ?",
+                VocabularyBoxColumns.ID + " = ?",
                 new String[]{String.valueOf(id)});
     }
 
@@ -222,7 +222,7 @@ public class VocabularyBoxRepository {
 
     private int update(int id, ContentValues newValues) {
         String[] idStringArray = new String[] {String.valueOf(id)};
-        return contentResolver.update(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, newValues, "_id = ?", idStringArray);
+        return contentResolver.update(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, newValues, VocabularyBoxColumns.ID + " = ?", idStringArray);
     }
 
     void logInfo(String message) {

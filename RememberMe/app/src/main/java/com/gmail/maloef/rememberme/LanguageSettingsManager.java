@@ -71,7 +71,7 @@ public class LanguageSettingsManager {
             }
         } else {
             languagePos = languagePosition(selectLanguage) + 1;
-            boxService.updateForeignLanguage(getSelectedBox()._id, selectLanguage);
+            boxService.updateForeignLanguage(getSelectedBox().id, selectLanguage);
         }
         logInfo("selected language " + selectLanguage + ", selection is position " + languagePos);
         spinner.setSelection(languagePos);
@@ -91,14 +91,14 @@ public class LanguageSettingsManager {
                         return;
                     }
                     getSelectedBox().foreignLanguage = null;
-                    boxService.updateForeignLanguage(getSelectedBox()._id, null);
+                    boxService.updateForeignLanguage(getSelectedBox().id, null);
                     informListeners();
                     logInfo("removed foreign language setting from box " + getSelectedBox().name);
                     return;
                 }
                 if (!selectedIso.equals(getSelectedBox().foreignLanguage)) {
                     getSelectedBox().foreignLanguage = selectedIso;
-                    boxService.updateForeignLanguage(getSelectedBox()._id, selectedIso);
+                    boxService.updateForeignLanguage(getSelectedBox().id, selectedIso);
                     informListeners();
                     logInfo("updated foreign language for box " + getSelectedBox().name + ": " + selectedIso);
                 }
@@ -123,7 +123,7 @@ public class LanguageSettingsManager {
                 String selectedIso = languageCodes[selectedItemPos];
                 if (!selectedIso.equals(getSelectedBox().nativeLanguage)) {
                     getSelectedBox().nativeLanguage = selectedIso;
-                    boxService.updateNativeLanguage(getSelectedBox()._id, selectedIso);
+                    boxService.updateNativeLanguage(getSelectedBox().id, selectedIso);
                     informListeners();
                     logInfo("updated native language for box " + getSelectedBox().name + ": " + selectedIso);
                 }

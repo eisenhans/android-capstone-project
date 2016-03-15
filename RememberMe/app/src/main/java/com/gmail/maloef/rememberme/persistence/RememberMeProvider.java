@@ -43,7 +43,7 @@ public class RememberMeProvider {
                 path = Path.VOCABULARY_BOXES + "/#",
                 name = "VOCABULARY_BOX",
                 type = "vnd.android.cursor.item/vocabularyBox",
-                whereColumn = VocabularyBoxColumns._ID,
+                whereColumn = VocabularyBoxColumns.ID,
                 pathSegment = 1)
         public static Uri findById(int id) {
             return VOCABULARY_BOXES.buildUpon().appendPath(String.valueOf(id)).build();
@@ -88,14 +88,14 @@ public class RememberMeProvider {
                 path = Path.COMPARTMENTS + "/#",
                 name = "COMPARTMENT",
                 type = "vnd.android.cursor.item/compartment",
-                whereColumn = CompartmentColumns._ID,
+                whereColumn = CompartmentColumns.ID,
                 pathSegment = 1)
         public static Uri findById(int id) {
             return COMPARTMENTS.buildUpon().appendPath(String.valueOf(id)).build();
         }
 
         /**
-         * Finds the compartments of one vocabulary box by the box' database _id.
+         * Finds the compartments of one vocabulary box by the box' database id.
          * <p/>
          * Example: ...rememberme/vocabularyBoxes/123/compartments
          */
@@ -122,7 +122,7 @@ public class RememberMeProvider {
         @ContentUri(
                 path = Path.WORDS,
                 type = "vnd.android.cursor.dir/word",
-                defaultSort = WordColumns._ID)
+                defaultSort = WordColumns.ID)
         public static final Uri WORDS = BASE_CONTENT_URI.buildUpon().appendPath(Path.WORDS).build();
 
         /**
@@ -134,7 +134,7 @@ public class RememberMeProvider {
                 path = Path.WORDS + "/#",
                 name = "WORD",
                 type = "vnd.android.cursor.item/word",
-                whereColumn = WordColumns._ID,
+                whereColumn = WordColumns.ID,
                 pathSegment = 1)
         public static Uri findById(int id) {
             return WORDS.buildUpon().appendPath(String.valueOf(id)).build();
@@ -151,7 +151,7 @@ public class RememberMeProvider {
                 type = "vnd.android.cursor.dir/words",
                 whereColumn = WordColumns.COMPARTMENT,
                 pathSegment = 1,
-                defaultSort = WordColumns._ID)
+                defaultSort = WordColumns.ID)
         public static final Uri findWords(int compartmentId) {
             return Compartment.findById(compartmentId).buildUpon().appendPath(Path.WORDS).build();
         }

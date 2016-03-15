@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position != selectedBox.translationDirection) {
                     selectedBox.translationDirection = position;
-                    boxService.updateTranslationDirection(selectedBox._id, position);
+                    boxService.updateTranslationDirection(selectedBox.id, position);
                     logInfo("updated translation direction for box " + selectedBox.name + ": " + position);
                 }
             }
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
         createTestData();
 
-        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox._id);
+        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
 
         for (int compartment = 1; compartment <= 5; compartment++) {
             addOverviewRow(compartment, boxOverview);
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         InputProcessor inputProcessor = new InputProcessor() {
             @Override
             public void process(String newBoxName) {
-                boxService.updateBoxName(selectedBox._id, newBoxName);
+                boxService.updateBoxName(selectedBox.id, newBoxName);
                 logInfo("updated box name: " + newBoxName);
                 updateBoxSpinner();
             }
@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void createTestData() {
-        int boxId = selectedBox._id;
+        int boxId = selectedBox.id;
 
         wordService.createWord(boxId, "porcupine", "Stachelschwein");
 

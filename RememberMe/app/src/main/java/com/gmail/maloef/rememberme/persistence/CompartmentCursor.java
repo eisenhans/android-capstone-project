@@ -14,7 +14,7 @@ public class CompartmentCursor extends IterableCursorWrapper<Compartment> {
     @Override
     public Compartment peek() {
         Compartment compartment = new Compartment();
-        compartment._id = getInteger(CompartmentColumns._ID, -1);
+        compartment.id = getInteger(CompartmentColumns.ID, -1);
         compartment.vocabularyBox = getInteger(CompartmentColumns.VOCABULARY_BOX, -1);
         compartment.number = getInteger(CompartmentColumns.NUMBER, -1);
 

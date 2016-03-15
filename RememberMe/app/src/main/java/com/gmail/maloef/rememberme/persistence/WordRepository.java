@@ -3,6 +3,7 @@ package com.gmail.maloef.rememberme.persistence;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -40,15 +41,32 @@ public class WordRepository {
         return Integer.valueOf(lastPathSegment);
     }
 
-    void logInfo(String message) {
-        Log.i(getClass().getSimpleName(), message);
-    }
-
     public void updateRepeatDate(int id) {
         ContentValues values = new ContentValues();
         long now = new Date().getTime();
         values.put(WordColumns.LAST_REPEAT_DATE, now);
 
-        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns._ID + " = ?", new String[]{String.valueOf(id)});
+        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public boolean doesWordExist(int boxId, String foreignWord, String nativeWord) {
+        long start = System.currentTimeMillis();
+        Cursor cursor = contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                new String[]{WordColumns.ID},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.FOREIGN_WORD + " = ? and " + WordColumns.NATIVE_WORD + " = ?",
+                new String[]{String.valueOf(boxId), foreignWord, nativeWord},
+                null);
+
+        boolean wordExists = cursor.moveToFirst();
+        cursor.close();
+        long stop = System.currentTimeMillis();
+        logInfo("checking if word exists took " + (stop - start) + " ms");
+
+        return wordExists;
+    }
+
+    void logInfo(String message) {
+        Log.i(getClass().getSimpleName(), message);
     }
 }
