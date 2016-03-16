@@ -4,17 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.Menu;
@@ -52,10 +48,9 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DrawerActivity {
 
-    private ActionBarDrawerToggle drawerToggle;
-    @Bind(R.id.drawer_layout) DrawerLayout drawer;
+    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigationView) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.mainFragmentLayout) LinearLayout mainFragmentLayout;
@@ -107,9 +102,7 @@ public class MainActivity extends AppCompatActivity {
         RememberMeApplication.injector().inject(this);
 
         setSupportActionBar(toolbar);
-
-        drawerToggle = setupDrawerToggle();
-        drawer.setDrawerListener(drawerToggle);
+        initDrawerToggle(drawerLayout, toolbar);
 
         logInfo("navigationView: " + navigationView);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -314,10 +307,6 @@ public class MainActivity extends AppCompatActivity {
         throw new IllegalArgumentException("unknown iso code: " + isoCode);
     }
 
-    private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -345,18 +334,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
     @OnClick(R.id.renameBoxButton)
     public void showRenameBoxDialog(final View parentView) {
         InputProcessor inputProcessor = new InputProcessor() {
@@ -381,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
                 logInfo("created new box: " + newBoxName);
                 updateBoxSpinner();
                 logInfo("closing dialog and drawer");
-                drawer.closeDrawer(GravityCompat.START);
+                drawerLayout.closeDrawer(GravityCompat.START);
             }
         };
         InputValidator inputValidator = createNewBoxNameInputValidator();
@@ -401,10 +378,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.memorizeButton)
     public void memorizeWordsFromCompartment1(View parentView) {
         logInfo("showing memorize activity");
-    }
-
-    void logInfo(String message) {
-        Log.i(getClass().getSimpleName(), message);
     }
 
     void createTestData() {
