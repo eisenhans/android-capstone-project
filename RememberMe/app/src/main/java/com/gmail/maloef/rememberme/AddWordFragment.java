@@ -116,6 +116,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
             @Override
             public void afterTextChanged(Editable s) {
                 translateButton.setEnabled(s.length() > 0 && ! s.equals(foreignWord));
+                saveButton.setEnabled(s.length() > 0 && nativeWordEditText.getText().length() > 0);
             }
         };
     }
@@ -131,6 +132,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
             @Override
             public void afterTextChanged(Editable s) {
                 translateButton.setEnabled(true);
+                saveButton.setEnabled(s.length() > 0 && foreignWordEditText.getText().length() > 0);
             }
         };
     }
@@ -157,6 +159,9 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         foreignWord = wordToAdd();
         if (foreignWord == null) {
             logInfo("nothing to translate");
+            translateButton.setEnabled(false);
+            saveButton.setEnabled(false);
+            foreignWordEditText.requestFocus();
             return;
         }
         foreignWordEditText.setText(foreignWord);
@@ -164,6 +169,10 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     String wordToAdd() {
+        if (getArguments() == null) {
+            logInfo("no arguments");
+            return null;
+        }
         if (!getArguments().containsKey(Intent.EXTRA_TEXT)) {
             logInfo("bundle does not contain key " + Intent.EXTRA_TEXT + ", keys are: " + getArguments().keySet());
             return null;
@@ -193,8 +202,9 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
         if (translation.detectedSourceLanguage != null) {
             showConfirmLanguageSettingsDialog(translation.detectedSourceLanguage);
         }
-        if (translation.translatedText.equalsIgnoreCase(foreignWord)) {
-            nativeWord = "";
+        if (StringUtils.isBlank(translation.translatedText) || translation.translatedText.equalsIgnoreCase(foreignWord)) {
+            nativeWord = null;
+            saveButton.setEnabled(false);
             Toast.makeText(getActivity(), noTranslationFoundString, Toast.LENGTH_SHORT).show();
         } else {
             if (nativeWord != null) {
@@ -203,6 +213,7 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
             }
             nativeWord = translation.translatedText;
             nativeWordEditText.setText(nativeWord);
+            saveButton.setEnabled(true);
         }
         translateButton.setEnabled(false);
         addWordParentLayout.requestFocus();

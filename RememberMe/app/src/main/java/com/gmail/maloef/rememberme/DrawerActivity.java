@@ -12,7 +12,7 @@ public class DrawerActivity extends AppCompatActivity {
 
     ActionBarDrawerToggle drawerToggle;
 
-    void initDrawerToggle(DrawerLayout drawerLayout, Toolbar toolbar) {
+    protected void initDrawerToggle(DrawerLayout drawerLayout, Toolbar toolbar) {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open,  R.string.drawer_close);
         drawerLayout.setDrawerListener(drawerToggle);
     }
@@ -29,11 +29,11 @@ public class DrawerActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    void logInfo(String message) {
+    protected void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);
     }
 
-    void logWarn(String message) {
+    protected void logWarn(String message) {
         Log.w(getClass().getSimpleName(), message);
     }
 }

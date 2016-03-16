@@ -9,9 +9,9 @@
             android:title="@string/create_new_box" />
         <!--android:icon="@drawable/ic_two"-->
         <item
-            android:id="@+id/nav_second_fragment"
+            android:id="@+id/add_word_to_current_box_item"
             android:checkable="false"
-            android:title="Second" />
+            android:title="Add word to current vocabulary box" />
         <!--android:icon="@drawable/ic_three"-->
         <item
             android:id="@+id/nav_third_fragment"

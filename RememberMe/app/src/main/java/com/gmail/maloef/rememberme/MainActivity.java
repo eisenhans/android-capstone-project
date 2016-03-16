@@ -111,6 +111,9 @@ public class MainActivity extends DrawerActivity {
                 logInfo("navigationItem selected: " + item);
                 if (item.getItemId() == R.id.create_new_box_item) {
                     showNewBoxNameDialog(mainFragmentLayout);
+                } else if (item.getItemId() == R.id.add_word_to_current_box_item) {
+                    Intent intent = new Intent(MainActivity.this, AddWordActivity.class);
+                    startActivity(intent);
                 }
                 return true;
             }
