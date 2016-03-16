@@ -330,14 +330,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         // The action bar home/up action should open or close the drawer.
-        // ToDo: which of the following two is necessary?
-        if (id == android.R.id.home) {
-            drawer.openDrawer(GravityCompat.START);
-            return true;
-        }
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+        // ToDo: is one of following two is necessary?
+//        if (id == android.R.id.home) {
+//            drawer.openDrawer(GravityCompat.START);
+//            return true;
+//        }
+//        if (drawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
 
         if (id == R.id.action_settings) {
             return true;
