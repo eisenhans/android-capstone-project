@@ -51,5 +51,6 @@
     <string name="no_native_word">No native word</string>
     <string name="word_already_exists_in_box">Word already exists in box </string>
     <string name="word_saved">Word saved</string>
+    <string name="compartment_i">Compartment %s</string>
 
 </resources>

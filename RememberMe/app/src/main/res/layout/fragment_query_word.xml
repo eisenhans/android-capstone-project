@@ -13,11 +13,11 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView style="@style/Flashcard">
-            <EditText android:id="@+id/foreign_word_edittext" style="@style/FlashcardText" />
+            <TextView android:id="@+id/query_textview" style="@style/FlashcardText" android:text="Hello from query_word!"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView style="@style/Flashcard">
-            <EditText android:id="@+id/native_word_edittext" style="@style/FlashcardText" />
+            <EditText android:id="@+id/answer_edittext" style="@style/FlashcardText" />
         </android.support.v7.widget.CardView>
 
     </LinearLayout>

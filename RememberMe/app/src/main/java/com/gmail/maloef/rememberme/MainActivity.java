@@ -112,7 +112,8 @@ public class MainActivity extends DrawerActivity {
                 if (item.getItemId() == R.id.create_new_box_item) {
                     showNewBoxNameDialog(mainFragmentLayout);
                 } else if (item.getItemId() == R.id.add_word_to_current_box_item) {
-                    Intent intent = new Intent(MainActivity.this, AddWordActivity.class);
+                    Intent intent = new Intent(MainActivity.this, WordActivity.class)
+                            .setAction(RememberMeIntent.ACTION_ADD);
                     startActivity(intent);
                 }
                 return true;
@@ -211,6 +212,10 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 logInfo("clicked: " + v + ", compartment: " + compartment);
+                Intent intent = new Intent(MainActivity.this, WordActivity.class)
+                        .setAction(RememberMeIntent.ACTION_QUERY)
+                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
+                startActivity(intent);
             }
         });
     }
