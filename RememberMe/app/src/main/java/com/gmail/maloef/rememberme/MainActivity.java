@@ -212,8 +212,18 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 logInfo("clicked: " + v + ", compartment: " + compartment);
+
+                int translationDirection = selectedBox.translationDirection;
+                if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_MIXED) {
+                    double random = Math.random();
+                    translationDirection = (random >= 0.5) ?
+                            VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
+                }
+
                 Intent intent = new Intent(MainActivity.this, WordActivity.class)
                         .setAction(RememberMeIntent.ACTION_QUERY)
+                        .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
+                        .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirection)
                         .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
                 startActivity(intent);
             }

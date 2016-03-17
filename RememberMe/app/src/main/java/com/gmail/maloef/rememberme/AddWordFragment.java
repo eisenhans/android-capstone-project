@@ -1,7 +1,6 @@
 package com.gmail.maloef.rememberme;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,13 +12,11 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,7 +41,7 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddWordFragment extends Fragment implements LoaderManager.LoaderCallbacks<Translation> {
+public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<Translation> {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -96,8 +93,8 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
 
         selectedBox = boxRepository.getSelectedBox();
 
-        configureEditBehavior(foreignWordEditText);
-        configureEditBehavior(nativeWordEditText);
+        configureEditTextBehavior(foreignWordEditText);
+        configureEditTextBehavior(nativeWordEditText);
 
         foreignWordEditText.addTextChangedListener(createForeignWordWatcher());
         nativeWordEditText.addTextChangedListener(createNativeWordWatcher());
@@ -135,15 +132,6 @@ public class AddWordFragment extends Fragment implements LoaderManager.LoaderCal
                 saveButton.setEnabled(s.length() > 0 && foreignWordEditText.getText().length() > 0);
             }
         };
-    }
-
-    // this does not work via xml :-(
-    private void configureEditBehavior(EditText editText) {
-        editText.setInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setSingleLine(true);
-        editText.setMaxLines(3);
-        editText.setHorizontallyScrolling(false);
-        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
     }
 
     @Override

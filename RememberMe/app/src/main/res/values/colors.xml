@@ -7,8 +7,6 @@
     <color name="colorTableHeader">@color/grey400</color>
     <color name="colorTableRowDark">@color/grey300</color>
 
-    <color name="textColorPrimary">#9E9E9E</color>
-
     <color name="blue100">#BBDEFB</color>
     <color name="blue500">#2196F3</color>
     <color name="blue700">#1976D2</color>

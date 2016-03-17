@@ -6,6 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Pair;
+
+import com.gmail.maloef.rememberme.domain.Word;
 
 import java.util.Date;
 
@@ -64,6 +67,20 @@ public class WordRepository {
         logInfo("checking if word exists took " + (stop - start) + " ms");
 
         return wordExists;
+    }
+
+    public Pair<String, String> getNextWord(int boxId, int compartment) {
+        WordCursor wordCursor = new WordCursor(contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                new String[]{WordColumns.FOREIGN_WORD, WordColumns.NATIVE_WORD},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
+                WordColumns.CREATION_DATE));
+
+        Word word = wordCursor.peek();
+        wordCursor.close();
+
+        return word == null ? null : Pair.create(word.foreignWord, word.nativeWord);
     }
 
     void logInfo(String message) {
