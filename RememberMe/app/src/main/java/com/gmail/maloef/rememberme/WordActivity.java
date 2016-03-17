@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -59,7 +60,7 @@ public class WordActivity extends DrawerActivity {
         } else if (action.equals(RememberMeIntent.ACTION_QUERY)) {
             setCompartmentFragment(new QueryWordFragment());
         } else if (action.equals(RememberMeIntent.ACTION_SHOW)) {
-//            setCompartmentFragment(new QueryWordFragment());
+            setCompartmentFragment(new ShowWordFragment());
         }
     }
 
@@ -74,6 +75,39 @@ public class WordActivity extends DrawerActivity {
 
     private void setFragment(Fragment fragment) {
         fragment.setArguments(getIntent().getExtras());
+        getFragmentManager().beginTransaction().replace(R.id.word_content, fragment).commit();
+    }
+
+    private QueryWordFragment queryWordFragment;
+    private ShowWordFragment showWordFragment;
+
+    public void displayQueryWordFragment(int boxId, int compartment, int translationDirection) {
+
+    }
+
+    public void displayShowWordFragment(String queryWord, String correctAnswer, String givenAnswer) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (queryWordFragment != null && queryWordFragment.isAdded()) {
+            ft.hide(queryWordFragment);
+        }
+        if (showWordFragment == null) {
+            showWordFragment = new ShowWordFragment();
+        }
+        if (showWordFragment.isAdded()) {
+            ft.show(showWordFragment);
+        } else {
+            ft.add(R.id.word_content, showWordFragment);
+        }
+        showWordFragment.queryWord = queryWord;
+        showWordFragment.correctAnswer = correctAnswer;
+        showWordFragment.givenAnswer = givenAnswer;
+
+        ft.commit();
+    }
+
+    public void setShowWordFragment(Bundle args) {
+        Fragment fragment = new ShowWordFragment();
+        fragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.word_content, fragment).commit();
     }
 }

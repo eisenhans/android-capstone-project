@@ -80,6 +80,14 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     String nativeWord;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        RememberMeApplication.injector().inject(this);
+        selectedBox = boxRepository.getSelectedBox();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_word, container, false);
 
@@ -87,11 +95,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
             // ToDo 14.03.16: can this information be used somehow?
             logInfo("savedInstanceState exists: " + savedInstanceState + ", keys: " + savedInstanceState.keySet());
         }
-
-        RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this, rootView);
-
-        selectedBox = boxRepository.getSelectedBox();
 
         configureEditTextBehavior(foreignWordEditText);
         configureEditTextBehavior(nativeWordEditText);

@@ -9,4 +9,6 @@ public class RememberMeIntent {
     static final String EXTRA_BOX_ID = "com.gmail.maloef.rememberme.extra.boxId";
     static final String EXTRA_COMPARTMENT = "com.gmail.maloef.rememberme.extra.compartment";
     static final String EXTRA_TRANSLATION_DIRECTION = "com.gmail.maloef.rememberme.extra.translationDirection";
+
+    public static final String QUERY_WORD = "com.gmail.maloef.rememberme.queryWord";
 }
