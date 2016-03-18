@@ -47,4 +47,9 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <style name="FlashcardText.Edit">
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+
+
 </resources>

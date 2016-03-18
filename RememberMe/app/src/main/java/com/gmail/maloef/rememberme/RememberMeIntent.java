@@ -10,5 +10,7 @@ public class RememberMeIntent {
     static final String EXTRA_COMPARTMENT = "com.gmail.maloef.rememberme.extra.compartment";
     static final String EXTRA_TRANSLATION_DIRECTION = "com.gmail.maloef.rememberme.extra.translationDirection";
 
-    public static final String QUERY_WORD = "com.gmail.maloef.rememberme.queryWord";
+    public static final String EXTRA_QUERY_WORD = "com.gmail.maloef.rememberme.extra.queryWord";
+    public static final String EXTRA_CORRECT_ANSWER = "com.gmail.maloef.rememberme.extra.correctAnswer";
+    public static final String EXTRA_GIVEN_ANSWER = "com.gmail.maloef.rememberme.extra.givenAnswer";
 }

@@ -1,6 +1,5 @@
 package com.gmail.maloef.rememberme;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -304,11 +302,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         hideKeyboard();
         foreignWord = foreignWordEditText.getText().toString();
         loadTranslation();
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     @OnClick(R.id.saveAddWordButton)
