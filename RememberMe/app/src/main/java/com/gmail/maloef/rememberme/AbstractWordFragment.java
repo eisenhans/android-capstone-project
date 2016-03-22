@@ -2,12 +2,22 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.hannesdorfmann.fragmentargs.FragmentArgs;
+
 public abstract class AbstractWordFragment extends Fragment {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentArgs.inject(this);
+    }
 
     // this does not work via xml :-(
     protected void configureEditTextBehavior(EditText editText) {
@@ -21,5 +31,9 @@ public abstract class AbstractWordFragment extends Fragment {
     protected void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+    }
+
+    void logInfo(String message) {
+        Log.i(getClass().getSimpleName(), message);
     }
 }

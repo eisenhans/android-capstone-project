@@ -52,5 +52,7 @@
     <string name="word_already_exists_in_box">Word already exists in box </string>
     <string name="word_saved">Word saved</string>
     <string name="compartment_i">Compartment %s</string>
+    <string name="i_words_left">%s words left</string>
+    <string name="one_word_left">1 word left</string>
 
 </resources>

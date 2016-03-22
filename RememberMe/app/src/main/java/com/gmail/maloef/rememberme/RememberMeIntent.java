@@ -13,4 +13,5 @@ public class RememberMeIntent {
     public static final String EXTRA_QUERY_WORD = "com.gmail.maloef.rememberme.extra.queryWord";
     public static final String EXTRA_CORRECT_ANSWER = "com.gmail.maloef.rememberme.extra.correctAnswer";
     public static final String EXTRA_GIVEN_ANSWER = "com.gmail.maloef.rememberme.extra.givenAnswer";
+    public static final String EXTRA_WORD = "com.gmail.maloef.rememberme.extra.word";
 }

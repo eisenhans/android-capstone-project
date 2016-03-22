@@ -31,6 +31,8 @@ import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.TranslateLoader;
 import com.gmail.maloef.rememberme.translate.google.Translation;
 import com.gmail.maloef.rememberme.util.StringUtils;
+import com.hannesdorfmann.fragmentargs.annotation.Arg;
+import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
 import javax.inject.Inject;
 
@@ -39,6 +41,7 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@FragmentWithArgs
 public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<Translation> {
 
     @Inject VocabularyBoxRepository boxRepository;
@@ -71,11 +74,11 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     @Bind (R.id.translateAddWordButton) Button translateButton;
     @Bind (R.id.saveAddWordButton) Button saveButton;
 
-    private int languageCount;
+    @Arg String foreignWord;
 
-    VocabularyBox selectedBox;
-    String foreignWord;
     String nativeWord;
+    VocabularyBox selectedBox;
+    int languageCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +149,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     public void onResume() {
         super.onResume();
 
-        foreignWord = wordToAdd();
         if (foreignWord == null) {
             logInfo("nothing to translate");
             translateButton.setEnabled(false);
@@ -156,23 +158,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         }
         foreignWordEditText.setText(foreignWord);
         loadTranslation();
-    }
-
-    String wordToAdd() {
-        if (getArguments() == null) {
-            logInfo("no arguments");
-            return null;
-        }
-        if (!getArguments().containsKey(Intent.EXTRA_TEXT)) {
-            logInfo("bundle does not contain key " + Intent.EXTRA_TEXT + ", keys are: " + getArguments().keySet());
-            return null;
-        }
-        String sharedText = (String) getArguments().get(Intent.EXTRA_TEXT);
-        if (sharedText == null) {
-            logWarn("bundle contains key " + Intent.EXTRA_TEXT + ", but value is null");
-            return null;
-        }
-        return sharedText;
     }
 
     void loadTranslation() {

@@ -1,8 +1,7 @@
 package com.gmail.maloef.rememberme;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +10,50 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.domain.Word;
+import com.gmail.maloef.rememberme.persistence.WordRepository;
+import com.hannesdorfmann.fragmentargs.annotation.Arg;
+import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
+
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+@FragmentWithArgs
 public class QueryWordFragment extends AbstractWordFragment {
 
-    private static final String QUERY_WORD = "queryWord";
-    private static final String ANSWER_WORD = "answerWord";
+    public interface AnswerListener {
+        void onWordEntered(Word word, String givenAnswer);
+    }
+
+    private AnswerListener answerListener;
+
+    @Inject WordRepository wordRepository;
 
     @Bind(R.id.query_textview) TextView queryTextView;
     @Bind(R.id.answer_edittext) EditText answerEditText;
 
-    String queryWord;
-    String answerWord;
+    @Arg int compartment;
+    @Arg int boxId;
+    @Arg int translationDirection;
+
+    Word word;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        answerListener = (AnswerListener) activity;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RememberMeApplication.injector().inject(this);
+
+        word = wordRepository.getNextWord(boxId, compartment);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,8 +62,11 @@ public class QueryWordFragment extends AbstractWordFragment {
         ButterKnife.bind(this, rootView);
         configureEditTextBehavior(answerEditText);
 
-        queryTextView.setText(queryWord);
-
+        if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
+            queryTextView.setText(word.foreignWord);
+        } else {
+            queryTextView.setText(word.nativeWord);
+        }
         answerEditText.setOnEditorActionListener(createDoneListener());
         return rootView;
     }
@@ -44,29 +77,13 @@ public class QueryWordFragment extends AbstractWordFragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     hideKeyboard();
-                    logInfo("done");
-                    String givenAnswer = answerEditText.getText().toString();
-                    logInfo("queryWord: " + queryWord + ", correct answer: " + answerWord + ", given answer: " + givenAnswer);
+                    String givenAnswer = answerEditText.getText().toString().trim();
+                    answerListener.onWordEntered(word, givenAnswer);
 
-                    Intent intent = new Intent(getActivity(), WordActivity.class)
-                            .setAction(RememberMeIntent.ACTION_SHOW)
-                            .putExtra(RememberMeIntent.EXTRA_QUERY_WORD, queryWord)
-                            .putExtra(RememberMeIntent.EXTRA_CORRECT_ANSWER, answerWord)
-                            .putExtra(RememberMeIntent.EXTRA_GIVEN_ANSWER, givenAnswer);
-                    startActivity(intent);
                     return true;
                 }
                 return false;
             }
         };
-    }
-
-    public void updateFragment(String queryWord, String answerWord) {
-        this.queryWord = queryWord;
-        this.answerWord = answerWord;
-    }
-
-    void logInfo(String message) {
-        Log.i(getClass().getSimpleName(), message);
     }
 }

@@ -159,6 +159,8 @@ public class MainActivity extends DrawerActivity {
 
         createTestData();
 
+        logInfo("creating");
+
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
 
         for (int compartment = 1; compartment <= 5; compartment++) {
@@ -174,6 +176,13 @@ public class MainActivity extends DrawerActivity {
         };
         IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, languagesUpdatedFilter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        logInfo("resuming");
+
     }
 
     @Override
@@ -194,7 +203,7 @@ public class MainActivity extends DrawerActivity {
         languageCount = languageService.countLanguages("en");
     }
 
-    private void addOverviewRow(final int compartment, BoxOverview boxOverview) {
+    private void addOverviewRow(final int compartment, final BoxOverview boxOverview) {
         TableRow row = new TableRow(this);
         row.setPadding(0, 16, 0, 16);
 
@@ -211,7 +220,11 @@ public class MainActivity extends DrawerActivity {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logInfo("clicked: " + v + ", compartment: " + compartment);
+                logInfo("clicked: compartment " + compartment);
+
+                if (boxOverview.getWordCount(compartment) == 0) {
+                    return;
+                }
 
                 int translationDirection = selectedBox.translationDirection;
                 if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_MIXED) {
@@ -254,8 +267,16 @@ public class MainActivity extends DrawerActivity {
         row.addView(textView);
     }
 
-    String calculateNotRepeatedSinceDays(Long repeatDate) {
-        if (repeatDate == null) {
+    private void updateBoxTable() {
+        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
+        for (int compartment = 1; compartment <= 5; compartment++) {
+            boxOverview.getWordCount(compartment);
+            boxOverview.getEarliestLastRepeatDate(compartment);
+        }
+    }
+
+    String calculateNotRepeatedSinceDays(long repeatDate) {
+        if (repeatDate == 0) {
             return "-";
         }
         Date now = new Date();
@@ -400,6 +421,10 @@ public class MainActivity extends DrawerActivity {
 
     void createTestData() {
         int boxId = selectedBox.id;
+
+        if (wordService.countWords(boxId, 1) > 0) {
+            return;
+        }
 
         wordService.createWord(boxId, "porcupine", "Stachelschwein");
 

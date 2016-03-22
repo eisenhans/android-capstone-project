@@ -39,7 +39,7 @@ public class CompartmentRepository {
                         WordColumns.LAST_REPEAT_DATE + " desc"));
 
         int wordCount = wordCursor.getCount();
-        Long earliestLastRepeatDate = null;
+        long earliestLastRepeatDate = 0;
         while (wordCursor.moveToNext()) {
             earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, wordCursor.peek().lastRepeatDate);
         }
@@ -48,11 +48,11 @@ public class CompartmentRepository {
         return new CompartmentOverview(wordCount, earliestLastRepeatDate);
     }
 
-    private Long earlierRepeatDate(Long first, Long second) {
-        if (first == null) {
+    private long earlierRepeatDate(long first, long second) {
+        if (first == 0) {
             return second;
         }
-        if (second == null) {
+        if (second == 0) {
             return first;
         }
         return Math.min(first, second);

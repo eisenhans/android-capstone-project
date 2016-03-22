@@ -14,9 +14,9 @@ public class Word implements Parcelable {
     public String nativeWord;
 
     // creationDate must not be null in database, but can be null for entity (because creation date was not fetched from database)
-    public Long creationDate;
-    public Long updateDate;
-    public Long lastRepeatDate;
+    public long creationDate;
+    public long updateDate;
+    public long lastRepeatDate;
 
     @Override
     public int describeContents() {

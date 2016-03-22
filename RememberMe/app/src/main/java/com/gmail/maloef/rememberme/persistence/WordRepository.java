@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
-import android.util.Pair;
 
 import com.gmail.maloef.rememberme.domain.Word;
 
@@ -69,10 +68,10 @@ public class WordRepository {
         return wordExists;
     }
 
-    public Pair<String, String> getNextWord(int boxId, int compartment) {
+    public Word getNextWord(int boxId, int compartment) {
         WordCursor wordCursor = new WordCursor(contentResolver.query(
                 RememberMeProvider.Word.WORDS,
-                new String[]{WordColumns.FOREIGN_WORD, WordColumns.NATIVE_WORD},
+                null,
                 WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
                 new String[]{String.valueOf(boxId), String.valueOf(compartment)},
                 WordColumns.CREATION_DATE));
@@ -80,7 +79,30 @@ public class WordRepository {
         Word word = wordCursor.peek();
         wordCursor.close();
 
-        return word == null ? null : Pair.create(word.foreignWord, word.nativeWord);
+        return word;
+    }
+
+    public int countWords(int boxId, int compartment) {
+        Cursor cursor = contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                new String[]{WordColumns.ID},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
+                null);
+
+        int result = cursor.getCount();
+        cursor.close();
+
+        return result;
+    }
+
+    public void moveToCompartment(int wordId, int compartment) {
+        ContentValues values = new ContentValues();
+        values.put(WordColumns.COMPARTMENT, compartment);
+        long now = new Date().getTime();
+        values.put(WordColumns.LAST_REPEAT_DATE, now);
+
+        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(wordId)});
     }
 
     void logInfo(String message) {
