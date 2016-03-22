@@ -68,13 +68,13 @@ public class WordRepository {
         return wordExists;
     }
 
-    public Word getNextWord(int boxId, int compartment) {
+    public Word findWord(int id) {
         WordCursor wordCursor = new WordCursor(contentResolver.query(
                 RememberMeProvider.Word.WORDS,
                 null,
-                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
-                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
-                WordColumns.CREATION_DATE));
+                WordColumns.ID + " = ?",
+                new String[]{String.valueOf(id)},
+                null));
 
         Word word = wordCursor.peek();
         wordCursor.close();
@@ -82,12 +82,39 @@ public class WordRepository {
         return word;
     }
 
+    public Word getNextWord(int boxId, int compartment) {
+        return getNextWord(boxId, compartment, Long.MAX_VALUE);
+    }
+
+    public Word getNextWord(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
+        WordCursor wordCursor = new WordCursor(contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                null,
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
+                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
+                WordColumns.CREATION_DATE));
+
+        Word word = wordCursor.moveToFirst() ? wordCursor.peek() : null;
+        wordCursor.close();
+        new Date(lastRepeatDateBeforeOrEqual);
+        logInfo("looked up next word from box " + boxId + ", compartment " + compartment +
+                " with lastRepeatDate before " + new Date(lastRepeatDateBeforeOrEqual) + ": " + word);
+
+        return word;
+    }
+
     public int countWords(int boxId, int compartment) {
+        return countWords(boxId, compartment, Long.MAX_VALUE);
+    }
+
+    public int countWords(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
         Cursor cursor = contentResolver.query(
                 RememberMeProvider.Word.WORDS,
                 new String[]{WordColumns.ID},
-                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
-                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
+                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
                 null);
 
         int result = cursor.getCount();

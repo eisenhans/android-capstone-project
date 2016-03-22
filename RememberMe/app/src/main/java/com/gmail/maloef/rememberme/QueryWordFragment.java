@@ -16,6 +16,8 @@ import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
 public class QueryWordFragment extends AbstractWordFragment {
 
     public interface AnswerListener {
-        void onWordEntered(Word word, String givenAnswer);
+        void onWordEntered(Word word, String givenAnswer, int wordsLeft);
     }
 
     private AnswerListener answerListener;
@@ -38,6 +40,7 @@ public class QueryWordFragment extends AbstractWordFragment {
     @Arg int compartment;
     @Arg int boxId;
     @Arg int translationDirection;
+    @Arg long startTime;
 
     Word word;
 
@@ -52,7 +55,8 @@ public class QueryWordFragment extends AbstractWordFragment {
         super.onCreate(savedInstanceState);
         RememberMeApplication.injector().inject(this);
 
-        word = wordRepository.getNextWord(boxId, compartment);
+        word = wordRepository.getNextWord(boxId, compartment, startTime);
+        logInfo("looked up next word for box " + boxId + ", compartment " + compartment + ", startTime " + new Date(startTime) + ": " +  word);
     }
 
     @Override
@@ -78,12 +82,20 @@ public class QueryWordFragment extends AbstractWordFragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     hideKeyboard();
                     String givenAnswer = answerEditText.getText().toString().trim();
-                    answerListener.onWordEntered(word, givenAnswer);
+                    int wordsLeft = wordRepository.countWords(boxId, compartment, startTime) - 1; // don't count the current word
+                    logInfo("user entered word " + givenAnswer + " for word " + word + ", words left: " + wordsLeft);
+                    answerListener.onWordEntered(word, givenAnswer, wordsLeft);
 
                     return true;
                 }
                 return false;
             }
         };
+    }
+
+    private boolean isFalse(String givenAnswer) {
+        String correctAnswer = translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE ?
+                word.nativeWord : word.foreignWord;
+        return !givenAnswer.equals(correctAnswer);
     }
 }

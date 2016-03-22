@@ -159,8 +159,6 @@ public class MainActivity extends DrawerActivity {
 
         createTestData();
 
-        logInfo("creating");
-
         BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
 
         for (int compartment = 1; compartment <= 5; compartment++) {
@@ -181,7 +179,6 @@ public class MainActivity extends DrawerActivity {
     @Override
     public void onResume() {
         super.onResume();
-        logInfo("resuming");
 
     }
 
@@ -233,11 +230,13 @@ public class MainActivity extends DrawerActivity {
                             VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
                 }
 
+                long startTime = new Date().getTime();
                 Intent intent = new Intent(MainActivity.this, WordActivity.class)
                         .setAction(RememberMeIntent.ACTION_QUERY)
                         .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
                         .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirection)
-                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
+                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment)
+                        .putExtra(RememberMeIntent.EXTRA_START_TIME, startTime);
                 startActivity(intent);
             }
         });

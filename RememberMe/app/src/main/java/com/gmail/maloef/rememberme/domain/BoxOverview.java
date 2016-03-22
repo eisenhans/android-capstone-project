@@ -15,7 +15,7 @@ public class BoxOverview {
         return overviewMap.get(compartment).wordCount;
     }
 
-    public Long getEarliestLastRepeatDate(int compartment) {
+    public long getEarliestLastRepeatDate(int compartment) {
         return overviewMap.get(compartment).earliestLastRepeatDate;
     }
 }

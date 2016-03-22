@@ -27,6 +27,7 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     int translationDirection;
+    long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
         }
 
         translationDirection = getIntent().getIntExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, -1);
+        startTime = getIntent().getLongExtra(RememberMeIntent.EXTRA_START_TIME, Long.MAX_VALUE);
 
         if (isAddAction()) {
             toolbar.setTitle(getString(R.string.add_word));
@@ -93,12 +95,12 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
 
-        QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
+        QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, startTime, translationDirection);
         replaceFragment(fragment);
     }
 
-    private void showWord(Word word, String givenAnswer) {
-        ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word);
+    private void showWord(Word word, String givenAnswer, int wordsLeft) {
+        ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsLeft);
         replaceFragment(fragment);
     }
 
@@ -112,9 +114,9 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
     }
 
     @Override
-    public void onWordEntered(Word word, String givenAnswer) {
-        logInfo("user entered answer " + givenAnswer + " for current word " + word);
-        showWord(word, givenAnswer);
+    public void onWordEntered(Word word, String givenAnswer, int wordsLeft) {
+        logInfo("user entered answer " + givenAnswer + " for current word " + word + ", wordsLeft: " + wordsLeft);
+        showWord(word, givenAnswer, wordsLeft);
     }
 
     @Override

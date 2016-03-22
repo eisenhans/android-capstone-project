@@ -29,6 +29,8 @@ public interface WordColumns {
     @DataType(INTEGER) @NotNull
     String CREATION_DATE = "creationDate";
 
+    // May be null in the database, but the field Word.updateDate is a long, so it's always January 1st, 1970. Using a Long instead
+    // lead to other problems. Maybe use @NotNull and a default value here?
     @DataType(INTEGER)
     String UPDATE_DATE = "updateDate";
 

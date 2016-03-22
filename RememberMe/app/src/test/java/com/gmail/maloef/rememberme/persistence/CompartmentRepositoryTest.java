@@ -11,7 +11,6 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class CompartmentRepositoryTest extends AbstractPersistenceTest {
 
@@ -60,7 +59,7 @@ public class CompartmentRepositoryTest extends AbstractPersistenceTest {
         assertAlmostEqual(timestamp, boxOverview.getEarliestLastRepeatDate(1), 100);
 
         assertEquals(1, boxOverview.getWordCount(2));
-        assertNull(boxOverview.getEarliestLastRepeatDate(2));
+        assertEquals(0, boxOverview.getEarliestLastRepeatDate(2));
 
         for (int compartment = 3; compartment <= 5; compartment++) {
             assertCompartmentEmpty(boxOverview, compartment);
@@ -69,7 +68,7 @@ public class CompartmentRepositoryTest extends AbstractPersistenceTest {
 
     void assertCompartmentEmpty(BoxOverview boxOverview, int compartment) {
         assertEquals(0, boxOverview.getWordCount(compartment));
-        assertNull(boxOverview.getEarliestLastRepeatDate(compartment));
+        assertEquals(0, boxOverview.getEarliestLastRepeatDate(compartment));
     }
 
     void assertAlmostEqual(long first, long second, long deltaAllowed) {

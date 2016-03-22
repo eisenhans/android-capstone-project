@@ -41,10 +41,10 @@ public class ShowWordFragment extends AbstractWordFragment {
     @Arg Word word;
     @Arg int translationDirection;
     @Arg String givenAnswer;
+    @Arg int wordsLeft;
 
     String queryWord;
     String correctAnswer;
-    int wordsLeft;
 
     @Override
     public void onAttach(Activity activity) {
@@ -71,7 +71,6 @@ public class ShowWordFragment extends AbstractWordFragment {
         } else {
             wordRepository.moveToCompartment(word.id, 1);
         }
-        wordsLeft = wordRepository.countWords(word.boxId, compartment);
     }
 
     @Override
