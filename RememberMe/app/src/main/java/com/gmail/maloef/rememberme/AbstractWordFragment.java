@@ -2,6 +2,7 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -26,6 +27,23 @@ public abstract class AbstractWordFragment extends Fragment {
         editText.setMaxLines(3);
         editText.setHorizontallyScrolling(false);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+    }
+
+    protected void showKeyboard(final EditText editText) {
+        Runnable showKeyboard = new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, 0);
+            }
+        };
+        editText.postDelayed(showKeyboard, 50);
+
+        // I googled these approaches, but they didn't work
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+//        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
     }
 
     protected void hideKeyboard() {

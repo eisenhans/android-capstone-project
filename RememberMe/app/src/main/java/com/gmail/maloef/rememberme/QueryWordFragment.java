@@ -56,7 +56,7 @@ public class QueryWordFragment extends AbstractWordFragment {
         RememberMeApplication.injector().inject(this);
 
         word = wordRepository.getNextWord(boxId, compartment, startTime);
-        logInfo("looked up next word for box " + boxId + ", compartment " + compartment + ", startTime " + new Date(startTime) + ": " +  word);
+        logInfo("looked up next word for box " + boxId + ", compartment " + compartment + ", startTime " + new Date(startTime) + ": " + word);
     }
 
     @Override
@@ -65,6 +65,8 @@ public class QueryWordFragment extends AbstractWordFragment {
 
         ButterKnife.bind(this, rootView);
         configureEditTextBehavior(answerEditText);
+        answerEditText.requestFocus();
+        showKeyboard(answerEditText);
 
         if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
             queryTextView.setText(word.foreignWord);
@@ -91,11 +93,5 @@ public class QueryWordFragment extends AbstractWordFragment {
                 return false;
             }
         };
-    }
-
-    private boolean isFalse(String givenAnswer) {
-        String correctAnswer = translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE ?
-                word.nativeWord : word.foreignWord;
-        return !givenAnswer.equals(correctAnswer);
     }
 }

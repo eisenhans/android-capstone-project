@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
+import com.gmail.maloef.rememberme.domain.Word;
 
 import javax.inject.Inject;
 
@@ -40,8 +41,8 @@ public class CompartmentRepository {
 
         int wordCount = wordCursor.getCount();
         long earliestLastRepeatDate = 0;
-        while (wordCursor.moveToNext()) {
-            earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, wordCursor.peek().lastRepeatDate);
+        for (Word word : wordCursor) {
+            earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, word.lastRepeatDate);
         }
         wordCursor.close();
 

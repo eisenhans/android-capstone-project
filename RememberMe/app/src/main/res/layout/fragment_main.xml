@@ -117,31 +117,40 @@
             android:stretchColumns="*"
             >
 
-            <TableRow
-                android:background="@color/colorTableHeader"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-            <!--<TableRow android:background="@color/blue500">-->
-
-                <!--android:textColor="?android:attr/textColorPrimaryInverse"-->
-                <TextView
-                    style="@style/AppTheme.VocabularyBoxTableCell"
-                    android:text="@string/compartment"
-                    />
-
-                <TextView
-                    style="@style/AppTheme.VocabularyBoxTableCell"
-                    android:text="@string/words"
-                    />
-
-                <TextView
-                    style="@style/AppTheme.VocabularyBoxTableCell"
-                    android:text="@string/not_repeated_since"
-                    />
-
+            <!-- header row -->
+            <TableRow android:background="@color/colorTableHeader" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/compartment" />
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/words" />
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/not_repeated_since" />
             </TableRow>
 
-            <!-- content is added programmatically -->
+            <TableRow android:id="@+id/overviewTableRow1" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="1" />
+                <TextView android:id="@+id/overviewWords1" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated1" style="@style/AppTheme.VocabularyBoxTableCell" />
+            </TableRow>
+            <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="2" />
+                <TextView android:id="@+id/overviewWords2" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated2" style="@style/AppTheme.VocabularyBoxTableCell" />
+            </TableRow>
+            <TableRow android:id="@+id/overviewTableRow3" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="3" />
+                <TextView android:id="@+id/overviewWords3" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated3" style="@style/AppTheme.VocabularyBoxTableCell" />
+            </TableRow>
+            <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="4" />
+                <TextView android:id="@+id/overviewWords4" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated4" style="@style/AppTheme.VocabularyBoxTableCell" />
+            </TableRow>
+            <TableRow android:id="@+id/overviewTableRow5" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="5" />
+                <TextView android:id="@+id/overviewWords5" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated5" style="@style/AppTheme.VocabularyBoxTableCell" />
+            </TableRow>
+
+
         </TableLayout>
 
         <View

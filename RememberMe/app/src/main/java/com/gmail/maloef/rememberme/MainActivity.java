@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,9 +31,9 @@ import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.util.DateUtils;
+import com.gmail.maloef.rememberme.util.StringUtils;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
-import com.gmail.maloef.rememberme.util.dialog.NotEmptyInputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
 
 import java.util.Arrays;
@@ -61,6 +60,23 @@ public class MainActivity extends DrawerActivity {
     @Bind(R.id.translationDirectionSpinner) Spinner translationDirectionSpinner;
 
     @Bind(R.id.vocabularyBoxOverviewTable) TableLayout vocabularyBoxOverviewTable;
+    @Bind(R.id.overviewTableRow1) TableRow overviewTableRow1;
+    @Bind(R.id.overviewTableRow2) TableRow overviewTableRow2;
+    @Bind(R.id.overviewTableRow3) TableRow overviewTableRow3;
+    @Bind(R.id.overviewTableRow4) TableRow overviewTableRow4;
+    @Bind(R.id.overviewTableRow5) TableRow overviewTableRow5;
+
+    @Bind(R.id.overviewWords1) TextView overviewWords1TextView;
+    @Bind(R.id.overviewWords2) TextView overviewWords2TextView;
+    @Bind(R.id.overviewWords3) TextView overviewWords3TextView;
+    @Bind(R.id.overviewWords4) TextView overviewWords4TextView;
+    @Bind(R.id.overviewWords5) TextView overviewWords5TextView;
+
+    @Bind(R.id.overviewNotRepeated1) TextView overviewNotRepeated1TextView;
+    @Bind(R.id.overviewNotRepeated2) TextView overviewNotRepeated2TextView;
+    @Bind(R.id.overviewNotRepeated3) TextView overviewNotRepeated3TextView;
+    @Bind(R.id.overviewNotRepeated4) TextView overviewNotRepeated4TextView;
+    @Bind(R.id.overviewNotRepeated5) TextView overviewNotRepeated5TextView;
 
     @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
 
@@ -84,14 +100,11 @@ public class MainActivity extends DrawerActivity {
     private String[] boxNames;
 
     private VocabularyBox selectedBox;
-    @Inject
-    VocabularyBoxRepository boxService;
-    @Inject
-    CompartmentRepository compartmentService;
-    @Inject
-    WordRepository wordService;
-    @Inject
-    LanguageRepository languageService;
+
+    @Inject VocabularyBoxRepository boxRepository;
+    @Inject CompartmentRepository compartmentRepository;
+    @Inject WordRepository wordRepository;
+    @Inject LanguageRepository languageRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +133,7 @@ public class MainActivity extends DrawerActivity {
             }
         });
 
-        codeLanguagePairs = languageService.getLanguages("en");
+        codeLanguagePairs = languageRepository.getLanguages("en");
         languageCodes = new String[codeLanguagePairs.length];
         languageNames = new String[codeLanguagePairs.length];
 
@@ -129,8 +142,8 @@ public class MainActivity extends DrawerActivity {
             languageNames[i] = codeLanguagePairs[i].second;
         }
 
-        if (!boxService.isOneBoxSaved()) {
-            boxService.createDefaultBox();
+        if (!boxRepository.isOneBoxSaved()) {
+            boxRepository.createDefaultBox();
         }
         updateBoxSpinner();
 
@@ -147,7 +160,7 @@ public class MainActivity extends DrawerActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position != selectedBox.translationDirection) {
                     selectedBox.translationDirection = position;
-                    boxService.updateTranslationDirection(selectedBox.id, position);
+                    boxRepository.updateTranslationDirection(selectedBox.id, position);
                     logInfo("updated translation direction for box " + selectedBox.name + ": " + position);
                 }
             }
@@ -159,11 +172,7 @@ public class MainActivity extends DrawerActivity {
 
         createTestData();
 
-        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
-
-        for (int compartment = 1; compartment <= 5; compartment++) {
-            addOverviewRow(compartment, boxOverview);
-        }
+        addRowListeners();
 
         updateLanguageSpinners();
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -179,7 +188,7 @@ public class MainActivity extends DrawerActivity {
     @Override
     public void onResume() {
         super.onResume();
-
+        updateOverviewTable();
     }
 
     @Override
@@ -189,37 +198,31 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void updateLanguageSpinners() {
-        if (languageCount > 0 && languageCount == languageService.countLanguages("en")) {
+        if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
             // languages are up to date
             return;
         }
-        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxService, languageService);
+        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languageRepository);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
-        languageCount = languageService.countLanguages("en");
+        languageCount = languageRepository.countLanguages("en");
     }
 
-    private void addOverviewRow(final int compartment, final BoxOverview boxOverview) {
-        TableRow row = new TableRow(this);
-        row.setPadding(0, 16, 0, 16);
+    private void addRowListeners() {
+        addRowListener(overviewTableRow1, 1);
+        addRowListener(overviewTableRow2, 2);
+        addRowListener(overviewTableRow3, 3);
+        addRowListener(overviewTableRow4, 4);
+        addRowListener(overviewTableRow5, 5);
+    }
 
-        if (compartment % 2 == 1) {
-            row.setBackgroundColor(colorTableRowDark);
-        }
-
-        addCompartmentCell(row, compartment);
-        addWordsCell(row, compartment, boxOverview);
-        addNotRepeatedSinceCell(row, compartment, boxOverview);
-
-        vocabularyBoxOverviewTable.addView(row);
-
+    private void addRowListener(TableRow row, final int compartment) {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logInfo("clicked: compartment " + compartment);
-
-                if (boxOverview.getWordCount(compartment) == 0) {
+                if (wordRepository.countWords(selectedBox.id, compartment) == 0) {
                     return;
                 }
 
@@ -242,39 +245,23 @@ public class MainActivity extends DrawerActivity {
         });
     }
 
-    private void addCompartmentCell(TableRow row, int compartment) {
-        addOverviewCell(row, String.valueOf(compartment));
+    private void updateOverviewTable() {
+        BoxOverview boxOverview = compartmentRepository.getBoxOverview(selectedBox.id);
+        overviewWords1TextView.setText(String.valueOf(boxOverview.getWordCount(1)));
+        overviewWords2TextView.setText(String.valueOf(boxOverview.getWordCount(2)));
+        overviewWords3TextView.setText(String.valueOf(boxOverview.getWordCount(3)));
+        overviewWords4TextView.setText(String.valueOf(boxOverview.getWordCount(4)));
+        overviewWords5TextView.setText(String.valueOf(boxOverview.getWordCount(5)));
+
+        overviewNotRepeated1TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 1));
+        overviewNotRepeated2TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 2));
+        overviewNotRepeated3TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 3));
+        overviewNotRepeated4TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 4));
+        overviewNotRepeated5TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 5));
     }
 
-    private void addWordsCell(TableRow row, int compartment, BoxOverview boxOverview) {
-        int words = boxOverview.getWordCount(compartment);
-        addOverviewCell(row, String.valueOf(words));
-    }
-
-    private void addNotRepeatedSinceCell(TableRow row, int compartment, BoxOverview boxOverview) {
-        Long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
-        String notRepeatedSince = calculateNotRepeatedSinceDays(repeatDate);
-        addOverviewCell(row, notRepeatedSince);
-    }
-
-    private void addOverviewCell(TableRow row, String content) {
-        TextView textView = new TextView(this);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextAppearance(this, R.style.AppTheme_VocabularyBoxTableCell);
-        textView.setText(content);
-
-        row.addView(textView);
-    }
-
-    private void updateBoxTable() {
-        BoxOverview boxOverview = compartmentService.getBoxOverview(selectedBox.id);
-        for (int compartment = 1; compartment <= 5; compartment++) {
-            boxOverview.getWordCount(compartment);
-            boxOverview.getEarliestLastRepeatDate(compartment);
-        }
-    }
-
-    String calculateNotRepeatedSinceDays(long repeatDate) {
+    private String calculateNotRepeatedSinceDays(BoxOverview boxOverview, int compartment) {
+        long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
         if (repeatDate == 0) {
             return "-";
         }
@@ -284,8 +271,8 @@ public class MainActivity extends DrawerActivity {
     }
 
     void updateBoxSpinner() {
-        boxNames = boxService.getBoxNames();
-        selectedBox = boxService.getSelectedBox();
+        boxNames = boxRepository.getBoxNames();
+        selectedBox = boxRepository.getSelectedBox();
 
         logInfo("updating spinner, boxNames: " + Arrays.asList(boxNames));
 
@@ -320,7 +307,7 @@ public class MainActivity extends DrawerActivity {
         if (boxName.equals(selectedBox.name)) {
             return;
         }
-        selectedBox = boxService.selectBoxByName(boxName);
+        selectedBox = boxRepository.selectBoxByName(boxName);
 
         int foreignLanguagePos = languagePosition(selectedBox.foreignLanguage);
         foreignLanguageSpinner.setSelection(foreignLanguagePos);
@@ -377,7 +364,7 @@ public class MainActivity extends DrawerActivity {
         InputProcessor inputProcessor = new InputProcessor() {
             @Override
             public void process(String newBoxName) {
-                boxService.updateBoxName(selectedBox.id, newBoxName);
+                boxRepository.updateBoxName(selectedBox.id, newBoxName);
                 logInfo("updated box name: " + newBoxName);
                 updateBoxSpinner();
             }
@@ -392,7 +379,7 @@ public class MainActivity extends DrawerActivity {
         InputProcessor inputProcessor = new InputProcessor() {
             @Override
             public void process(String newBoxName) {
-                boxService.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
+                boxRepository.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
                 logInfo("created new box: " + newBoxName);
                 updateBoxSpinner();
                 logInfo("closing dialog and drawer");
@@ -405,10 +392,10 @@ public class MainActivity extends DrawerActivity {
     }
 
     private InputValidator createNewBoxNameInputValidator() {
-        return new NotEmptyInputValidator() {
+        return new InputValidator() {
             @Override
             public boolean isValid(String input) {
-                return super.isValid(input) && !boxService.isBoxSaved(input);
+                return StringUtils.isNotBlank(input) && !boxRepository.isBoxSaved(input);
             }
         };
     }
@@ -421,18 +408,18 @@ public class MainActivity extends DrawerActivity {
     void createTestData() {
         int boxId = selectedBox.id;
 
-        if (wordService.countWords(boxId, 1) > 0) {
+        if (wordRepository.countWords(boxId, 1) > 0) {
             return;
         }
 
-        wordService.createWord(boxId, "porcupine", "Stachelschwein");
+        wordRepository.createWord(boxId, "porcupine", "Stachelschwein");
 
-        int ointmentId = wordService.createWord(boxId, "ointment", "Salbe");
-        wordService.updateRepeatDate(ointmentId);
+        int ointmentId = wordRepository.createWord(boxId, "ointment", "Salbe");
+        wordRepository.updateRepeatDate(ointmentId);
 
-        int biasId = wordService.createWord(boxId, "bias", "Tendenz, Neigung");
-        wordService.updateRepeatDate(biasId);
+        int biasId = wordRepository.createWord(boxId, "bias", "Tendenz, Neigung");
+        wordRepository.updateRepeatDate(biasId);
 
-        wordService.createWord(boxId, 2, "emissary", "Abgesandter");
+        wordRepository.createWord(boxId, 2, "emissary", "Abgesandter");
     }
 }

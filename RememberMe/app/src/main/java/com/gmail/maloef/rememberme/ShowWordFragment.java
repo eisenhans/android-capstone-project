@@ -83,19 +83,17 @@ public class ShowWordFragment extends AbstractWordFragment {
         answerTextView.setText(correctAnswer);
 
         if (correctAnswer.equals(givenAnswer)) {
-            resultIconView.setImageResource(R.drawable.ic_check_48dp);
-            resultIconView.setColorFilter(R.color.greenA400);
+            resultIconView.setImageResource(R.drawable.ic_check_36dp);
         } else {
-            resultIconView.setImageResource(R.drawable.ic_close_48dp);
-            resultIconView.setColorFilter(R.color.colorAccent);
+            resultIconView.setImageResource(R.drawable.ic_close_36dp);
         }
-        if (wordsLeft == 1) {
+        if (wordsLeft == 0) {
+            wordsLeftTextView.setText("");
+            nextWordButton.setRotation(270);
+        } else if (wordsLeft == 1) {
             wordsLeftTextView.setText(getString(R.string.one_word_left));
         } else {
             wordsLeftTextView.setText(getString(R.string.i_words_left, wordsLeft));
-        }
-        if (wordsLeft == 0) {
-            nextWordButton.setRotation(270);
         }
         nextWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
