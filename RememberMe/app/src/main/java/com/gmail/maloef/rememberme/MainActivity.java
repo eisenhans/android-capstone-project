@@ -170,7 +170,7 @@ public class MainActivity extends DrawerActivity {
             }
         });
 
-        createTestData();
+//        createTestData();
 
         addRowListeners();
 
@@ -253,21 +253,27 @@ public class MainActivity extends DrawerActivity {
         overviewWords4TextView.setText(String.valueOf(boxOverview.getWordCount(4)));
         overviewWords5TextView.setText(String.valueOf(boxOverview.getWordCount(5)));
 
-        overviewNotRepeated1TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 1));
-        overviewNotRepeated2TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 2));
-        overviewNotRepeated3TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 3));
-        overviewNotRepeated4TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 4));
-        overviewNotRepeated5TextView.setText(calculateNotRepeatedSinceDays(boxOverview, 5));
+        overviewNotRepeated1TextView.setText(calculateDaysSinceRepeat(boxOverview, 1));
+        overviewNotRepeated2TextView.setText(calculateDaysSinceRepeat(boxOverview, 2));
+        overviewNotRepeated3TextView.setText(calculateDaysSinceRepeat(boxOverview, 3));
+        overviewNotRepeated4TextView.setText(calculateDaysSinceRepeat(boxOverview, 4));
+        overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
     }
 
-    private String calculateNotRepeatedSinceDays(BoxOverview boxOverview, int compartment) {
+    private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
         long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
         if (repeatDate == 0) {
             return "-";
         }
         Date now = new Date();
         long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
-        return String.valueOf(days);
+        if (days == 0) {
+            return getString(R.string.today);
+        }
+        if (days == 1) {
+            return getString(R.string.yesterday);
+        }
+        return getString(R.string.i_days_ago, days);
     }
 
     void updateBoxSpinner() {

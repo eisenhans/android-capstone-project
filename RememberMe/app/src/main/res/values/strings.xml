@@ -27,7 +27,10 @@
 
     <string name="compartment">Compartment</string>
     <string name="words">Words</string>
-    <string name="not_repeated_since">Not repeated\nsince (days)</string>
+    <string name="repeated">Repeated</string>
+    <string name="today">today</string>
+    <string name="yesterday">yesterday</string>
+    <string name="i_days_ago">%s days ago</string>
     <string name="memorize_compartment_1">Memorize words from compartment 1</string>
 
     <string name="add_word">Add word</string>

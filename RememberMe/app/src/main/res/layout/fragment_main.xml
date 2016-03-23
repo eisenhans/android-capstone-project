@@ -121,7 +121,7 @@
             <TableRow android:background="@color/colorTableHeader" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/compartment" />
                 <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/words" />
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/not_repeated_since" />
+                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/repeated" />
             </TableRow>
 
             <TableRow android:id="@+id/overviewTableRow1" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
