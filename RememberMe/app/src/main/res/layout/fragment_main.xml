@@ -114,40 +114,40 @@
             android:id="@+id/vocabularyBoxOverviewTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            >
+            android:layout_gravity=""
+            android:stretchColumns="*">
 
             <!-- header row -->
             <TableRow android:background="@color/colorTableHeader" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/compartment" />
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/words" />
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="@string/repeated" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="@string/compartment" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="@string/words" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="@string/repeated" />
             </TableRow>
 
             <TableRow android:id="@+id/overviewTableRow1" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="1" />
-                <TextView android:id="@+id/overviewWords1" style="@style/AppTheme.VocabularyBoxTableCell" />
-                <TextView android:id="@+id/overviewNotRepeated1" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="1" />
+                <TextView android:id="@+id/overviewWords1" style="@style/AppTheme.WordTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated1" style="@style/AppTheme.WordTableCell" />
             </TableRow>
             <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="2" />
-                <TextView android:id="@+id/overviewWords2" style="@style/AppTheme.VocabularyBoxTableCell" />
-                <TextView android:id="@+id/overviewNotRepeated2" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="2" />
+                <TextView android:id="@+id/overviewWords2" style="@style/AppTheme.WordTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated2" style="@style/AppTheme.WordTableCell" />
             </TableRow>
             <TableRow android:id="@+id/overviewTableRow3" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="3" />
-                <TextView android:id="@+id/overviewWords3" style="@style/AppTheme.VocabularyBoxTableCell" />
-                <TextView android:id="@+id/overviewNotRepeated3" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="3" />
+                <TextView android:id="@+id/overviewWords3" style="@style/AppTheme.WordTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated3" style="@style/AppTheme.WordTableCell" />
             </TableRow>
             <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="4" />
-                <TextView android:id="@+id/overviewWords4" style="@style/AppTheme.VocabularyBoxTableCell" />
-                <TextView android:id="@+id/overviewNotRepeated4" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="4" />
+                <TextView android:id="@+id/overviewWords4" style="@style/AppTheme.WordTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated4" style="@style/AppTheme.WordTableCell" />
             </TableRow>
             <TableRow android:id="@+id/overviewTableRow5" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/AppTheme.VocabularyBoxTableCell" android:text="5" />
-                <TextView android:id="@+id/overviewWords5" style="@style/AppTheme.VocabularyBoxTableCell" />
-                <TextView android:id="@+id/overviewNotRepeated5" style="@style/AppTheme.VocabularyBoxTableCell" />
+                <TextView style="@style/AppTheme.WordTableCell" android:text="5" />
+                <TextView android:id="@+id/overviewWords5" style="@style/AppTheme.WordTableCell" />
+                <TextView android:id="@+id/overviewNotRepeated5" style="@style/AppTheme.WordTableCell" />
             </TableRow>
 
 

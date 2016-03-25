@@ -26,7 +26,6 @@ public class LanguageUpdateService extends IntentService {
      */
     public LanguageUpdateService() {
         super(LanguageUpdateService.class.getSimpleName());
-        logInfo("created service " + this);
     }
 
     /**
@@ -35,7 +34,6 @@ public class LanguageUpdateService extends IntentService {
     public LanguageUpdateService(LanguageProvider languageProvider) {
         super(LanguageUpdateService.class.getSimpleName());
         this.languageProvider = languageProvider;
-        logInfo("created service " + this);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class LanguageUpdateService extends IntentService {
     public boolean isTimeForUpdate(String nameCode) {
         // ToDo 09.03.16: read last update date from preferences, do update every week/month
         int languages = countLanguages(nameCode);
-        logInfo("found " + languages + " for nameCode " + nameCode + " in db");
+        logInfo("found " + languages + " languages for nameCode " + nameCode + " in database");
 
         return languages < 10;
     }

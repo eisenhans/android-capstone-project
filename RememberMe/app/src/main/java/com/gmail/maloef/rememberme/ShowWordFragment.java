@@ -2,7 +2,6 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,9 +101,5 @@ public class ShowWordFragment extends AbstractWordFragment {
             }
         });
         return rootView;
-    }
-
-    void logInfo(String message) {
-        Log.i(getClass().getSimpleName(), message);
     }
 }

@@ -6,10 +6,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Pair;
 
 import com.gmail.maloef.rememberme.domain.Word;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -130,6 +133,36 @@ public class WordRepository {
         values.put(WordColumns.LAST_REPEAT_DATE, now);
 
         contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(wordId)});
+    }
+
+    /**
+     *
+     * @param boxId
+     * @param compartment
+     * @param offset starts at 1, not at 0
+     * @param howMany
+     * @return
+     */
+    public List<Pair<String, String>> getWords(int boxId, int compartment, int offset, int howMany) {
+        List<Pair<String, String>> words = new ArrayList<>(howMany);
+
+        WordCursor wordCursor = new WordCursor(contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                new String[]{WordColumns.FOREIGN_WORD, WordColumns.NATIVE_WORD},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
+                WordColumns.CREATION_DATE));
+
+        if (wordCursor.move(offset - 1)) {
+            for (int i = 0; i < howMany; i++) {
+                Word word = wordCursor.peek();
+                words.add(Pair.create(word.foreignWord, word.nativeWord));
+                if (!wordCursor.moveToNext()) {
+                    break;
+                };
+            }
+        }
+        return words;
     }
 
     void logInfo(String message) {

@@ -22,7 +22,7 @@
     <!-- used in activity_main.xml to set up Toolbar -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.VocabularyBoxTableCell" parent="TextAppearance.AppCompat.Medium">
+    <style name="AppTheme.WordTableCell" parent="TextAppearance.AppCompat.Medium">
         <item name="android:layout_gravity">center</item>
         <!-- does not work from xml, does work from code -->
         <!--<item name="android:gravity">center</item>-->

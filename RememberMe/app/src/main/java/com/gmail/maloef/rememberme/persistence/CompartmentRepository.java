@@ -8,6 +8,8 @@ import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
 import com.gmail.maloef.rememberme.domain.Word;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 public class CompartmentRepository {
@@ -46,6 +48,7 @@ public class CompartmentRepository {
         }
         wordCursor.close();
 
+        logInfo("compartment " + compartment + " contains " + wordCount + " words, repeated on " + new Date(earliestLastRepeatDate));
         return new CompartmentOverview(wordCount, earliestLastRepeatDate);
     }
 

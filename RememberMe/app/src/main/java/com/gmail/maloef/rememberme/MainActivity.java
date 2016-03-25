@@ -125,8 +125,7 @@ public class MainActivity extends DrawerActivity {
                 if (item.getItemId() == R.id.create_new_box_item) {
                     showNewBoxNameDialog(mainFragmentLayout);
                 } else if (item.getItemId() == R.id.add_word_to_current_box_item) {
-                    Intent intent = new Intent(MainActivity.this, WordActivity.class)
-                            .setAction(RememberMeIntent.ACTION_ADD);
+                    Intent intent = new Intent(MainActivity.this, WordActivity.class).setAction(RememberMeIntent.ACTION_ADD);
                     startActivity(intent);
                 }
                 return true;
@@ -267,6 +266,8 @@ public class MainActivity extends DrawerActivity {
         }
         Date now = new Date();
         long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
+        logInfo("days since repeat for compartment " + compartment + ": repeat date was " + new Date(repeatDate) + ", now is " + now +
+                " days between these two dates = " + days);
         if (days == 0) {
             return getString(R.string.today);
         }
@@ -408,7 +409,10 @@ public class MainActivity extends DrawerActivity {
 
     @OnClick(R.id.memorizeButton)
     public void memorizeWordsFromCompartment1(View parentView) {
-        logInfo("showing memorize activity");
+        Intent intent = new Intent(MainActivity.this, MemorizeActivity.class)
+                .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
+                //.putExtra(RememberMeIntent.EXTRA_MEMORIZE_OFFSET, 1);
+        startActivity(intent);
     }
 
     void createTestData() {

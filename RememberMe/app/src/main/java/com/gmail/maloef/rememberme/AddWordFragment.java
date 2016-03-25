@@ -12,7 +12,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -313,13 +312,5 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         if (finish) {
             getActivity().finish();
         }
-    }
-
-    void logInfo(String message) {
-        Log.i(getClass().getSimpleName(), message);
-    }
-
-    void logWarn(String message) {
-        Log.w(getClass().getSimpleName(), message);
     }
 }

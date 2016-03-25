@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme.persistence;
 
 import android.app.Application;
+import android.util.Pair;
 
 import com.gmail.maloef.rememberme.domain.Word;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -90,5 +92,28 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         assertEquals(0, wordRepository.countWords(boxId, 1, before - 1));
         assertEquals(1, wordRepository.countWords(boxId, 1, after));
         assertEquals(1, wordRepository.countWords(boxId, 1, Long.MAX_VALUE));
+    }
+
+    @Test
+    public void getWords() {
+        for (int i = 1; i <= 8; i++) {
+            wordRepository.createWord(boxId, "foreign" + i, "native" + i);
+        }
+        List<Pair<String, String>> firstFive = wordRepository.getWords(boxId, 1, 0, 5);
+        assertEquals(5, firstFive.size());
+        assertEquals("foreign1", firstFive.get(0).first);
+        assertEquals("native1", firstFive.get(0).second);
+        assertEquals("foreign5", firstFive.get(4).first);
+        assertEquals("native5", firstFive.get(4).second);
+
+        List<Pair<String, String>> fifthToEighth = wordRepository.getWords(boxId, 1, 5, 5);
+        assertEquals(3, fifthToEighth.size());
+        assertEquals("foreign6", fifthToEighth.get(0).first);
+        assertEquals("native6", fifthToEighth.get(0).second);
+        assertEquals("foreign8", fifthToEighth.get(2).first);
+        assertEquals("native8", fifthToEighth.get(2).second);
+
+        assertTrue(wordRepository.getWords(boxId, 1, 8, 5).isEmpty());
+        assertTrue(wordRepository.getWords(boxId, 1, 10, 5).isEmpty());
     }
 }
