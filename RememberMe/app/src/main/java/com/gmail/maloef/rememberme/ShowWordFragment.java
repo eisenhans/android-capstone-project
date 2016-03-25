@@ -34,16 +34,17 @@ public class ShowWordFragment extends AbstractWordFragment {
     @Bind(R.id.query_textview) TextView queryTextView;
     @Bind(R.id.answer_textview) TextView answerTextView;
     @Bind(R.id.result_icon) ImageView resultIconView;
-    @Bind(R.id.words_left_textview) TextView wordsLeftTextView;
+    @Bind(R.id.repeat_status_textview) TextView repeatStatusTextView;
     @Bind(R.id.nextWordButton) ImageButton nextWordButton;
 
     @Arg Word word;
+    @Arg int wordsInCompartment;
     @Arg int translationDirection;
     @Arg String givenAnswer;
-    @Arg int wordsLeft;
 
     String queryWord;
     String correctAnswer;
+    int compartment;
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,9 +65,12 @@ public class ShowWordFragment extends AbstractWordFragment {
             correctAnswer = word.foreignWord;
         }
 
-        int compartment = word.compartment;
+        compartment = word.compartment;
         if (correctAnswer.equals(givenAnswer)) {
             wordRepository.moveToCompartment(word.id, compartment + 1);
+        } else if (compartment == 1){
+            // virtual compartment
+            wordRepository.moveToCompartment(word.id, 0);
         } else {
             wordRepository.moveToCompartment(word.id, 1);
         }
@@ -86,18 +90,18 @@ public class ShowWordFragment extends AbstractWordFragment {
         } else {
             resultIconView.setImageResource(R.drawable.ic_close_36dp);
         }
-        if (wordsLeft == 0) {
-            wordsLeftTextView.setText("");
-            nextWordButton.setRotation(270);
-        } else if (wordsLeft == 1) {
-            wordsLeftTextView.setText(getString(R.string.one_word_left));
-        } else {
-            wordsLeftTextView.setText(getString(R.string.i_words_left, wordsLeft));
-        }
+
+        final int wordsInCompartmentNow = wordRepository.countWords(word.boxId, compartment);
+        final int wordCount = wordsInCompartment - wordsInCompartmentNow;
+        repeatStatusTextView.setText(wordCount + "/" + wordsInCompartment);
+
+        final boolean moreWordsAvailable = wordsInCompartmentNow > 0;
+        nextWordButton.setRotation(moreWordsAvailable ? 0 : 270);
+
         nextWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    nextWordListener.onNextWordButtonClicked(wordsLeft > 0);
+                nextWordListener.onNextWordButtonClicked(moreWordsAvailable);
             }
         });
         return rootView;

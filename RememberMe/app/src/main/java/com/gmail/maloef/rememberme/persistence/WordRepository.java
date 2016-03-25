@@ -126,15 +126,6 @@ public class WordRepository {
         return result;
     }
 
-    public void moveToCompartment(int wordId, int compartment) {
-        ContentValues values = new ContentValues();
-        values.put(WordColumns.COMPARTMENT, compartment);
-        long now = new Date().getTime();
-        values.put(WordColumns.LAST_REPEAT_DATE, now);
-
-        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(wordId)});
-    }
-
     /**
      *
      * @param boxId
@@ -163,6 +154,25 @@ public class WordRepository {
             }
         }
         return words;
+    }
+
+    public void moveToCompartment(int wordId, int compartment) {
+        ContentValues values = new ContentValues();
+        values.put(WordColumns.COMPARTMENT, compartment);
+        long now = new Date().getTime();
+        values.put(WordColumns.LAST_REPEAT_DATE, now);
+
+        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(wordId)});
+    }
+
+    public void moveAll(int boxId, int fromCompartment, int toCompartment) {
+        ContentValues values = new ContentValues();
+        values.put(WordColumns.COMPARTMENT, toCompartment);
+        contentResolver.update(
+                RememberMeProvider.Word.WORDS,
+                values,
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(fromCompartment)});
     }
 
     void logInfo(String message) {

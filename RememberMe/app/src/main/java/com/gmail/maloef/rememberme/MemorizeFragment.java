@@ -70,9 +70,8 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
         int wordsInCompartment1 = wordRepository.countWords(boxId, 1);
         List<Pair<String, String>> words = wordRepository.getWords(boxId, 1, offset, 5);
 
+        statusTextView.setText(createStatusString(wordsInCompartment1));
         updateButtons(wordsInCompartment1);
-
-        statusTextView.setText(createStatusString(wordsInCompartment1, words.size()));
 
         TableLayout table = createTable(words);
         memorizeTableContainer.removeAllViews();
@@ -95,15 +94,15 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
         }
     }
 
-    private String createStatusString(int wordsInCompartment1, int wordsFound) {
-        String status = "";
-        if (wordsFound == 1) {
-            status = wordsInCompartment1 + "/" + wordsInCompartment1;
-        } else if (wordsFound > 1) {
-            int start = offset;
-            int end = start - 1 + wordsFound;
-            status = start + "-" + end + "/" + wordsInCompartment1;
+    private String createStatusString(int wordsInCompartment1) {
+        int pages;
+        if (wordsInCompartment1 % 5 == 0) {
+            pages = wordsInCompartment1 / 5;
+        } else {
+            pages = wordsInCompartment1 / 5 + 1;
         }
+        int currentPage = offset / 5 + 1;
+        String status = currentPage + "/" + pages;
         logInfo("status of memorize fragment: " + status);
         return status;
     }
@@ -112,7 +111,7 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
         TableLayout table = new TableLayout(getActivity());
         table.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
 //        table.setStretchAllColumns(true);
-        table.setShrinkAllColumns(true);
+//        table.setShrinkAllColumns(true);
 
         for (int i = 0; i < words.size(); i++) {
             TableRow row = new TableRow(getActivity());

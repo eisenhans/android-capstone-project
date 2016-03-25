@@ -190,6 +190,10 @@ public class MainActivity extends DrawerActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        // move all words from the 'virtual' compartment 0 to compartment 1
+        wordRepository.moveAll(selectedBox.id, 0, 1);
+
         updateOverviewTable();
     }
 
@@ -224,7 +228,8 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 logInfo("clicked: compartment " + compartment);
-                if (wordRepository.countWords(selectedBox.id, compartment) == 0) {
+                int wordsInCompartment = wordRepository.countWords(selectedBox.id, compartment);
+                if (wordsInCompartment == 0) {
                     return;
                 }
 
@@ -241,6 +246,7 @@ public class MainActivity extends DrawerActivity {
                         .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
                         .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirection)
                         .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment)
+                        .putExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, wordsInCompartment)
                         .putExtra(RememberMeIntent.EXTRA_START_TIME, startTime);
                 startActivity(intent);
             }

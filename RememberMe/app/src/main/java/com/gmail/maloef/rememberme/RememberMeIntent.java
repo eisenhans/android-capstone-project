@@ -16,4 +16,5 @@ public class RememberMeIntent {
     public static final String EXTRA_WORD = "com.gmail.maloef.rememberme.extra.word";
     public static final String EXTRA_START_TIME = "com.gmail.maloef.rememberme.extra.startTime";
     public static final String EXTRA_MEMORIZE_OFFSET = "com.gmail.maloef.rememberme.extra.memorize.offset";
+    public static final String EXTRA_WORDS_IN_COMPARTMENT = "com.gmail.maloef.rememberme.extra.memorize.wordsInCompartment";
 }

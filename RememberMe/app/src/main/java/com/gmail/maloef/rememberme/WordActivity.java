@@ -26,6 +26,7 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
     @Bind(R.id.navigationView) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
+    int wordsInCompartment;
     int translationDirection;
     long startTime;
 
@@ -60,6 +61,7 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
             logInfo("extra keys: " + getIntent().getExtras().keySet());
         }
 
+        wordsInCompartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, -1);
         translationDirection = getIntent().getIntExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, -1);
         startTime = getIntent().getLongExtra(RememberMeIntent.EXTRA_START_TIME, Long.MAX_VALUE);
 
@@ -99,8 +101,8 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
         replaceFragment(fragment);
     }
 
-    private void showWord(Word word, String givenAnswer, int wordsLeft) {
-        ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsLeft);
+    private void showWord(Word word, String givenAnswer) {
+        ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
         replaceFragment(fragment);
     }
 
@@ -114,9 +116,9 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
     }
 
     @Override
-    public void onWordEntered(Word word, String givenAnswer, int wordsLeft) {
-        logInfo("user entered answer " + givenAnswer + " for current word " + word + ", wordsLeft: " + wordsLeft);
-        showWord(word, givenAnswer, wordsLeft);
+    public void onWordEntered(Word word, String givenAnswer) {
+        logInfo("user entered answer " + givenAnswer + " for current word " + word);
+        showWord(word, givenAnswer);
     }
 
     @Override

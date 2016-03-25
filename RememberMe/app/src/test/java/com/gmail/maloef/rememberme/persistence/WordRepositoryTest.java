@@ -137,4 +137,19 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         assertTrue(wordRepository.getWords(boxId, 1, 8, 5).isEmpty());
         assertTrue(wordRepository.getWords(boxId, 1, 10, 5).isEmpty());
     }
+
+    @Test
+    public void moveAll() {
+        for (int i = 1; i <= 5; i++) {
+            wordRepository.createWord(boxId, "foreign" + i, "native" + i);
+        }
+        wordRepository.moveAll(boxId, 1, 0);
+        assertEquals(0, wordRepository.countWords(boxId, 1));
+        assertEquals(5, wordRepository.countWords(boxId, 0));
+
+        wordRepository.moveAll(boxId, 0, 1);
+        assertEquals(0, wordRepository.countWords(boxId, 0));
+        assertEquals(5, wordRepository.countWords(boxId, 1));
+
+    }
 }

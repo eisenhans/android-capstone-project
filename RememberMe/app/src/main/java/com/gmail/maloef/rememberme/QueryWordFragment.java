@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 public class QueryWordFragment extends AbstractWordFragment {
 
     public interface AnswerListener {
-        void onWordEntered(Word word, String givenAnswer, int wordsLeft);
+        void onWordEntered(Word word, String givenAnswer);
     }
 
     private AnswerListener answerListener;
@@ -84,9 +84,8 @@ public class QueryWordFragment extends AbstractWordFragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     hideKeyboard();
                     String givenAnswer = answerEditText.getText().toString().trim();
-                    int wordsLeft = wordRepository.countWords(boxId, compartment, startTime) - 1; // don't count the current word
-                    logInfo("user entered word " + givenAnswer + " for word " + word + ", words left: " + wordsLeft);
-                    answerListener.onWordEntered(word, givenAnswer, wordsLeft);
+                    logInfo("user entered word " + givenAnswer + " for word " + word);
+                    answerListener.onWordEntered(word, givenAnswer);
 
                     return true;
                 }
