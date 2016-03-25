@@ -28,10 +28,10 @@
     <string name="compartment">Compartment</string>
     <string name="words">Words</string>
     <string name="repeated">Repeated</string>
-    <string name="today">today</string>
-    <string name="yesterday">yesterday</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
     <string name="i_days_ago">%s days ago</string>
-    <string name="memorize_compartment_1">Memorize words from compartment 1</string>
+    <string name="memorize_new_words">Memorize new words</string>
 
     <string name="add_word">Add word</string>
 

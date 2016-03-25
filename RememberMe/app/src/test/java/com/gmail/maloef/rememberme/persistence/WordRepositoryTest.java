@@ -69,6 +69,27 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
     }
 
     @Test
+    public void getNextWordInCorrectOrder() {
+        int[] wordIds = new int[5];
+        for (int i = 0; i < 5; i++) {
+            wordIds[i] = wordRepository.createWord(boxId, "foreign" + i, "native" + i);
+        }
+        wordRepository.updateRepeatDate(wordIds[3]);
+        wordRepository.updateRepeatDate(wordIds[1]);
+
+        assertNextWord(wordIds[0]);
+        assertNextWord(wordIds[2]);
+        assertNextWord(wordIds[4]);
+        assertNextWord(wordIds[3]);
+        assertNextWord(wordIds[1]);
+    }
+
+    void assertNextWord(int expectedWordId) {
+        assertEquals(expectedWordId, wordRepository.getNextWord(boxId, 1).id);
+        wordRepository.moveToCompartment(expectedWordId, 2);
+    }
+
+    @Test
     public void countWords() {
         assertTrue(0 < Long.MAX_VALUE);
 

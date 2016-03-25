@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -77,6 +78,8 @@ public class MainActivity extends DrawerActivity {
     @Bind(R.id.overviewNotRepeated3) TextView overviewNotRepeated3TextView;
     @Bind(R.id.overviewNotRepeated4) TextView overviewNotRepeated4TextView;
     @Bind(R.id.overviewNotRepeated5) TextView overviewNotRepeated5TextView;
+
+    @Bind(R.id.memorizeButton) Button memorizeButton;
 
     @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
 
@@ -257,6 +260,8 @@ public class MainActivity extends DrawerActivity {
         overviewNotRepeated3TextView.setText(calculateDaysSinceRepeat(boxOverview, 3));
         overviewNotRepeated4TextView.setText(calculateDaysSinceRepeat(boxOverview, 4));
         overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
+
+        memorizeButton.setEnabled(boxOverview.getWordCount(1) > 0);
     }
 
     private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {

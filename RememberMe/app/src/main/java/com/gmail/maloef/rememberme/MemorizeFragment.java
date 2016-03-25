@@ -33,8 +33,8 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
     @Inject WordRepository wordRepository;
 
     @Bind(R.id.memorize_table_container) FrameLayout memorizeTableContainer;
-    @Bind(R.id.memorize_back_button) ImageButton backButton;
-    @Bind(R.id.memorize_forward_button) ImageButton forwardButton;
+    @Bind(R.id.memorize_left_button) ImageButton leftButton;
+    @Bind(R.id.memorize_right_button) ImageButton rightButton;
     @Bind(R.id.memorize_footer_textview) TextView statusTextView;
 
     @Arg int boxId;
@@ -70,11 +70,29 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
         int wordsInCompartment1 = wordRepository.countWords(boxId, 1);
         List<Pair<String, String>> words = wordRepository.getWords(boxId, 1, offset, 5);
 
+        updateButtons(wordsInCompartment1);
+
         statusTextView.setText(createStatusString(wordsInCompartment1, words.size()));
 
         TableLayout table = createTable(words);
         memorizeTableContainer.removeAllViews();
         memorizeTableContainer.addView(table);
+    }
+
+    private void updateButtons(int wordsInCompartment1) {
+        if (wordsInCompartment1 <= 5) {
+            leftButton.setVisibility(View.INVISIBLE);
+            rightButton.setRotation(270);
+        } else if (offset == 1) {
+            leftButton.setRotation(90);
+            rightButton.setRotation(0);
+        } else if (wordsInCompartment1 < offset + 5) {
+            leftButton.setRotation(0);
+            rightButton.setRotation(270);
+        } else {
+            leftButton.setRotation(0);
+            rightButton.setRotation(0);
+        }
     }
 
     private String createStatusString(int wordsInCompartment1, int wordsFound) {
@@ -92,18 +110,19 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
 
     private TableLayout createTable(List<Pair<String, String>> words) {
         TableLayout table = new TableLayout(getActivity());
-        table.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        table.setStretchAllColumns(true);
+        table.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+//        table.setStretchAllColumns(true);
+        table.setShrinkAllColumns(true);
 
         for (int i = 0; i < words.size(); i++) {
             TableRow row = new TableRow(getActivity());
-            row.setPadding(24, 24, 24, 24);
+            row.setGravity(Gravity.CENTER_VERTICAL);
 
             if (i % 2 == 0) {
                 row.setBackgroundColor(getResources().getColor(R.color.colorTableRowDark));
             }
-            row.addView(createTableCell(words.get(i).first));
             row.addView(createTableCell(words.get(i).second));
+            row.addView(createTableCell(words.get(i).first));
 
             table.addView(row);
         }
@@ -113,23 +132,37 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
 
     private TextView createTableCell(String text) {
         TextView textView = new TextView(getActivity());
-        textView.setTextAppearance(getActivity(), R.style.AppTheme_WordTableCell);
+        textView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
+        textView.setPadding(36, 36, 36, 36);
+        textView.setTextAppearance(getActivity(), R.style.DefaultText);
         textView.setText(text);
 
         return textView;
     }
 
-    @OnClick(R.id.memorize_back_button)
-    public void showPreviousWords(View view) {
-        logInfo("showing previous words");
-        offset -= 5;
-        update();
+    @OnClick(R.id.memorize_left_button)
+    public void onLeftButtonClick(View view) {
+        if (leftButton.getRotation() != 0) {
+            goUp();
+        } else {
+            logInfo("showing previous words");
+            offset -= 5;
+            update();
+        }
     }
 
-    @OnClick(R.id.memorize_forward_button)
-    public void showNextWords(View view) {
-        logInfo("showing next words");
-        offset += 5;
-        update();
+    @OnClick(R.id.memorize_right_button)
+    public void onRightButtonClick(View view) {
+        if (rightButton.getRotation() != 0) {
+            goUp();
+        } else {
+            logInfo("showing next words");
+            offset += 5;
+            update();
+        }
+    }
+
+    private void goUp() {
+        getActivity().finish();
     }
 }

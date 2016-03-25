@@ -96,7 +96,7 @@ public class WordRepository {
                 WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
                         WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
                 new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
-                WordColumns.CREATION_DATE));
+                WordColumns.LAST_REPEAT_DATE + ", " + WordColumns.CREATION_DATE));
 
         Word word = wordCursor.moveToFirst() ? wordCursor.peek() : null;
         wordCursor.close();

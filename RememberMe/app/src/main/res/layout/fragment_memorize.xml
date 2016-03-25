@@ -29,7 +29,7 @@
             android:gravity="center">
 
             <ImageButton
-                android:id="@+id/memorize_back_button"
+                android:id="@+id/memorize_left_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_chevron_left_36dp"
@@ -40,12 +40,13 @@
                 android:id="@+id/memorize_footer_textview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
                 android:gravity="center"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                style="@style/DefaultText"
+                />
 
             <ImageButton
-                android:id="@+id/memorize_forward_button"
+                android:id="@+id/memorize_right_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_chevron_right_36dp"
