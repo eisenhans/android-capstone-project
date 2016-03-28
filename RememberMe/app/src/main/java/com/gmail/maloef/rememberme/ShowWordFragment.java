@@ -2,16 +2,22 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
+import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
@@ -24,7 +30,7 @@ import butterknife.ButterKnife;
 public class ShowWordFragment extends AbstractWordFragment {
 
     public interface NextWordListener {
-        void onNextWordButtonClicked(boolean moreWordsAvailable);
+        void nextWordRequested(boolean moreWordsAvailable);
     }
 
     private NextWordListener nextWordListener;
@@ -55,6 +61,7 @@ public class ShowWordFragment extends AbstractWordFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         RememberMeApplication.injector().inject(this);
 
         if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
@@ -91,19 +98,57 @@ public class ShowWordFragment extends AbstractWordFragment {
             resultIconView.setImageResource(R.drawable.ic_close_36dp);
         }
 
-        final int wordsInCompartmentNow = wordRepository.countWords(word.boxId, compartment);
-        final int wordCount = wordsInCompartment - wordsInCompartmentNow;
+        int wordsInCompartmentNow = wordRepository.countWords(word.boxId, compartment);
+        int wordCount = wordsInCompartment - wordsInCompartmentNow;
         repeatStatusTextView.setText(wordCount + "/" + wordsInCompartment);
 
-        final boolean moreWordsAvailable = wordsInCompartmentNow > 0;
-        nextWordButton.setRotation(moreWordsAvailable ? 0 : 270);
+        nextWordButton.setRotation(wordsInCompartmentNow > 0 ? 0 : 270);
 
         nextWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nextWordListener.onNextWordButtonClicked(moreWordsAvailable);
+               requestNextWord();
             }
         });
         return rootView;
     }
+
+    private void requestNextWord() {
+        int words = wordRepository.countWords(word.boxId, compartment);
+        nextWordListener.nextWordRequested(words > 0);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_show_word, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit_word) {
+            logInfo("editing word");
+            return true;
+        }
+        if (item.getItemId() == R.id.action_delete_word) {
+            CharSequence title = Html.fromHtml(getString(R.string.delete_word_s, word.foreignWord));
+            ConfirmDialog confirmDialog = new ConfirmDialog(getActivity(), title, null, new ConfirmDialog.OkCallback() {
+                @Override
+                public void onOk() {
+                    deleteCurrentWord();
+                }
+            });
+            confirmDialog.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteCurrentWord() {
+        logInfo("deleting word " + word.foreignWord);
+        wordRepository.deleteWord(word.id);
+        requestNextWord();
+        Toast.makeText(getActivity(), getString(R.string.word_deleted), Toast.LENGTH_SHORT).show();
+    }
+
 }

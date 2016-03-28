@@ -191,6 +191,11 @@ public class WordRepository {
                 new String[]{String.valueOf(boxId), String.valueOf(fromCompartment)});
     }
 
+    public boolean deleteWord(int wordId) {
+        int deleted = contentResolver.delete(RememberMeProvider.Word.WORDS, WordColumns.ID + " = ?", new String[] {String.valueOf(wordId)});
+        return deleted > 0;
+    }
+
     void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);
     }

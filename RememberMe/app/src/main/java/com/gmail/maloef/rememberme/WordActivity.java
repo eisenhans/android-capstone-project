@@ -95,7 +95,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     @Override
-    public void onNextWordButtonClicked(boolean moreWordsAvailable) {
+    public void nextWordRequested(boolean moreWordsAvailable) {
         if (moreWordsAvailable) {
             logInfo("showing next word, extras: " + getIntent().getExtras());
             queryWord();

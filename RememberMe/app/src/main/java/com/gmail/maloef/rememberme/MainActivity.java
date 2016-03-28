@@ -2,12 +2,10 @@ package com.gmail.maloef.rememberme;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Pair;
 import android.view.Menu;
@@ -32,6 +30,7 @@ import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.util.DateUtils;
 import com.gmail.maloef.rememberme.util.StringUtils;
+import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
@@ -330,13 +329,6 @@ public class MainActivity extends AbstractRememberMeActivity {
         throw new IllegalArgumentException("unknown iso code: " + isoCode);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
     private InputValidator createNewBoxNameInputValidator() {
         return new InputValidator() {
             @Override
@@ -370,6 +362,13 @@ public class MainActivity extends AbstractRememberMeActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
         MenuItem deleteBoxItem = menu.getItem(1);
         int boxes = boxRepository.countBoxes();
@@ -387,7 +386,14 @@ public class MainActivity extends AbstractRememberMeActivity {
         if (item.getItemId() == R.id.action_delete_current_box) {
             int wordsInSelectedBox = wordRepository.countWords(selectedBox.id);
             if (wordsInSelectedBox > 0) {
-                showDeleteSelectedBoxDialog();
+                CharSequence title = Html.fromHtml(getString(R.string.delete_box_s_and_all_its_words, selectedBox.name));
+                ConfirmDialog confirmDialog = new ConfirmDialog(this, title, null, new ConfirmDialog.OkCallback() {
+                    @Override
+                    public void onOk() {
+                        deleteSelectedBox();
+                    }
+                });
+                confirmDialog.show();
             } else {
                 deleteSelectedBox();
             }
@@ -413,26 +419,6 @@ public class MainActivity extends AbstractRememberMeActivity {
         logInfo("created new box: " + boxName);
         updateBoxSpinner();
         updateOverviewTable();
-    }
-
-    public void showDeleteSelectedBoxDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String rawTitle = getString(R.string.delete_box_s_and_all_its_words, selectedBox.name);
-        CharSequence title = Html.fromHtml(rawTitle);
-        logInfo("raw title for dialog: " + rawTitle + ", real title: " + title);
-        builder.setTitle(title);
-
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedBox();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {}
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     public void deleteSelectedBox() {
