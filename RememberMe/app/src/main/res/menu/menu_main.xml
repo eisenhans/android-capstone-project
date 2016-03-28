@@ -2,6 +2,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.gmail.maloef.rememberme.MainActivity">
+
+    <item
+        android:id="@+id/action_create_new_box"
+        android:orderInCategory="100"
+        android:title="@string/create_new_box"
+        />
+
+    <item
+        android:id="@+id/action_delete_current_box"
+        android:orderInCategory="100"
+        android:title="@string/delete_current_box"
+        />
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

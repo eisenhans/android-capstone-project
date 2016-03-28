@@ -55,7 +55,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     @BindString(R.string.select_language_settings_title) String selectLanguageSettingsTitleString;
     @BindString(R.string.select_language_settings_message) String selectLanguageSettingsMessageString;
     @BindString(R.string.no_translation_found) String noTranslationFoundString;
-    @BindString(android.R.string.ok) String okString;
     @BindString(R.string.word_translated) String wordTranslatedString;
     @BindString(R.string.no_foreign_word) String noForeignWordString;
     @BindString(R.string.no_native_word) String noNativeWordString;
@@ -226,7 +225,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, languagesUpdatedFilter);
 
         alertDialogBuilder.setView(dialogView);
-        alertDialogBuilder.setPositiveButton(okString, new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 selectedBox = boxRepository.getSelectedBox();

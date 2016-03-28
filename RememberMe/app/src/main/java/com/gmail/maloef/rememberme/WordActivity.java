@@ -19,7 +19,6 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
 
     int wordsInCompartment;
     int translationDirection;
-    long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
 
         wordsInCompartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, -1);
         translationDirection = getIntent().getIntExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, -1);
-        startTime = getIntent().getLongExtra(RememberMeIntent.EXTRA_START_TIME, Long.MAX_VALUE);
 
         if (isAddAction()) {
             initToolbar(false, R.string.add_word);
@@ -77,7 +75,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
 
-        QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, startTime, translationDirection);
+        QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
         replaceFragment(fragment);
     }
 

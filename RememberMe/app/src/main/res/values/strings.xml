@@ -41,9 +41,6 @@
     <string name="select_language_settings_message">Select the languages for the current vocabulary box.</string>
 
     <string name="no_translation_found">No translation found.</string>
-    <string name="create_new_box">Create new vocabulary box</string>
-    <string name="enter_name_for_new_box">Enter a name for the new vocabulary box:</string>
-    <string name="create_box">Create box</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -58,5 +55,11 @@
     <string name="i_words_left">%s words left</string>
     <string name="one_word_left">1 word left</string>
     <string name="memorize">Memorize</string>
+
+    <string name="create_new_box">Create new box</string>
+    <string name="enter_name_for_new_box">Enter a name for the new vocabulary box:</string>
+    <string name="delete_current_box">Delete current box</string>
+    <string name="delete_box_s_and_all_its_words">Delete box &lt;i&gt;%s&lt;/i&gt; and all its words?</string>
+    <string name="deleted_box_s">Deleted box &lt;i&gt;%s&lt;/i&gt;</string>
 
 </resources>

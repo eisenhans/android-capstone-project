@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class ValidatingInputDialog {
         alertDialogBuilder.setNegativeButton(R.string.cancel, null);
 
         alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         editText.setOnEditorActionListener(createDoneListener());
         editText.addTextChangedListener(createTextWatcher());
     }

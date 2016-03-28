@@ -89,6 +89,7 @@ public class WordRepository {
         return getNextWord(boxId, compartment, Long.MAX_VALUE);
     }
 
+    // ToDo 28.03.16: remove this method if not needed
     public Word getNextWord(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
         WordCursor wordCursor = new WordCursor(contentResolver.query(
                 RememberMeProvider.Word.WORDS,
@@ -107,10 +108,25 @@ public class WordRepository {
         return word;
     }
 
+    public int countWords(int boxId) {
+        Cursor cursor = contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                new String[]{WordColumns.ID},
+                WordColumns.BOX_ID + " = ? ",
+                new String[]{String.valueOf(boxId)},
+                null);
+
+        int result = cursor.getCount();
+        cursor.close();
+
+        return result;
+    }
+
     public int countWords(int boxId, int compartment) {
         return countWords(boxId, compartment, Long.MAX_VALUE);
     }
 
+    // ToDo 28.03.16: remove this method if not needed
     public int countWords(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
         Cursor cursor = contentResolver.query(
                 RememberMeProvider.Word.WORDS,

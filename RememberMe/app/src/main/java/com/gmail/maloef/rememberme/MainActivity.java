@@ -2,10 +2,12 @@ package com.gmail.maloef.rememberme;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Pair;
 import android.view.Menu;
@@ -19,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
@@ -81,7 +84,7 @@ public class MainActivity extends AbstractRememberMeActivity {
     @BindString(android.R.string.ok) String okString;
     @BindString(R.string.box_exists) String boxExistsString;
 
-    @BindString(R.string.create_box) String createBoxString;
+    @BindString(R.string.create_new_box) String createNewBoxString;
     @BindString(R.string.enter_name_for_new_box) String enterNameForNewBoxString;
 
     @BindString(R.string.foreign_to_native) String foreignToNativeString;
@@ -217,14 +220,12 @@ public class MainActivity extends AbstractRememberMeActivity {
                             VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
                 }
 
-                long startTime = new Date().getTime();
                 Intent intent = new Intent(MainActivity.this, WordActivity.class)
                         .setAction(RememberMeIntent.ACTION_QUERY)
                         .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
                         .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirection)
                         .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment)
-                        .putExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, wordsInCompartment)
-                        .putExtra(RememberMeIntent.EXTRA_START_TIME, startTime);
+                        .putExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, wordsInCompartment);
                 startActivity(intent);
             }
         });
@@ -312,6 +313,8 @@ public class MainActivity extends AbstractRememberMeActivity {
 
         translationDirectionSpinner.setSelection(selectedBox.translationDirection);
 
+        updateOverviewTable();
+
         logInfo("updated selected box: " + boxName);
     }
 
@@ -334,24 +337,20 @@ public class MainActivity extends AbstractRememberMeActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    private InputValidator createNewBoxNameInputValidator() {
+        return new InputValidator() {
+            @Override
+            public boolean isValid(String input) {
+                return StringUtils.isNotBlank(input) && !boxRepository.isBoxSaved(input);
+            }
+        };
+    }
 
-        // The action bar home/up action should open or close the drawer.
-        // ToDo: is one of following two is necessary?
-//        if (id == android.R.id.home) {
-//            drawer.openDrawer(GravityCompat.START);
-//            return true;
-//        }
-//        if (drawerToggle.onOptionsItemSelected(item)) {
-//            return true;
-//        }
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    @OnClick(R.id.memorizeButton)
+    public void memorizeWordsFromCompartment1(View parentView) {
+        Intent intent = new Intent(MainActivity.this, MemorizeActivity.class)
+                .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
+        startActivity(intent);
     }
 
     @OnClick(R.id.renameBoxButton)
@@ -370,36 +369,79 @@ public class MainActivity extends AbstractRememberMeActivity {
         dialog.show();
     }
 
-    public void showNewBoxNameDialog(final View parentView) {
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        MenuItem deleteBoxItem = menu.getItem(1);
+        int boxes = boxRepository.countBoxes();
+        deleteBoxItem.setEnabled(boxes >= 2);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_create_new_box) {
+            showCreateNewBoxDialog();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_delete_current_box) {
+            int wordsInSelectedBox = wordRepository.countWords(selectedBox.id);
+            if (wordsInSelectedBox > 0) {
+                showDeleteSelectedBoxDialog();
+            } else {
+                deleteSelectedBox();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void showCreateNewBoxDialog() {
         InputProcessor inputProcessor = new InputProcessor() {
             @Override
             public void process(String newBoxName) {
-                boxRepository.createBox(newBoxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
-                logInfo("created new box: " + newBoxName);
-                updateBoxSpinner();
-                logInfo("closing dialog and drawer");
+                createNewBox(newBoxName);
             }
         };
         InputValidator inputValidator = createNewBoxNameInputValidator();
-        ValidatingInputDialog dialog = new ValidatingInputDialog(this, createBoxString, enterNameForNewBoxString, inputValidator, inputProcessor);
+        ValidatingInputDialog dialog = new ValidatingInputDialog(this, createNewBoxString, enterNameForNewBoxString, inputValidator, inputProcessor);
         dialog.show();
     }
 
-    private InputValidator createNewBoxNameInputValidator() {
-        return new InputValidator() {
-            @Override
-            public boolean isValid(String input) {
-                return StringUtils.isNotBlank(input) && !boxRepository.isBoxSaved(input);
-            }
-        };
+    public void createNewBox(String boxName) {
+        boxRepository.createBox(boxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
+        logInfo("created new box: " + boxName);
+        updateBoxSpinner();
+        updateOverviewTable();
     }
 
-    @OnClick(R.id.memorizeButton)
-    public void memorizeWordsFromCompartment1(View parentView) {
-        Intent intent = new Intent(MainActivity.this, MemorizeActivity.class)
-                .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
-                //.putExtra(RememberMeIntent.EXTRA_MEMORIZE_OFFSET, 1);
-        startActivity(intent);
+    public void showDeleteSelectedBoxDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String rawTitle = getString(R.string.delete_box_s_and_all_its_words, selectedBox.name);
+        CharSequence title = Html.fromHtml(rawTitle);
+        logInfo("raw title for dialog: " + rawTitle + ", real title: " + title);
+        builder.setTitle(title);
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteSelectedBox();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {}
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void deleteSelectedBox() {
+        String boxName = selectedBox.name;
+        boxRepository.deleteSelectedBox();
+        updateBoxSpinner();
+        updateOverviewTable();
+        CharSequence message = Html.fromHtml(getString(R.string.deleted_box_s, boxName));
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     void createTestData() {

@@ -16,8 +16,6 @@ import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -40,7 +38,6 @@ public class QueryWordFragment extends AbstractWordFragment {
     @Arg int compartment;
     @Arg int boxId;
     @Arg int translationDirection;
-    @Arg long startTime;
 
     Word word;
 
@@ -55,8 +52,8 @@ public class QueryWordFragment extends AbstractWordFragment {
         super.onCreate(savedInstanceState);
         RememberMeApplication.injector().inject(this);
 
-        word = wordRepository.getNextWord(boxId, compartment, startTime);
-        logInfo("looked up next word for box " + boxId + ", compartment " + compartment + ", startTime " + new Date(startTime) + ": " + word);
+        word = wordRepository.getNextWord(boxId, compartment);
+        logInfo("looked up next word for box " + boxId + ", compartment " + compartment + ": " + word);
     }
 
     @Override

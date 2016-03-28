@@ -34,8 +34,7 @@ public class VocabularyBoxRepository {
                 new String[]{String.valueOf(id)},
                 null));
 
-        boxCursor.moveToFirst();
-        VocabularyBox box = boxCursor.peek();
+        VocabularyBox box = boxCursor.moveToFirst() ? boxCursor.peek() : null;
         boxCursor.close();
 
         return box;
@@ -53,6 +52,20 @@ public class VocabularyBoxRepository {
         boxCursor.close();
 
         return box;
+    }
+
+    public boolean isOneBoxSaved() {
+        return countBoxes() > 0;
+    }
+
+    public int countBoxes() {
+        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, new String[] {VocabularyBoxColumns.ID}, null, null, null));
+
+        int count = boxCursor.getCount();
+        boxCursor.close();
+
+        return count;
     }
 
     public boolean isBoxSaved(String boxName) {
@@ -73,16 +86,6 @@ public class VocabularyBoxRepository {
         return result;
     }
 
-    public boolean isOneBoxSaved() {
-        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
-                contentResolver.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
-
-        boolean empty = boxCursor.isEmpty();
-        boxCursor.close();
-
-        return !empty;
-    }
-    
     public int createDefaultBox() {
         String boxName = context.getResources().getString(R.string.default_name);
         String nativeLanguage = Locale.getDefault().getLanguage();
@@ -223,6 +226,38 @@ public class VocabularyBoxRepository {
     private int update(int id, ContentValues newValues) {
         String[] idStringArray = new String[] {String.valueOf(id)};
         return contentResolver.update(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, newValues, VocabularyBoxColumns.ID + " = ?", idStringArray);
+    }
+
+    public boolean deleteSelectedBox() {
+        int deleteBoxId = getSelectedBox().id;
+
+        VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(contentResolver.query(
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
+                new String[] {VocabularyBoxColumns.ID},
+                VocabularyBoxColumns.ID + " <> ?",
+                new String[] {String.valueOf(deleteBoxId)},
+                VocabularyBoxColumns.ID + " desc"));
+
+        if (boxCursor.isEmpty()) {
+            boxCursor.close();
+            logInfo("can't delete box " + deleteBoxId + " because this is the only box");
+            return false;
+        }
+        int newSelectedBoxId = boxCursor.peek().id;
+        boxCursor.close();
+        selectBox(newSelectedBoxId);
+
+        int deleted = contentResolver.delete(
+                RememberMeProvider.VocabularyBox.VOCABULARY_BOXES,
+                VocabularyBoxColumns.ID + " = ?",
+                new String[] {String.valueOf(deleteBoxId)});
+
+        if (deleted == 0) {
+            logWarn("could not delete box " + deleteBoxId);
+            return false;
+        }
+        logInfo("deleted box " + deleteBoxId + ", selected box " + newSelectedBoxId);
+        return true;
     }
 
     void logInfo(String message) {

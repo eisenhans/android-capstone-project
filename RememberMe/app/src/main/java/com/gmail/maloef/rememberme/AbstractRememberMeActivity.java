@@ -22,6 +22,10 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            // ToDo 28.03.16
+            return true;
+        }
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
