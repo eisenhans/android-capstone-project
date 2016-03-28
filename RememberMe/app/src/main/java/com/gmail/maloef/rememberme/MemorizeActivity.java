@@ -2,20 +2,15 @@ package com.gmail.maloef.rememberme;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MemorizeActivity extends DrawerActivity {
+public class MemorizeActivity extends AbstractRememberMeActivity {
 
     private static final String MEMORIZE_FRAGMENT_TAG = "memorizeFragmentTag";
 
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.navigationView) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Override
@@ -26,18 +21,7 @@ public class MemorizeActivity extends DrawerActivity {
         RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-        initDrawerToggle(drawerLayout, toolbar);
-        toolbar.setTitle(getString(R.string.memorize));
-
-        // ToDo 16.03.16:
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                logInfo("navigationItem selected: " + item);
-                return true;
-            }
-        });
+        initToolbar(true, R.string.memorize);
 
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
 

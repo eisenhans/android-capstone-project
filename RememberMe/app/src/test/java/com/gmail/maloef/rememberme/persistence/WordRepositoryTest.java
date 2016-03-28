@@ -59,10 +59,11 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         long beforeUpdate = new Date().getTime() - 1;
         wordRepository.updateRepeatDate(wordIds[0]);
         wordRepository.updateRepeatDate(wordIds[2]);
+        assertEquals(5, wordRepository.countWords(boxId, 1));
         assertEquals(3, wordRepository.countWords(boxId, 1, beforeUpdate));
 
         Word first = wordRepository.getNextWord(boxId, 1);
-        assertEquals("foreign0", first.foreignWord);
+        assertEquals("foreign1", first.foreignWord);
 
         Word firstAfterUpdate = wordRepository.getNextWord(boxId, 1, beforeUpdate);
         assertEquals("foreign1", firstAfterUpdate.foreignWord);
@@ -120,21 +121,21 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         for (int i = 1; i <= 8; i++) {
             wordRepository.createWord(boxId, "foreign" + i, "native" + i);
         }
-        List<Pair<String, String>> firstFive = wordRepository.getWords(boxId, 1, 0, 5);
+        List<Pair<String, String>> firstFive = wordRepository.getWords(boxId, 1, 1, 5);
         assertEquals(5, firstFive.size());
         assertEquals("foreign1", firstFive.get(0).first);
         assertEquals("native1", firstFive.get(0).second);
         assertEquals("foreign5", firstFive.get(4).first);
         assertEquals("native5", firstFive.get(4).second);
 
-        List<Pair<String, String>> fifthToEighth = wordRepository.getWords(boxId, 1, 5, 5);
+        List<Pair<String, String>> fifthToEighth = wordRepository.getWords(boxId, 1, 6, 5);
         assertEquals(3, fifthToEighth.size());
         assertEquals("foreign6", fifthToEighth.get(0).first);
         assertEquals("native6", fifthToEighth.get(0).second);
         assertEquals("foreign8", fifthToEighth.get(2).first);
         assertEquals("native8", fifthToEighth.get(2).second);
 
-        assertTrue(wordRepository.getWords(boxId, 1, 8, 5).isEmpty());
+        assertTrue(wordRepository.getWords(boxId, 1, 9, 5).isEmpty());
         assertTrue(wordRepository.getWords(boxId, 1, 10, 5).isEmpty());
     }
 

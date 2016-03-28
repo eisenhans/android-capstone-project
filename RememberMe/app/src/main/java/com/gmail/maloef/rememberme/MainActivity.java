@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Pair;
 import android.view.Menu;
@@ -48,11 +44,8 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends DrawerActivity {
+public class MainActivity extends AbstractRememberMeActivity {
 
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.navigationView) NavigationView navigationView;
-    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.mainFragmentLayout) LinearLayout mainFragmentLayout;
 
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
@@ -117,23 +110,7 @@ public class MainActivity extends DrawerActivity {
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
 
-        setSupportActionBar(toolbar);
-        initDrawerToggle(drawerLayout, toolbar);
-
-        logInfo("navigationView: " + navigationView);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                logInfo("navigationItem selected: " + item);
-                if (item.getItemId() == R.id.create_new_box_item) {
-                    showNewBoxNameDialog(mainFragmentLayout);
-                } else if (item.getItemId() == R.id.add_word_to_current_box_item) {
-                    Intent intent = new Intent(MainActivity.this, WordActivity.class).setAction(RememberMeIntent.ACTION_ADD);
-                    startActivity(intent);
-                }
-                return true;
-            }
-        });
+        initToolbar(false, R.string.vocabulary_box);
 
         codeLanguagePairs = languageRepository.getLanguages("en");
         languageCodes = new String[codeLanguagePairs.length];
@@ -401,7 +378,6 @@ public class MainActivity extends DrawerActivity {
                 logInfo("created new box: " + newBoxName);
                 updateBoxSpinner();
                 logInfo("closing dialog and drawer");
-                drawerLayout.closeDrawer(GravityCompat.START);
             }
         };
         InputValidator inputValidator = createNewBoxNameInputValidator();

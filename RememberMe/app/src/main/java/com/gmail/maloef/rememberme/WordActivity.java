@@ -3,10 +3,6 @@ package com.gmail.maloef.rememberme;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
@@ -14,17 +10,12 @@ import com.gmail.maloef.rememberme.persistence.WordRepository;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class WordActivity extends DrawerActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.NextWordListener {
+public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.NextWordListener {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
-
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.navigationView) NavigationView navigationView;
-    @Bind(R.id.toolbar) Toolbar toolbar;
 
     int wordsInCompartment;
     int translationDirection;
@@ -37,18 +28,6 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
 
         RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this);
-
-        setSupportActionBar(toolbar);
-        initDrawerToggle(drawerLayout, toolbar);
-
-        // ToDo 16.03.16:
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                logInfo("navigationItem selected: " + item);
-                return true;
-            }
-        });
 
         if (!"text/plain".equals(getIntent().getType())) {
             // ToDo 17.03.16: handle this
@@ -66,9 +45,10 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
         startTime = getIntent().getLongExtra(RememberMeIntent.EXTRA_START_TIME, Long.MAX_VALUE);
 
         if (isAddAction()) {
-            toolbar.setTitle(getString(R.string.add_word));
+            initToolbar(false, R.string.add_word);
         } else {
-            setCompartmentToolbarTitle();
+            int compartment = getIntent().getExtras().getInt(RememberMeIntent.EXTRA_COMPARTMENT, -1);
+           initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
         }
 
         if (savedInstanceState != null) {
@@ -104,11 +84,6 @@ public class WordActivity extends DrawerActivity implements QueryWordFragment.An
     private void showWord(Word word, String givenAnswer) {
         ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
         replaceFragment(fragment);
-    }
-
-    private void setCompartmentToolbarTitle() {
-        int compartment = getIntent().getExtras().getInt(RememberMeIntent.EXTRA_COMPARTMENT, -1);
-        toolbar.setTitle(getString(R.string.compartment_i, compartment));
     }
 
     private void replaceFragment(Fragment fragment) {
