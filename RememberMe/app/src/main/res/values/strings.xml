@@ -47,7 +47,7 @@
     <string name="word_translated">Word translated</string>
     <string name="no_foreign_word">No foreign word</string>
     <string name="no_native_word">No native word</string>
-    <string name="word_already_exists_in_box">Word already exists in box </string>
+    <string name="word_already_exists_in_box_s">Word already exists in box %s</string>
     <string name="word_saved">Word saved</string>
     <string name="compartment_i">Compartment %s</string>
     <string name="i_words_left">%s words left</string>
@@ -63,5 +63,6 @@
     <string name="delete_word">Delete word</string>
     <string name="delete_word_s">Delete word &lt;i&gt;%s&lt;/i&gt;?</string>
     <string name="word_deleted">Word deleted</string>
+    <string name="changes_saved">Changes saved</string>
 
 </resources>

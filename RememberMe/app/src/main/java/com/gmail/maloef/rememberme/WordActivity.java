@@ -12,7 +12,8 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
-public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.NextWordListener {
+public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback,
+        EditWordFragment.EditWordCallback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -42,29 +43,24 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         wordsInCompartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, -1);
         translationDirection = getIntent().getIntExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, -1);
 
-        if (isAddAction()) {
-            initToolbar(false, R.string.add_word);
-        } else {
-            int compartment = getIntent().getExtras().getInt(RememberMeIntent.EXTRA_COMPARTMENT, -1);
-           initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
-        }
-
         if (savedInstanceState != null) {
             return;
         }
-        if (isAddAction()) {
+        if (isAddWord()) {
             addWord();
         } else {
             queryWord();
         }
     }
 
-    private boolean isAddAction() {
+    private boolean isAddWord() {
         String action = getIntent().getAction();
         return Intent.ACTION_SEND.equals(action) || RememberMeIntent.ACTION_ADD.equals(action);
     }
 
     private void addWord() {
+        initToolbar(false, R.string.add_word);
+
         String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         AddWordFragment fragment = AddWordFragmentBuilder.newAddWordFragment(foreignWord);
 
@@ -72,15 +68,31 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private void queryWord() {
-        int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
+        initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
+
+        int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
 
         QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
         replaceFragment(fragment);
     }
 
+    public void showWord(int wordId) {
+        Word word = wordRepository.findWord(wordId);
+        showWord(word, null);
+    }
+
     private void showWord(Word word, String givenAnswer) {
+        initToolbar(false, R.string.add_word);
+
         ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
+        replaceFragment(fragment);
+    }
+
+    @Override
+    public void editWord(int wordId) {
+        initToolbar(false, R.string.edit_word);
+        EditWordFragment fragment = EditWordFragmentBuilder.newEditWordFragment(wordId);
         replaceFragment(fragment);
     }
 
@@ -95,12 +107,17 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     @Override
-    public void nextWordRequested(boolean moreWordsAvailable) {
+    public void nextWord(boolean moreWordsAvailable) {
         if (moreWordsAvailable) {
             logInfo("showing next word, extras: " + getIntent().getExtras());
             queryWord();
         } else {
             finish();
         }
+    }
+
+    @Override
+    public void editDone(int wordId) {
+        showWord(wordId);
     }
 }

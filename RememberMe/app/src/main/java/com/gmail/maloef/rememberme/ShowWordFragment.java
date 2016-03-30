@@ -29,11 +29,12 @@ import butterknife.ButterKnife;
 @FragmentWithArgs
 public class ShowWordFragment extends AbstractWordFragment {
 
-    public interface NextWordListener {
-        void nextWordRequested(boolean moreWordsAvailable);
+    public interface ShowWordCallback {
+        void nextWord(boolean moreWordsAvailable);
+        void editWord(int wordId);
     }
 
-    private NextWordListener nextWordListener;
+    private ShowWordCallback showWordCallback;
 
     @Inject WordRepository wordRepository;
 
@@ -55,7 +56,7 @@ public class ShowWordFragment extends AbstractWordFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        nextWordListener = (NextWordListener) activity;
+        showWordCallback = (ShowWordCallback) activity;
     }
 
     @Override
@@ -63,6 +64,7 @@ public class ShowWordFragment extends AbstractWordFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         RememberMeApplication.injector().inject(this);
+        compartment = Math.max(word.compartment, 1);
 
         if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
             queryWord = word.foreignWord;
@@ -72,13 +74,16 @@ public class ShowWordFragment extends AbstractWordFragment {
             correctAnswer = word.foreignWord;
         }
 
-        compartment = word.compartment;
+        if (givenAnswer == null || word.compartment == 0) {
+            return;
+        }
         if (correctAnswer.equals(givenAnswer)) {
-            wordRepository.moveToCompartment(word.id, compartment + 1);
+            wordRepository.moveToCompartment(word.id, word.compartment + 1);
         } else if (compartment == 1){
-            // virtual compartment
+            // move word to virtual compartment
             wordRepository.moveToCompartment(word.id, 0);
         } else {
+            // move word back to compartment 1
             wordRepository.moveToCompartment(word.id, 1);
         }
     }
@@ -92,9 +97,13 @@ public class ShowWordFragment extends AbstractWordFragment {
         queryTextView.setText(queryWord);
         answerTextView.setText(correctAnswer);
 
-        if (correctAnswer.equals(givenAnswer)) {
+        if (givenAnswer == null) {
+            resultIconView.setVisibility(View.INVISIBLE);
+        } else if (correctAnswer.equals(givenAnswer)) {
+            resultIconView.setVisibility(View.VISIBLE);
             resultIconView.setImageResource(R.drawable.ic_check_36dp);
         } else {
+            resultIconView.setVisibility(View.VISIBLE);
             resultIconView.setImageResource(R.drawable.ic_close_36dp);
         }
 
@@ -107,7 +116,7 @@ public class ShowWordFragment extends AbstractWordFragment {
         nextWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               requestNextWord();
+                requestNextWord();
             }
         });
         return rootView;
@@ -115,7 +124,7 @@ public class ShowWordFragment extends AbstractWordFragment {
 
     private void requestNextWord() {
         int words = wordRepository.countWords(word.boxId, compartment);
-        nextWordListener.nextWordRequested(words > 0);
+        showWordCallback.nextWord(words > 0);
     }
 
     @Override
@@ -128,6 +137,7 @@ public class ShowWordFragment extends AbstractWordFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit_word) {
             logInfo("editing word");
+            showWordCallback.editWord(word.id);
             return true;
         }
         if (item.getItemId() == R.id.action_delete_word) {
@@ -150,5 +160,4 @@ public class ShowWordFragment extends AbstractWordFragment {
         requestNextWord();
         Toast.makeText(getActivity(), getString(R.string.word_deleted), Toast.LENGTH_SHORT).show();
     }
-
 }

@@ -196,6 +196,15 @@ public class WordRepository {
         return deleted > 0;
     }
 
+    public void updateWord(int wordId, String foreignWord, String nativeWord) {
+        ContentValues values = new ContentValues();
+        values.put(WordColumns.FOREIGN_WORD, foreignWord);
+        values.put(WordColumns.NATIVE_WORD, nativeWord);
+        values.put(WordColumns.UPDATE_DATE, new Date().getTime());
+
+        contentResolver.update(RememberMeProvider.Word.WORDS, values, WordColumns.ID + " = ?", new String[]{String.valueOf(wordId)});
+    }
+
     void logInfo(String message) {
         Log.i(getClass().getSimpleName(), message);
     }

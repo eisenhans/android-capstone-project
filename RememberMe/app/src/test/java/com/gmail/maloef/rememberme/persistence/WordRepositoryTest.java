@@ -163,4 +163,20 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
 
         assertFalse(wordRepository.deleteWord(wordId));
     }
+
+    @Test
+    public void update() {
+        int wordId = wordRepository.createWord(boxId, "foreign", "native");
+        Word word = wordRepository.findWord(wordId);
+        assertEquals(0, word.updateDate);
+
+        long timestamp = new Date().getTime();
+        wordRepository.updateWord(wordId, "foreignNew", "nativeNew");
+        assertEquals(1, wordRepository.countWords(boxId));
+
+        word = wordRepository.findWord(wordId);
+        assertEquals("foreignNew", word.foreignWord);
+        assertEquals("nativeNew", word.nativeWord);
+        assertTrue(word.updateDate >= timestamp);
+    }
 }
