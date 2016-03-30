@@ -50,10 +50,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
 
     LanguageSettingsManager languageSettingsManager;
 
-    @BindString(R.string.confirm_language_settings_title) String confirmLanguageSettingsTitleString;
-    @BindString(R.string.confirm_language_settings_message) String confirmLanguageSettingsMessageString;
-    @BindString(R.string.select_language_settings_title) String selectLanguageSettingsTitleString;
-    @BindString(R.string.select_language_settings_message) String selectLanguageSettingsMessageString;
     @BindString(R.string.no_translation_found) String noTranslationFoundString;
     @BindString(R.string.word_translated) String wordTranslatedString;
     @BindString(R.string.no_foreign_word) String noForeignWordString;
@@ -200,13 +196,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         final String nativeLanguageUsedForTranslation = selectedBox.nativeLanguage;
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        if (foreignLanguageUsedForTranslation.equals(nativeLanguageUsedForTranslation)) {
-            alertDialogBuilder.setTitle(selectLanguageSettingsTitleString);
-            alertDialogBuilder.setMessage(selectLanguageSettingsMessageString);
-        } else {
-            alertDialogBuilder.setTitle(confirmLanguageSettingsTitleString);
-            alertDialogBuilder.setMessage(confirmLanguageSettingsMessageString);
-        }
+        alertDialogBuilder.setTitle(getString(R.string.review_language_settings));
+
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_language_settings, null);
 
         foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);

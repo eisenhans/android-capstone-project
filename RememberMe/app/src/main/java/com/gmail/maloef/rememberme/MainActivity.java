@@ -176,12 +176,6 @@ public class MainActivity extends AbstractRememberMeActivity {
         updateOverviewTable();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
-
     private void updateLanguageSpinners() {
         if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
             // languages are up to date

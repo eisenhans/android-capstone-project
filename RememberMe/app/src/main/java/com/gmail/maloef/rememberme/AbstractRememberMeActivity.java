@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public abstract class AbstractRememberMeActivity extends AppCompatActivity {
 
@@ -30,6 +31,12 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 
     protected void logInfo(String message) {

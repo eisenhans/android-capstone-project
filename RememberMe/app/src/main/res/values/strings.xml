@@ -35,10 +35,8 @@
 
     <string name="add_word">Add word</string>
 
-    <string name="confirm_language_settings_title">Confirm language settings</string>
-    <string name="confirm_language_settings_message">We tried to guess your language settings. Please confirm or update.</string>
-    <string name="select_language_settings_title">Select languages</string>
-    <string name="select_language_settings_message">Select the languages for the current vocabulary box.</string>
+    <string name="review_language_settings">Review language settings</string>
+    <!--<string name="confirm_language_settings_message">We tried to guess your language settings. Please confirm or update.</string>-->
 
     <string name="no_translation_found">No translation found.</string>
 

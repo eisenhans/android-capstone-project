@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/blue500</color>
-    <color name="colorPrimaryDark">@color/blue700</color>
-    <color name="colorAccent">@color/deepOrangeA400</color>
+    <color name="colorPrimary">@color/indigo500</color>
+    <color name="colorPrimaryDark">@color/indigo900</color>
+    <color name="colorAccent">@color/redA700</color>
 
     <color name="colorTableHeader">@color/grey400</color>
     <color name="colorTableRowDark">@color/grey300</color>
@@ -11,9 +11,17 @@
     <color name="blue500">#2196F3</color>
     <color name="blue700">#1976D2</color>
 
+    <color name="indigo500">#3F51B5</color>
+    <color name="indigo600">#3949AB</color>
+    <color name="indigo700">#303F9F</color>
+    <color name="indigo800">#283593</color>
+    <color name="indigo900">#1A237E</color>
+
     <color name="deepOrange500">#FF5722</color>
     <color name="deepOrangeA200">#FF6E40</color>
     <color name="deepOrangeA400">#FF3D00</color>
+
+    <color name="redA700">#D50000</color>
 
     <color name="lightGreenA200">#B2FF59</color>
     <color name="greenA400">#00E676</color>

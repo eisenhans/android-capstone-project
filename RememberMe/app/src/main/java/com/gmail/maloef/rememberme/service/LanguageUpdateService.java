@@ -67,7 +67,7 @@ public class LanguageUpdateService extends IntentService {
                 RememberMeProvider.Language.LANGUAGES,
                 null,
                 LanguageColumns.NAME_CODE + " = ?",
-                new String[]{"en"},
+                new String[]{nameCode},
                 null);
 
         int languages = cursor.getCount();
