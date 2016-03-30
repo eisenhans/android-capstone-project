@@ -12,9 +12,9 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
 
-    protected void initToolbar(boolean withBackArrow, int titleResId, String... args) {
+    protected void initToolbar(boolean withUpArrow, int titleResId, String... args) {
         setSupportActionBar(toolbar);
-        if (withBackArrow) {
+        if (withUpArrow) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }

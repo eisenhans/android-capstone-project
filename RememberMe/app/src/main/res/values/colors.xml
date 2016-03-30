@@ -26,6 +26,13 @@
     <color name="lightGreenA200">#B2FF59</color>
     <color name="greenA400">#00E676</color>
 
+    <!--<color name="yellow100">#FFF9C4</color>-->
+    <!--<color name="yellow200">#FFF59D</color>-->
+    <!--<color name="yellow300">#FFF176</color>-->
+    <!--<color name="yellow400">#FFEE58</color>-->
+    <!--<color name="yellow500">#FFEB3B</color>-->
+    <!--<color name="yellowA100">#FFFF8D</color>-->
+
     <color name="grey100">#F5F5F5</color>
     <color name="grey200">#EEEEEE</color>
     <color name="grey300">#E0E0E0</color>

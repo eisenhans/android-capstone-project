@@ -249,7 +249,7 @@ public class MainActivity extends AbstractRememberMeActivity {
         Date now = new Date();
         long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
         logInfo("days since repeat for compartment " + compartment + ": repeat date was " + new Date(repeatDate) + ", now is " + now +
-                " days between these two dates = " + days);
+                ", days between these two dates: " + days);
         if (days == 0) {
             return getString(R.string.today);
         }
