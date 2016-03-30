@@ -48,11 +48,11 @@
         </LinearLayout>
 
         <android.support.v7.widget.CardView style="@style/Flashcard">
-            <EditText android:id="@+id/foreign_word_edittext" style="@style/FlashcardText" />
+            <EditText android:id="@+id/top_word_edittext" style="@style/FlashcardText" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView style="@style/Flashcard">
-            <EditText android:id="@+id/native_word_edittext" style="@style/FlashcardText" />
+            <EditText android:id="@+id/bottom_word_edittext" style="@style/FlashcardText" />
         </android.support.v7.widget.CardView>
 
     </LinearLayout>

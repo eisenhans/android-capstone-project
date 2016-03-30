@@ -83,7 +83,8 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private void showWord(Word word, String givenAnswer) {
-        initToolbar(false, R.string.add_word);
+        int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
+        initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
 
         ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
         replaceFragment(fragment);
@@ -92,7 +93,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     @Override
     public void editWord(int wordId) {
         initToolbar(false, R.string.edit_word);
-        EditWordFragment fragment = EditWordFragmentBuilder.newEditWordFragment(wordId);
+        EditWordFragment fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirection, wordId);
         replaceFragment(fragment);
     }
 

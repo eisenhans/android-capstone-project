@@ -37,16 +37,17 @@ public class EditWordFragment extends AbstractWordFragment {
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
 
-    @Bind(R.id.foreign_word_edittext) EditText foreignWordEditText;
-    @Bind(R.id.native_word_edittext) EditText nativeWordEditText;
+    @Bind(R.id.top_word_edittext) EditText topWordEditText;
+    @Bind(R.id.bottom_word_edittext) EditText bottomWordEditText;
 
     @Bind (R.id.cancelButton) Button cancelButton;
     @Bind (R.id.saveButton) Button saveButton;
 
     @Arg int wordId;
+    @Arg int translationDirection;
 
-    String foreignWord;
-    String nativeWord;
+    String topWord;
+    String bottomWord;
 
     VocabularyBox selectedBox;
 
@@ -64,8 +65,13 @@ public class EditWordFragment extends AbstractWordFragment {
         selectedBox = boxRepository.getSelectedBox();
 
         Word word = wordRepository.findWord(wordId);
-        foreignWord = word.foreignWord;
-        nativeWord = word.nativeWord;
+        if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
+            topWord = word.foreignWord;
+            bottomWord = word.nativeWord;
+        } else {
+            topWord = word.nativeWord;
+            bottomWord = word.foreignWord;
+        }
     }
 
     @Override
@@ -78,17 +84,17 @@ public class EditWordFragment extends AbstractWordFragment {
         }
         ButterKnife.bind(this, rootView);
 
-        configureEditTextBehavior(foreignWordEditText);
-        configureEditTextBehavior(nativeWordEditText);
+        configureEditTextBehavior(topWordEditText);
+        configureEditTextBehavior(bottomWordEditText);
 
-        foreignWordEditText.setText(foreignWord);
-        nativeWordEditText.setText(nativeWord);
+        topWordEditText.setText(topWord);
+        bottomWordEditText.setText(bottomWord);
 
         saveButton.setEnabled(false);
 
         TextWatcher textWatcher = createTextWatcher();
-        foreignWordEditText.addTextChangedListener(textWatcher);
-        nativeWordEditText.addTextChangedListener(textWatcher);
+        topWordEditText.addTextChangedListener(textWatcher);
+        bottomWordEditText.addTextChangedListener(textWatcher);
 
         return rootView;
     }
@@ -104,11 +110,11 @@ public class EditWordFragment extends AbstractWordFragment {
     }
 
     private void updateSaveButtonState() {
-        String foreignNow = foreignWordEditText.getText().toString();
-        String nativeNow = nativeWordEditText.getText().toString();
+        String topNow = topWordEditText.getText().toString();
+        String bottomNow = bottomWordEditText.getText().toString();
 
-        saveButton.setEnabled(!foreignNow.isEmpty() && !nativeNow.isEmpty() &&
-                !(foreignNow.equals(foreignWord) && nativeNow.equals(nativeWord)));
+        saveButton.setEnabled(!topNow.isEmpty() && !bottomNow.isEmpty() &&
+                !(topNow.equals(topWord) && bottomNow.equals(bottomWord)));
     }
 
     @Override
@@ -126,10 +132,11 @@ public class EditWordFragment extends AbstractWordFragment {
     @OnClick(R.id.saveButton)
     public void saveWord(View view) {
         logInfo("saving edited word");
-        String foreignWord = foreignWordEditText.getText().toString();
-        String nativeWord = nativeWordEditText.getText().toString();
+        String foreignWord = topWordEditText.getText().toString();
+        String nativeWord = bottomWordEditText.getText().toString();
 
         wordRepository.updateWord(wordId, foreignWord, nativeWord);
+        hideKeyboard();
         Toast.makeText(getActivity(), getString(R.string.changes_saved), Toast.LENGTH_SHORT).show();
         editWordCallback.editDone(wordId);
     }

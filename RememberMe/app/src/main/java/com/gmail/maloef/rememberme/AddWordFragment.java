@@ -51,8 +51,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     LanguageSettingsManager languageSettingsManager;
 
     @Bind(R.id.add_word_parent_layout) LinearLayout addWordParentLayout;
-    @Bind(R.id.foreign_word_edittext) EditText foreignWordEditText;
-    @Bind(R.id.native_word_edittext) EditText nativeWordEditText;
+    @Bind(R.id.top_word_edittext) EditText foreignWordEditText;
+    @Bind(R.id.bottom_word_edittext) EditText nativeWordEditText;
 
     @Bind (R.id.cancelButton) Button cancelButton;
     @Bind (R.id.translateButton) Button translateButton;
