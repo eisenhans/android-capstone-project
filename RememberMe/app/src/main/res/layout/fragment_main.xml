@@ -22,6 +22,7 @@
         <android.support.v7.widget.GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             app:columnCount="2">
 
             <TextView
@@ -31,6 +32,7 @@
                 app:layout_column="0"
                 style="@style/LabelText"
                 android:text="@string/current_box"
+                android:layout_marginBottom="16dp"
                 />
 
             <Spinner
@@ -42,16 +44,6 @@
                 app:layout_column="1"
                 />
 
-            <Button
-                android:id="@+id/renameBoxButton"
-                app:layout_columnWeight="1"
-                app:layout_gravity="fill_horizontal"
-                android:gravity="center"
-                app:layout_row="1"
-                app:layout_column="1"
-                android:text="@string/rename_box"
-                />
-
             <TextView
                 app:layout_columnWeight="1"
                 app:layout_gravity="left"
@@ -59,6 +51,7 @@
                 app:layout_column="0"
                 style="@style/LabelText"
                 android:text="@string/foreign_language"
+                android:layout_marginBottom="8dp"
                 />
 
             <Spinner
@@ -76,6 +69,7 @@
                 app:layout_column="0"
                 style="@style/LabelText"
                 android:text="@string/native_language"
+                android:layout_marginBottom="8dp"
                 />
 
             <Spinner
@@ -93,6 +87,7 @@
                 app:layout_column="0"
                 style="@style/LabelText"
                 android:text="@string/translation_direction"
+                android:layout_marginBottom="8dp"
                 />
 
             <Spinner
@@ -124,32 +119,36 @@
                 <TextView style="@style/DefaultText" android:text="@string/repeated" />
             </TableRow>
 
-            <TableRow android:id="@+id/overviewTableRow1" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TableRow android:id="@+id/overviewTableRow1" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="1" />
                 <TextView android:id="@+id/overviewWords1" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated1" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
                 <TextView style="@style/DefaultText" android:text="2" />
                 <TextView android:id="@+id/overviewWords2" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated2" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow3" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TableRow android:id="@+id/overviewTableRow3" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="3" />
                 <TextView android:id="@+id/overviewWords3" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated3" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
                 <TextView style="@style/DefaultText" android:text="4" />
                 <TextView android:id="@+id/overviewWords4" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated4" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow5" android:background="@color/colorTableRowDark" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TableRow android:id="@+id/overviewTableRow5" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="5" />
                 <TextView android:id="@+id/overviewWords5" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated5" style="@style/DefaultText" />
             </TableRow>
-
+            <TableRow android:id="@+id/overviewTableRow6" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
+                <TextView style="@style/DefaultText" android:text="6" />
+                <TextView android:id="@+id/overviewWords6" style="@style/DefaultText" />
+                <TextView android:id="@+id/overviewNotRepeated6" style="@style/DefaultText" />
+            </TableRow>
 
         </TableLayout>
 

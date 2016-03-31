@@ -9,8 +9,13 @@
         />
 
     <item
+        android:id="@+id/action_rename_box"
+        android:title="@string/rename_box"
+        />
+
+    <item
         android:id="@+id/action_delete_current_box"
-        android:title="@string/delete_current_box"
+        android:title="@string/delete_box"
         />
 
     <item

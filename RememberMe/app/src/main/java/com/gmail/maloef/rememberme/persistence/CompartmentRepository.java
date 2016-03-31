@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Log;
 
+import com.gmail.maloef.rememberme.RememberMeConstants;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
 import com.gmail.maloef.rememberme.domain.Word;
@@ -25,7 +26,7 @@ public class CompartmentRepository {
 
     public BoxOverview getBoxOverview(int boxId) {
         BoxOverview boxOverview = new BoxOverview();
-        for (int compartment = 1; compartment <= 5; compartment++) {
+        for (int compartment = 1; compartment <= RememberMeConstants.NUMBER_OF_COMPARTMENTS; compartment++) {
             CompartmentOverview compartmentOverview = getCompartmentOverview(boxId, compartment);
             boxOverview.putCompartmentOverview(compartment, compartmentOverview);
         }

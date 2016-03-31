@@ -61,18 +61,21 @@ public class MainActivity extends AbstractRememberMeActivity {
     @Bind(R.id.overviewTableRow3) TableRow overviewTableRow3;
     @Bind(R.id.overviewTableRow4) TableRow overviewTableRow4;
     @Bind(R.id.overviewTableRow5) TableRow overviewTableRow5;
+    @Bind(R.id.overviewTableRow6) TableRow overviewTableRow6;
 
     @Bind(R.id.overviewWords1) TextView overviewWords1TextView;
     @Bind(R.id.overviewWords2) TextView overviewWords2TextView;
     @Bind(R.id.overviewWords3) TextView overviewWords3TextView;
     @Bind(R.id.overviewWords4) TextView overviewWords4TextView;
     @Bind(R.id.overviewWords5) TextView overviewWords5TextView;
+    @Bind(R.id.overviewWords6) TextView overviewWords6TextView;
 
     @Bind(R.id.overviewNotRepeated1) TextView overviewNotRepeated1TextView;
     @Bind(R.id.overviewNotRepeated2) TextView overviewNotRepeated2TextView;
     @Bind(R.id.overviewNotRepeated3) TextView overviewNotRepeated3TextView;
     @Bind(R.id.overviewNotRepeated4) TextView overviewNotRepeated4TextView;
     @Bind(R.id.overviewNotRepeated5) TextView overviewNotRepeated5TextView;
+    @Bind(R.id.overviewNotRepeated6) TextView overviewNotRepeated6TextView;
 
     @Bind(R.id.memorizeButton) Button memorizeButton;
 
@@ -189,14 +192,15 @@ public class MainActivity extends AbstractRememberMeActivity {
     }
 
     private void addRowListeners() {
-        addRowListener(overviewTableRow1, 1);
-        addRowListener(overviewTableRow2, 2);
-        addRowListener(overviewTableRow3, 3);
-        addRowListener(overviewTableRow4, 4);
-        addRowListener(overviewTableRow5, 5);
+        addWordActivityRowListener(overviewTableRow1, 1);
+        addWordActivityRowListener(overviewTableRow2, 2);
+        addWordActivityRowListener(overviewTableRow3, 3);
+        addWordActivityRowListener(overviewTableRow4, 4);
+        addWordActivityRowListener(overviewTableRow5, 5);
+        addWordListActivityRowListener(overviewTableRow6, 6);
     }
 
-    private void addRowListener(TableRow row, final int compartment) {
+    private void addWordActivityRowListener(TableRow row, final int compartment) {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,6 +228,21 @@ public class MainActivity extends AbstractRememberMeActivity {
         });
     }
 
+    private void addWordListActivityRowListener(TableRow row, final int compartment) {
+        row.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, WordListActivity.class)
+                        .setAction(RememberMeIntent.ACTION_SHOW)
+                        .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
+                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
+
+                startActivity(intent);
+            }
+        });
+    }
+
     private void updateOverviewTable() {
         BoxOverview boxOverview = compartmentRepository.getBoxOverview(selectedBox.id);
         overviewWords1TextView.setText(String.valueOf(boxOverview.getWordCount(1)));
@@ -231,12 +250,14 @@ public class MainActivity extends AbstractRememberMeActivity {
         overviewWords3TextView.setText(String.valueOf(boxOverview.getWordCount(3)));
         overviewWords4TextView.setText(String.valueOf(boxOverview.getWordCount(4)));
         overviewWords5TextView.setText(String.valueOf(boxOverview.getWordCount(5)));
+        overviewWords6TextView.setText(String.valueOf(boxOverview.getWordCount(6)));
 
         overviewNotRepeated1TextView.setText(calculateDaysSinceRepeat(boxOverview, 1));
         overviewNotRepeated2TextView.setText(calculateDaysSinceRepeat(boxOverview, 2));
         overviewNotRepeated3TextView.setText(calculateDaysSinceRepeat(boxOverview, 3));
         overviewNotRepeated4TextView.setText(calculateDaysSinceRepeat(boxOverview, 4));
         overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
+        overviewNotRepeated6TextView.setText(calculateDaysSinceRepeat(boxOverview, 6));
 
         memorizeButton.setEnabled(boxOverview.getWordCount(1) > 0);
     }
@@ -339,8 +360,7 @@ public class MainActivity extends AbstractRememberMeActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.renameBoxButton)
-    public void showRenameBoxDialog(final View parentView) {
+    public void showRenameBoxDialog() {
         InputProcessor inputProcessor = new InputProcessor() {
             @Override
             public void process(String newBoxName) {
@@ -364,7 +384,7 @@ public class MainActivity extends AbstractRememberMeActivity {
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        MenuItem deleteBoxItem = menu.getItem(1);
+        MenuItem deleteBoxItem = menu.findItem(R.id.action_delete_current_box);
         int boxes = boxRepository.countBoxes();
         deleteBoxItem.setEnabled(boxes >= 2);
 
@@ -375,6 +395,10 @@ public class MainActivity extends AbstractRememberMeActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_create_new_box) {
             showCreateNewBoxDialog();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_rename_box) {
+            showRenameBoxDialog();
             return true;
         }
         if (item.getItemId() == R.id.action_delete_current_box) {

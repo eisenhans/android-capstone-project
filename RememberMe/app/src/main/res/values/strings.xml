@@ -56,7 +56,7 @@
 
     <string name="create_new_box">Create new box</string>
     <string name="enter_name_for_new_box">Enter a name for the new vocabulary box:</string>
-    <string name="delete_current_box">Delete current box</string>
+    <string name="delete_box">Delete box</string>
     <string name="delete_box_s_and_all_its_words">Delete box &lt;i&gt;%s&lt;/i&gt; and all its words?</string>
     <string name="deleted_box_s">Deleted box &lt;i&gt;%s&lt;/i&gt;</string>
     <string name="edit_word">Edit word</string>
@@ -64,5 +64,6 @@
     <string name="delete_word_s">Delete word &lt;i&gt;%s&lt;/i&gt;?</string>
     <string name="word_deleted">Word deleted</string>
     <string name="changes_saved">Changes saved</string>
+    <string name="words_learned">Words learned</string>
 
 </resources>
