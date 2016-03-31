@@ -132,9 +132,15 @@ public class EditWordFragment extends AbstractWordFragment {
     @OnClick(R.id.saveButton)
     public void saveWord(View view) {
         logInfo("saving edited word");
-        String foreignWord = topWordEditText.getText().toString();
-        String nativeWord = bottomWordEditText.getText().toString();
-
+        String foreignWord;
+        String nativeWord;
+        if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE) {
+            foreignWord = topWordEditText.getText().toString();
+            nativeWord = bottomWordEditText.getText().toString();
+        } else {
+            nativeWord = topWordEditText.getText().toString();
+            foreignWord = bottomWordEditText.getText().toString();
+        }
         wordRepository.updateWord(wordId, foreignWord, nativeWord);
         hideKeyboard();
         Toast.makeText(getActivity(), getString(R.string.changes_saved), Toast.LENGTH_SHORT).show();
