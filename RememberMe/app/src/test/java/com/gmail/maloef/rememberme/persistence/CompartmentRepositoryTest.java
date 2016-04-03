@@ -70,11 +70,4 @@ public class CompartmentRepositoryTest extends AbstractPersistenceTest {
         assertEquals(0, boxOverview.getWordCount(compartment));
         assertEquals(0, boxOverview.getEarliestLastRepeatDate(compartment));
     }
-
-    void assertAlmostEqual(long first, long second, long deltaAllowed) {
-        if (Math.abs(first - second) > deltaAllowed) {
-            throw new AssertionError("difference between values should at most " + deltaAllowed + ", but first is " + first + ", second is " + second);
-        }
-    }
-
 }

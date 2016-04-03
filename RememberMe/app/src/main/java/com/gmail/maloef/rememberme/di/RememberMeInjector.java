@@ -8,8 +8,9 @@ import com.gmail.maloef.rememberme.MemorizeFragment;
 import com.gmail.maloef.rememberme.QueryWordFragment;
 import com.gmail.maloef.rememberme.ShowWordFragment;
 import com.gmail.maloef.rememberme.WordActivity;
-import com.gmail.maloef.rememberme.WordListActivity;
 import com.gmail.maloef.rememberme.service.LanguageUpdateService;
+import com.gmail.maloef.rememberme.wordlist.WordListActivity;
+import com.gmail.maloef.rememberme.wordlist.WordListFragment;
 
 import javax.inject.Singleton;
 
@@ -29,6 +30,8 @@ public interface RememberMeInjector {
     void inject(QueryWordFragment queryWordFragment);
     void inject(ShowWordFragment showWordFragment);
     void inject(MemorizeFragment memorizeFragment);
+    void inject(WordListFragment wordListFragment);
 
+//    void inject(RememberMePreferences prefs);
     void inject(LanguageUpdateService languageUpdateService);
 }

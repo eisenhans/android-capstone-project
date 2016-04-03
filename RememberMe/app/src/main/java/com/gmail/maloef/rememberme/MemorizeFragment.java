@@ -57,13 +57,13 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_memorize, container, false);
+        View view = inflater.inflate(R.layout.fragment_memorize, container, false);
 
-        ButterKnife.bind(this, rootView);
+        ButterKnife.bind(this, view);
 
         update();
 
-        return rootView;
+        return view;
     }
 
     private void update() {

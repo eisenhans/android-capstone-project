@@ -18,7 +18,7 @@ public class MemorizeActivity extends AbstractRememberMeActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memorize);
 
-        RememberMeApplication.injector().inject(this);
+//        RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this);
 
         initToolbar(true, R.string.memorize);

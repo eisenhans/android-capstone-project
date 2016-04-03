@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -34,6 +33,7 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
+import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -47,8 +47,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AbstractRememberMeActivity {
-
-    @Bind(R.id.mainFragmentLayout) LinearLayout mainFragmentLayout;
 
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
     @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
@@ -404,20 +402,24 @@ public class MainActivity extends AbstractRememberMeActivity {
         if (item.getItemId() == R.id.action_delete_current_box) {
             int wordsInSelectedBox = wordRepository.countWords(selectedBox.id);
             if (wordsInSelectedBox > 0) {
-                CharSequence title = Html.fromHtml(getString(R.string.delete_box_s_and_all_its_words, selectedBox.name));
-                ConfirmDialog confirmDialog = new ConfirmDialog(this, title, null, new ConfirmDialog.OkCallback() {
-                    @Override
-                    public void onOk() {
-                        deleteSelectedBox();
-                    }
-                });
-                confirmDialog.show();
+                showConfirmDeleteDialog();
             } else {
                 deleteSelectedBox();
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showConfirmDeleteDialog() {
+        CharSequence message = Html.fromHtml(getString(R.string.delete_box_s_and_all_its_words, selectedBox.name));
+        ConfirmDialog dialog = new ConfirmDialog(this, null, message, new ConfirmDialog.OkCallback() {
+            @Override
+            public void onOk() {
+                deleteSelectedBox();
+            }
+        });
+        dialog.show();
     }
 
     public void showCreateNewBoxDialog() {

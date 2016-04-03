@@ -6,6 +6,14 @@ import android.support.v7.app.AlertDialog;
 
 import com.gmail.maloef.rememberme.R;
 
+/*
+ * Implementation note: this class could also extend DialogFragment, as described here:
+ *
+ * http://developer.android.com/guide/topics/ui/dialogs.html
+ *
+ * But this doesn't make things easier, and the dialog isn't properly rebuilt after screen rotation either. The current approach favors
+ * composition over inheritance, which is a good thing.
+ */
 public class ConfirmDialog {
 
     public interface OkCallback {

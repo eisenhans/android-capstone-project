@@ -141,17 +141,21 @@ public class ShowWordFragment extends AbstractWordFragment {
             return true;
         }
         if (item.getItemId() == R.id.action_delete_word) {
-            CharSequence title = Html.fromHtml(getString(R.string.delete_word_s, word.foreignWord));
-            ConfirmDialog confirmDialog = new ConfirmDialog(getActivity(), title, null, new ConfirmDialog.OkCallback() {
-                @Override
-                public void onOk() {
-                    deleteCurrentWord();
-                }
-            });
-            confirmDialog.show();
+            showConfirmDeleteWordDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showConfirmDeleteWordDialog() {
+        CharSequence message = Html.fromHtml(getString(R.string.delete_word_s, word.foreignWord));
+        ConfirmDialog dialog = new ConfirmDialog(getActivity(), null, message, new ConfirmDialog.OkCallback() {
+            @Override
+            public void onOk() {
+                deleteCurrentWord();
+            }
+        });
+        dialog.show();
     }
 
     private void deleteCurrentWord() {

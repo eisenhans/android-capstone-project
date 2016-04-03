@@ -37,4 +37,11 @@ public abstract class AbstractPersistenceTest extends AbstractRobolectricTest {
         instance.setAccessible(true);
         instance.set(null, null);
     }
+
+    protected void assertAlmostEqual(long first, long second, long deltaAllowed) {
+        long delta = Math.abs(first - second);
+        if (delta > deltaAllowed) {
+            throw new AssertionError("difference between values should at most " + deltaAllowed + ", but is " + delta);
+        }
+    }
 }

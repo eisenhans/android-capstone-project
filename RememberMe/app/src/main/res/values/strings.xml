@@ -42,6 +42,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="got_it">Got it</string>
     <string name="translate">Translate</string>
     <string name="save">Save</string>
     <string name="word_translated">Word translated</string>
@@ -65,5 +66,8 @@
     <string name="word_deleted">Word deleted</string>
     <string name="changes_saved">Changes saved</string>
     <string name="words_learned">Words learned</string>
+    <string name="message">message</string>
+    <string name="title">title</string>
+    <string name="words_from_compartment_known">You\'ve mastered the words from this\ncompartment. There\'s no need to\nrepeat them any more.</string>
 
 </resources>

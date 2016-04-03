@@ -35,6 +35,18 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
     }
 
     @Test
+    public void createWord() {
+        String foreignWord = "porcupine";
+        String nativeWord = "Stachelschwein";
+        assertFalse(wordRepository.doesWordExist(boxId, foreignWord, nativeWord));
+
+        long start = System.currentTimeMillis();
+        int wordId = wordRepository.createWord(boxId, foreignWord, nativeWord);
+        long stop = System.currentTimeMillis();
+        assertAlmostEqual(start, stop, 100);
+    }
+
+    @Test
     public void doesWordExist() {
         String foreignWord = "porcupine";
         String nativeWord = "Stachelschwein";

@@ -32,6 +32,7 @@ public class WordRepository {
     }
 
     public int createWord(int boxId, int compartment, String foreignWord, String nativeWord) {
+        long start = System.currentTimeMillis();
         ContentValues values = new ContentValues();
         values.put(WordColumns.BOX_ID, boxId);
         values.put(WordColumns.COMPARTMENT, compartment);
@@ -39,10 +40,12 @@ public class WordRepository {
         values.put(WordColumns.NATIVE_WORD, nativeWord);
         values.put(WordColumns.CREATION_DATE, new Date().getTime());
 
+        long between = System.currentTimeMillis();
         Uri uri = contentResolver.insert(RememberMeProvider.Word.WORDS, values);
-        String lastPathSegment = uri.getLastPathSegment();
-        logInfo("created word: " + values + ", uri: " + uri);
+        long stop = System.currentTimeMillis();
+        logInfo("created word " + values + " in " + (stop - start) + " ms, insert itself took " + (stop - between) + " ms");
 
+        String lastPathSegment = uri.getLastPathSegment();
         return Integer.valueOf(lastPathSegment);
     }
 
@@ -71,18 +74,29 @@ public class WordRepository {
         return wordExists;
     }
 
-    public Word findWord(int id) {
+    public Word findWord(int wordId) {
         WordCursor wordCursor = new WordCursor(contentResolver.query(
                 RememberMeProvider.Word.WORDS,
                 null,
                 WordColumns.ID + " = ?",
-                new String[]{String.valueOf(id)},
+                new String[]{String.valueOf(wordId)},
                 null));
 
         Word word = wordCursor.peek();
         wordCursor.close();
 
         return word;
+    }
+
+    public WordCursor getWordCursor(int boxId, int compartment, String orderBy) {
+        WordCursor wordCursor = new WordCursor(contentResolver.query(
+                RememberMeProvider.Word.WORDS,
+                null,
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
+                orderBy));
+
+        return wordCursor;
     }
 
     public Word getNextWord(int boxId, int compartment) {
