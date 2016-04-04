@@ -89,7 +89,7 @@ public class MainActivity extends AbstractRememberMeActivity {
 
     @BindString(R.string.foreign_to_native) String foreignToNativeString;
     @BindString(R.string.native_to_foreign) String nativeToForeignString;
-    @BindString(R.string.mixed) String mixedString;
+    @BindString(R.string.randomString) String randomString;
 
     private Pair<String, String>[] codeLanguagePairs;
     private String[] languageCodes;
@@ -129,7 +129,7 @@ public class MainActivity extends AbstractRememberMeActivity {
         }
         updateBoxSpinner();
 
-        String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, mixedString };
+        String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, randomString};
 
         ArrayAdapter<String> translationDirectionAdapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
@@ -209,7 +209,7 @@ public class MainActivity extends AbstractRememberMeActivity {
                 }
 
                 int translationDirection = selectedBox.translationDirection;
-                if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_MIXED) {
+                if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_RANDOM) {
                     double random = Math.random();
                     translationDirection = (random >= 0.5) ?
                             VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
@@ -231,6 +231,11 @@ public class MainActivity extends AbstractRememberMeActivity {
 
             @Override
             public void onClick(View v) {
+                logInfo("clicked: compartment " + compartment);
+                int wordsInCompartment = wordRepository.countWords(selectedBox.id, compartment);
+                if (wordsInCompartment == 0) {
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, WordListActivity.class)
                         .setAction(RememberMeIntent.ACTION_SHOW)
                         .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)

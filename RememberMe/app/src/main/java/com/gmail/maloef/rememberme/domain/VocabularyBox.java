@@ -7,7 +7,7 @@ public class VocabularyBox implements Parcelable {
 
     public static final int TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE = 0;
     public static final int TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN = 1;
-    public static final int TRANSLATION_DIRECTION_MIXED = 2;
+    public static final int TRANSLATION_DIRECTION_RANDOM = 2;
 
     public int id;
 

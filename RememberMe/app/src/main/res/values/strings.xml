@@ -19,7 +19,7 @@
     <string name="translation_direction">Translation direction</string>
     <string name="foreign_to_native">Foreign to native</string>
     <string name="native_to_foreign">Native to foreign</string>
-    <string name="mixed">Mixed</string>
+    <string name="random">Random</string>
 
     <string name="enter_new_name_here">Enter new name here</string>
     <string name="box_exists">A box with this name already exists</string>
@@ -69,5 +69,6 @@
     <string name="message">message</string>
     <string name="title">title</string>
     <string name="words_from_compartment_known">You\'ve mastered the words from this\ncompartment. There\'s no need to\nrepeat them any more.</string>
+    <string name="randomString">Random</string>
 
 </resources>

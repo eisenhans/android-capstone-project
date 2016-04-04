@@ -24,7 +24,7 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         assertFalse(boxCursor.moveToFirst());
         boxCursor.close();
 
-        insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+        insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_RANDOM);
         boxCursor = new VocabularyBoxCursor(
                 contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertTrue(boxCursor.moveToFirst());
@@ -32,7 +32,7 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         assertEquals("defaultBox", box.name);
         assertEquals("English", box.foreignLanguage);
         assertEquals("German", box.nativeLanguage);
-        assertEquals(VocabularyBox.TRANSLATION_DIRECTION_MIXED, box.translationDirection);
+        assertEquals(VocabularyBox.TRANSLATION_DIRECTION_RANDOM, box.translationDirection);
         assertFalse(box.isCurrent);
 
         assertFalse(boxCursor.moveToNext());
@@ -73,7 +73,7 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         wordCursor.close();
         logTime("checked no word in db");
 
-        int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+        int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_RANDOM);
         logTime("inserted voacabulary box");
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
         logTime("inserted one word");
@@ -97,7 +97,7 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
 
     @Test
     public void testCombined() {
-        int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_MIXED);
+        int boxId = insertVocabularyBox("defaultBox", "English", "German", VocabularyBox.TRANSLATION_DIRECTION_RANDOM);
         VocabularyBoxCursor boxCursor = new VocabularyBoxCursor(
                 contentProvider.query(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, null, null, null, null));
         assertTrue(boxCursor.moveToFirst());

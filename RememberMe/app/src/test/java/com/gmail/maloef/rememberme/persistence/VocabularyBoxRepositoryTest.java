@@ -42,9 +42,9 @@ public class VocabularyBoxRepositoryTest extends AbstractPersistenceTest {
 
     @Test
     public void testGetBoxNames() {
-        boxService.createBox("English", "en", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
-        boxService.createBox("Italian", "it", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
-        boxService.createBox("Hungarian", "hu", "de", VocabularyBox.TRANSLATION_DIRECTION_MIXED, false);
+        boxService.createBox("English", "en", "de", VocabularyBox.TRANSLATION_DIRECTION_RANDOM, false);
+        boxService.createBox("Italian", "it", "de", VocabularyBox.TRANSLATION_DIRECTION_RANDOM, true);
+        boxService.createBox("Hungarian", "hu", "de", VocabularyBox.TRANSLATION_DIRECTION_RANDOM, false);
 
         String[] boxNames = boxService.getBoxNames();
         assertEquals(3, boxNames.length);

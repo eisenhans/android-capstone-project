@@ -90,7 +90,7 @@ public class VocabularyBoxRepository {
         String boxName = context.getResources().getString(R.string.default_name);
         String nativeLanguage = Locale.getDefault().getLanguage();
         logInfo("default language of device: " + nativeLanguage + ", foreign language to be detected");
-        int defaultBoxId = createBox(boxName, null, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_MIXED, true);
+        int defaultBoxId = createBox(boxName, null, nativeLanguage, VocabularyBox.TRANSLATION_DIRECTION_RANDOM, true);
 
         return defaultBoxId;
     }
