@@ -70,5 +70,6 @@
     <string name="title">title</string>
     <string name="words_from_compartment_known">You\'ve mastered the words from this\ncompartment. There\'s no need to\nrepeat them any more.</string>
     <string name="randomString">Random</string>
+    <string name="will_be_detected">Will be detected</string>
 
 </resources>

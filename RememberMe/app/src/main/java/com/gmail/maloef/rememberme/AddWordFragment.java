@@ -187,12 +187,15 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
         languageSettingsManager = new LanguageSettingsManager(getActivity(), boxRepository, languageRepository);
 
-        updateLanguageSpinners(foreignLanguageUsedForTranslation);
+        configureLanguageSpinners();
+        updateForeignLanguageSpinner(foreignLanguageUsedForTranslation);
+        updateNativeLanguageSpinner(nativeLanguageUsedForTranslation);
+
         // ToDo 09.03.16: necessary here? DRY?
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updateLanguageSpinners(foreignLanguageUsedForTranslation);
+                configureLanguageSpinners();
             }
         };
         IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
@@ -232,15 +235,23 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(enableOkButton);
     }
 
-    private void updateLanguageSpinners(String foreignLanguage) {
+    private void configureLanguageSpinners() {
         if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
             // languages are up to date
             return;
         }
-        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
         languageCount = languageRepository.countLanguages("en");
+    }
+
+    private void updateForeignLanguageSpinner(String foreignLanguage) {
+        languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+    }
+
+    private void updateNativeLanguageSpinner(String nativeLanguage) {
+        languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguage);
     }
 
     @Override

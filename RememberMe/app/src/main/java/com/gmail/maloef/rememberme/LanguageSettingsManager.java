@@ -49,32 +49,13 @@ public class LanguageSettingsManager {
     }
 
     public void configureForeignLanguageSpinner(final Spinner spinner) {
-        configureForeignLanguageSpinner(spinner, null);
-    }
+        List<String> languagesPlusDetect = new ArrayList<>();
 
-    public void configureForeignLanguageSpinner(final Spinner spinner, String selectLanguage) {
-        List<String> languagesPlusDetect = new ArrayList<String>();
-
-        // ToDo 07.03.16: remove string or create resource
-        String detectedLabel = (selectLanguage == null ? "Will be detected" : "");
+        String detectedLabel = context.getString(R.string.will_be_detected);
         languagesPlusDetect.add(detectedLabel);
         languagesPlusDetect.addAll(Arrays.asList(languageNames));
 
         spinner.setAdapter(createLanguageAdapter(languagesPlusDetect));
-
-        int languagePos;
-        if (selectLanguage == null) {
-            if (getSelectedBox().foreignLanguage == null) {
-                languagePos = 0;
-            } else {
-                languagePos = languagePosition(getSelectedBox().foreignLanguage) + 1;
-            }
-        } else {
-            languagePos = languagePosition(selectLanguage) + 1;
-            boxService.updateForeignLanguage(getSelectedBox().id, selectLanguage);
-        }
-        logInfo("selected language " + selectLanguage + ", selection is position " + languagePos);
-        spinner.setSelection(languagePos);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -86,52 +67,55 @@ public class LanguageSettingsManager {
                 } else {
                     selectedIso = languageCodes[selectedItemPos - 1];
                 }
-                if (selectedIso == null) {
-                    if (getSelectedBox().foreignLanguage == null) {
-                        return;
-                    }
-                    getSelectedBox().foreignLanguage = null;
-                    boxService.updateForeignLanguage(getSelectedBox().id, null);
-                    informListeners();
-                    logInfo("removed foreign language setting from box " + getSelectedBox().name);
+                if (selectedIso == null && getSelectedBox().foreignLanguage == null) {
                     return;
                 }
-                if (!selectedIso.equals(getSelectedBox().foreignLanguage)) {
-                    getSelectedBox().foreignLanguage = selectedIso;
-                    boxService.updateForeignLanguage(getSelectedBox().id, selectedIso);
-                    informListeners();
-                    logInfo("updated foreign language for box " + getSelectedBox().name + ": " + selectedIso);
+                if (selectedIso != null && selectedIso.equals(getSelectedBox().foreignLanguage)) {
+                    return;
                 }
+                getSelectedBox().foreignLanguage = selectedIso;
+                boxService.updateForeignLanguage(getSelectedBox().id, selectedIso);
+                informListeners();
+                logInfo("updated foreign language for box " + getSelectedBox().name + ": " + selectedIso);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
+    }
+
+    public void updateForeignLanguageSpinner(Spinner foreignLanguageSpinner, String foreignLanguage) {
+        int languagePos = (foreignLanguage == null ? 0 : languagePosition(foreignLanguage) + 1);
+        foreignLanguageSpinner.setSelection(languagePos);
+        boxService.updateForeignLanguage(getSelectedBox().id, foreignLanguage);
     }
 
     public void configureNativeLanguageSpinner(final Spinner spinner) {
         spinner.setAdapter(createLanguageAdapter(Arrays.asList(languageNames)));
-
-        int languagePos = languagePosition(getSelectedBox().nativeLanguage);
-        spinner.setSelection(languagePos);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 int selectedItemPos = spinner.getSelectedItemPosition();
                 String selectedIso = languageCodes[selectedItemPos];
-                if (!selectedIso.equals(getSelectedBox().nativeLanguage)) {
-                    getSelectedBox().nativeLanguage = selectedIso;
-                    boxService.updateNativeLanguage(getSelectedBox().id, selectedIso);
-                    informListeners();
-                    logInfo("updated native language for box " + getSelectedBox().name + ": " + selectedIso);
+                if (selectedIso.equals(getSelectedBox().nativeLanguage)) {
+                    return;
                 }
+                getSelectedBox().nativeLanguage = selectedIso;
+                boxService.updateNativeLanguage(getSelectedBox().id, selectedIso);
+                informListeners();
+                logInfo("updated native language for box " + getSelectedBox().name + ": " + selectedIso);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
+    }
+
+    public void updateNativeLanguageSpinner(Spinner nativeLanguageSpinner, String nativeLanguage) {
+        int languagePos = languagePosition(nativeLanguage);
+        nativeLanguageSpinner.setSelection(languagePos);
+        boxService.updateNativeLanguage(getSelectedBox().id, nativeLanguage);
     }
 
     public void setLanguageSelectionListener(LanguageSelectionListener languageSelectionListener) {

@@ -48,6 +48,11 @@ import butterknife.OnClick;
 
 public class MainActivity extends AbstractRememberMeActivity {
 
+    @Inject VocabularyBoxRepository boxRepository;
+    @Inject CompartmentRepository compartmentRepository;
+    @Inject WordRepository wordRepository;
+    @Inject LanguageRepository languageRepository;
+
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
     @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
     @Bind(R.id.nativeLanguageSpinner) Spinner nativeLanguageSpinner;
@@ -99,11 +104,7 @@ public class MainActivity extends AbstractRememberMeActivity {
     private String[] boxNames;
 
     private VocabularyBox selectedBox;
-
-    @Inject VocabularyBoxRepository boxRepository;
-    @Inject CompartmentRepository compartmentRepository;
-    @Inject WordRepository wordRepository;
-    @Inject LanguageRepository languageRepository;
+    private LanguageSettingsManager languageSettingsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +128,14 @@ public class MainActivity extends AbstractRememberMeActivity {
         if (!boxRepository.isOneBoxSaved()) {
             boxRepository.createDefaultBox();
         }
+        languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languageRepository);
+
         updateBoxSpinner();
 
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, randomString};
 
         ArrayAdapter<String> translationDirectionAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, translationDirections);
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, translationDirections);
         translationDirectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         translationDirectionSpinner.setAdapter(translationDirectionAdapter);
         translationDirectionSpinner.setSelection(selectedBox.translationDirection);
@@ -156,11 +159,11 @@ public class MainActivity extends AbstractRememberMeActivity {
 
         addRowListeners();
 
-        updateLanguageSpinners();
+        configureLanguageSpinners();
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updateLanguageSpinners();
+                configureLanguageSpinners();
             }
         };
         IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
@@ -174,19 +177,26 @@ public class MainActivity extends AbstractRememberMeActivity {
         // move all words from the 'virtual' compartment 0 to compartment 1
         wordRepository.moveAll(selectedBox.id, 0, 1);
 
-        updateOverviewTable();
+        updateSelectedBox(selectedBox.name);
     }
 
-    private void updateLanguageSpinners() {
+    private void configureLanguageSpinners() {
         if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
             // languages are up to date
             return;
         }
-        LanguageSettingsManager languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languageRepository);
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
         languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
 
         languageCount = languageRepository.countLanguages("en");
+    }
+
+    private void updateForeignLanguageSpinner(String foreignLanguage) {
+        languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+    }
+
+    private void updateNativeLanguageSpinner(String nativeLanguage) {
+        languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguage);
     }
 
     private void addRowListeners() {
@@ -246,25 +256,6 @@ public class MainActivity extends AbstractRememberMeActivity {
         });
     }
 
-    private void updateOverviewTable() {
-        BoxOverview boxOverview = compartmentRepository.getBoxOverview(selectedBox.id);
-        overviewWords1TextView.setText(String.valueOf(boxOverview.getWordCount(1)));
-        overviewWords2TextView.setText(String.valueOf(boxOverview.getWordCount(2)));
-        overviewWords3TextView.setText(String.valueOf(boxOverview.getWordCount(3)));
-        overviewWords4TextView.setText(String.valueOf(boxOverview.getWordCount(4)));
-        overviewWords5TextView.setText(String.valueOf(boxOverview.getWordCount(5)));
-        overviewWords6TextView.setText(String.valueOf(boxOverview.getWordCount(6)));
-
-        overviewNotRepeated1TextView.setText(calculateDaysSinceRepeat(boxOverview, 1));
-        overviewNotRepeated2TextView.setText(calculateDaysSinceRepeat(boxOverview, 2));
-        overviewNotRepeated3TextView.setText(calculateDaysSinceRepeat(boxOverview, 3));
-        overviewNotRepeated4TextView.setText(calculateDaysSinceRepeat(boxOverview, 4));
-        overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
-        overviewNotRepeated6TextView.setText(calculateDaysSinceRepeat(boxOverview, 6));
-
-        memorizeButton.setEnabled(boxOverview.getWordCount(1) > 0);
-    }
-
     private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
         long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
         if (repeatDate == 0) {
@@ -289,7 +280,7 @@ public class MainActivity extends AbstractRememberMeActivity {
 
         logInfo("updating spinner, boxNames: " + Arrays.asList(boxNames));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, boxNames);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, boxNames);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vocabularyBoxSpinner.setAdapter(spinnerAdapter);
 
@@ -306,6 +297,39 @@ public class MainActivity extends AbstractRememberMeActivity {
         });
     }
 
+    void updateSelectedBox(String boxName) {
+        if (!boxName.equals(selectedBox.name)) {
+            selectedBox = boxRepository.selectBoxByName(boxName);
+        }
+
+        updateForeignLanguageSpinner(selectedBox.foreignLanguage);
+        updateNativeLanguageSpinner(selectedBox.nativeLanguage);
+        translationDirectionSpinner.setSelection(selectedBox.translationDirection);
+
+        updateOverviewTable();
+
+        logInfo("updated selected box: " + boxName);
+    }
+
+    private void updateOverviewTable() {
+        BoxOverview boxOverview = compartmentRepository.getBoxOverview(selectedBox.id);
+        overviewWords1TextView.setText(String.valueOf(boxOverview.getWordCount(1)));
+        overviewWords2TextView.setText(String.valueOf(boxOverview.getWordCount(2)));
+        overviewWords3TextView.setText(String.valueOf(boxOverview.getWordCount(3)));
+        overviewWords4TextView.setText(String.valueOf(boxOverview.getWordCount(4)));
+        overviewWords5TextView.setText(String.valueOf(boxOverview.getWordCount(5)));
+        overviewWords6TextView.setText(String.valueOf(boxOverview.getWordCount(6)));
+
+        overviewNotRepeated1TextView.setText(calculateDaysSinceRepeat(boxOverview, 1));
+        overviewNotRepeated2TextView.setText(calculateDaysSinceRepeat(boxOverview, 2));
+        overviewNotRepeated3TextView.setText(calculateDaysSinceRepeat(boxOverview, 3));
+        overviewNotRepeated4TextView.setText(calculateDaysSinceRepeat(boxOverview, 4));
+        overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
+        overviewNotRepeated6TextView.setText(calculateDaysSinceRepeat(boxOverview, 6));
+
+        memorizeButton.setEnabled(boxOverview.getWordCount(1) > 0);
+    }
+
     int selectedBoxPosition() {
         for (int i = 0; i < boxNames.length; i++) {
             if (boxNames[i].equals(selectedBox.name)) {
@@ -314,37 +338,6 @@ public class MainActivity extends AbstractRememberMeActivity {
         }
         throw new IllegalStateException("cannot find selected box: boxNames = " + Arrays.asList(boxNames) +
                 ", selectedBox = " + selectedBox.name);
-    }
-
-    void updateSelectedBox(String boxName) {
-        if (boxName.equals(selectedBox.name)) {
-            return;
-        }
-        selectedBox = boxRepository.selectBoxByName(boxName);
-
-        int foreignLanguagePos = languagePosition(selectedBox.foreignLanguage);
-        foreignLanguageSpinner.setSelection(foreignLanguagePos);
-
-        int nativeLanguagePos = languagePosition(selectedBox.nativeLanguage);
-        nativeLanguageSpinner.setSelection(nativeLanguagePos);
-
-        translationDirectionSpinner.setSelection(selectedBox.translationDirection);
-
-        updateOverviewTable();
-
-        logInfo("updated selected box: " + boxName);
-    }
-
-    int languagePosition(String isoCode) {
-        if (isoCode == null) {
-            return 0;
-        }
-        for (int i = 0; i < languageCodes.length; i++) {
-            if (languageCodes[i].equals(isoCode)) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("unknown iso code: " + isoCode);
     }
 
     private InputValidator createNewBoxNameInputValidator() {
