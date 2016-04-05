@@ -16,9 +16,7 @@ public class LanguageUpdater {
         this.languageProvider = languageProvider;
     }
 
-    public void update() {
-        String language = "en";
-
+    public void update(String language) {
         if (isTimeForUpdate(language)) {
             updateLanguages(language);
         }
@@ -31,8 +29,6 @@ public class LanguageUpdater {
 
         return languages < 10;
     }
-
-
 
     public void updateLanguages(String nameCode) {
         Pair<String, String>[] languages = languageProvider.getLanguages(nameCode);

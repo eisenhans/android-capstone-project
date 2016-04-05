@@ -67,6 +67,9 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         super.onCreate(savedInstanceState);
 
         RememberMeApplication.injector().inject(this);
+        if (!boxRepository.isOneBoxSaved()) {
+            boxRepository.createDefaultBox();
+        }
         selectedBox = boxRepository.getSelectedBox();
     }
 
@@ -151,7 +154,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         if (translation.detectedSourceLanguage != null) {
             showConfirmLanguageSettingsDialog(translationResult);
         }
-        if (StringUtils.isBlank(translation.translatedText) || translation.translatedText.equalsIgnoreCase(foreignWord)) {
+        if (StringUtils.isBlank(translation.translatedText)) {
+        //if (StringUtils.isBlank(translation.translatedText) || translation.translatedText.equalsIgnoreCase(foreignWord)) {
             nativeWord = null;
             nativeWordEditText.setText(null);
             saveButton.setEnabled(false);

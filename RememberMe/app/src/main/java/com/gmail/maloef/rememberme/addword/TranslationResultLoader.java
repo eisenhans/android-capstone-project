@@ -27,12 +27,13 @@ public class TranslationResultLoader  extends AsyncTaskLoader<TranslationResult>
 
     @Override
     public TranslationResult loadInBackground() {
-        TranslationResult result = new TranslationResult();
+        String appLanguage = "en";
 
         LanguageUpdater updater = new LanguageUpdater(languageRepository, translateService);
-        updater.update();
+        updater.update(appLanguage);
 
-        result.languages = languageRepository.getLanguages("en");
+        TranslationResult result = new TranslationResult();
+        result.languages = languageRepository.getLanguages(appLanguage);
         result.translation = translateService.translate(foreignWord, foreignLanguage, nativeLanguage);
 
         return result;

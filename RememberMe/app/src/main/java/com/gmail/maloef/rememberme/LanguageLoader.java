@@ -21,11 +21,11 @@ public class LanguageLoader extends AsyncTaskLoader<Language[]> {
 
     @Override
     public Language[] loadInBackground() {
+        String appLanguage = "en";
         LanguageUpdater updater = new LanguageUpdater(languageRepository, languageProvider);
+        updater.update(appLanguage);
 
-        updater.update();
-
-        return languageRepository.getLanguages("en");
+        return languageRepository.getLanguages(appLanguage);
     }
 
     @Override

@@ -116,6 +116,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         if (!boxRepository.isOneBoxSaved()) {
             boxRepository.createDefaultBox();
         }
+        selectedBox = boxRepository.getSelectedBox();
         updateBoxSpinner();
 
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, randomString};
@@ -245,7 +246,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     void updateBoxSpinner() {
         boxNames = boxRepository.getBoxNames();
-        selectedBox = boxRepository.getSelectedBox();
 
         logInfo("updating spinner, boxNames: " + Arrays.asList(boxNames));
 
@@ -267,9 +267,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     void updateSelectedBox(String boxName) {
-        if (!boxName.equals(selectedBox.name)) {
-            selectedBox = boxRepository.selectBoxByName(boxName);
-        }
+        selectedBox = boxRepository.selectBoxByName(boxName);
 
         updateForeignLanguageSpinner(selectedBox.foreignLanguage);
         updateNativeLanguageSpinner(selectedBox.nativeLanguage);
