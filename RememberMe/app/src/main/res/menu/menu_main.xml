@@ -19,6 +19,11 @@
         />
 
     <item
+        android:id="@+id/action_add_word"
+        android:title="@string/add_word"
+        />
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />

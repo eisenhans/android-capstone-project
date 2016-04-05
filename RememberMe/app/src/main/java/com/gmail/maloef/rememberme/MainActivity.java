@@ -373,6 +373,14 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             }
             return true;
         }
+        if (item.getItemId() == R.id.action_add_word) {
+            Intent intent = new Intent(MainActivity.this, WordActivity.class)
+                    .setAction(RememberMeIntent.ACTION_ADD)
+                    .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
+
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
