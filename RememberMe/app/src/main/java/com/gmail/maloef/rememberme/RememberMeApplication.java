@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.gmail.maloef.rememberme.di.DaggerRememberMeInjector;
 import com.gmail.maloef.rememberme.di.RememberMeInjector;
 import com.gmail.maloef.rememberme.di.RememberMeModule;
-import com.gmail.maloef.rememberme.service.LanguageUpdateService;
+import com.gmail.maloef.rememberme.service.LanguageUpdater;
 
 public class RememberMeApplication extends Application {
 
@@ -25,7 +25,7 @@ public class RememberMeApplication extends Application {
 
     private void startLanguageUpdateService() {
         // not sure if this is the best way to start a service when the app starts
-        Intent startServiceIntent = new Intent(getApplicationContext(), LanguageUpdateService.class);
+        Intent startServiceIntent = new Intent(getApplicationContext(), LanguageUpdater.class);
         startService(startServiceIntent);
     }
 

@@ -2,15 +2,14 @@ package com.gmail.maloef.rememberme;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
-import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 
 import java.util.ArrayList;
@@ -29,22 +28,17 @@ public class LanguageSettingsManager {
     private String[] languageCodes;
     private String[] languageNames;
 
-    private Pair<String, String>[] codeLanguagePairs;
-
     private LanguageSelectionListener languageSelectionListener;
 
-    public LanguageSettingsManager(Context context, VocabularyBoxRepository boxService, LanguageRepository languageService) {
+    public LanguageSettingsManager(Context context, VocabularyBoxRepository boxService, Language[] languages) {
         this.context = context;
         this.boxService = boxService;
 
-        // ToDo 07.03.16: simplify
-        codeLanguagePairs = languageService.getLanguages("en");
-        languageCodes = new String[codeLanguagePairs.length];
-        languageNames = new String[codeLanguagePairs.length];
-
-        for (int i = 0; i < codeLanguagePairs.length; i++) {
-            languageCodes[i] = codeLanguagePairs[i].first;
-            languageNames[i] = codeLanguagePairs[i].second;
+        languageCodes = new String[languages.length];
+        languageNames = new String[languages.length];
+        for (int i = 0; i < languages.length; i++) {
+            languageCodes[i] = languages[i].code;
+            languageNames[i] = languages[i].name;
         }
     }
 

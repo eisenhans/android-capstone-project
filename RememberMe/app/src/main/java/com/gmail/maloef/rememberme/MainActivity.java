@@ -1,13 +1,10 @@
 package com.gmail.maloef.rememberme;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gmail.maloef.rememberme.domain.BoxOverview;
+import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
-import com.gmail.maloef.rememberme.service.LanguageUpdateService;
+import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
 import com.gmail.maloef.rememberme.util.DateUtils;
 import com.gmail.maloef.rememberme.util.StringUtils;
 import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
@@ -46,12 +44,13 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AbstractRememberMeActivity {
+public class MainActivity extends AbstractRememberMeActivity implements LoaderManager.LoaderCallbacks<Language[]> {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject CompartmentRepository compartmentRepository;
     @Inject WordRepository wordRepository;
     @Inject LanguageRepository languageRepository;
+    @Inject LanguageProvider languageProvider;
 
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
     @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
@@ -96,15 +95,11 @@ public class MainActivity extends AbstractRememberMeActivity {
     @BindString(R.string.native_to_foreign) String nativeToForeignString;
     @BindString(R.string.randomString) String randomString;
 
-    private Pair<String, String>[] codeLanguagePairs;
-    private String[] languageCodes;
-    private String[] languageNames;
-    private int languageCount;
-
     private String[] boxNames;
 
     private VocabularyBox selectedBox;
     private LanguageSettingsManager languageSettingsManager;
+    private boolean loadFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,22 +109,13 @@ public class MainActivity extends AbstractRememberMeActivity {
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
 
+        getLoaderManager().initLoader(0, null, this);
+
         initToolbar(false, R.string.vocabulary_box);
-
-        codeLanguagePairs = languageRepository.getLanguages("en");
-        languageCodes = new String[codeLanguagePairs.length];
-        languageNames = new String[codeLanguagePairs.length];
-
-        for (int i = 0; i < codeLanguagePairs.length; i++) {
-            languageCodes[i] = codeLanguagePairs[i].first;
-            languageNames[i] = codeLanguagePairs[i].second;
-        }
 
         if (!boxRepository.isOneBoxSaved()) {
             boxRepository.createDefaultBox();
         }
-        languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languageRepository);
-
         updateBoxSpinner();
 
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, randomString};
@@ -158,16 +144,6 @@ public class MainActivity extends AbstractRememberMeActivity {
 //        createTestData();
 
         addRowListeners();
-
-        configureLanguageSpinners();
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                configureLanguageSpinners();
-            }
-        };
-        IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, languagesUpdatedFilter);
     }
 
     @Override
@@ -180,23 +156,16 @@ public class MainActivity extends AbstractRememberMeActivity {
         updateSelectedBox(selectedBox.name);
     }
 
-    private void configureLanguageSpinners() {
-        if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
-            // languages are up to date
-            return;
-        }
-        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
-        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
-
-        languageCount = languageRepository.countLanguages("en");
-    }
-
     private void updateForeignLanguageSpinner(String foreignLanguage) {
-        languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+        if (loadFinished) {
+            languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
+        }
     }
 
     private void updateNativeLanguageSpinner(String nativeLanguage) {
-        languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguage);
+        if (loadFinished) {
+            languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguage);
+        }
     }
 
     private void addRowListeners() {
@@ -465,4 +434,24 @@ public class MainActivity extends AbstractRememberMeActivity {
 
         wordRepository.createWord(boxId, 2, "emissary", "Abgesandter");
     }
+
+    @Override
+    public Loader<Language[]> onCreateLoader(int id, Bundle args) {
+        return new LanguageLoader(this, languageRepository, languageProvider);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Language[]> languageLoader, Language[] languages) {
+        languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languages);
+
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
+        loadFinished = true;
+
+        updateForeignLanguageSpinner(selectedBox.foreignLanguage);
+        updateNativeLanguageSpinner(selectedBox.nativeLanguage);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Language[]> languageLoader) {}
 }

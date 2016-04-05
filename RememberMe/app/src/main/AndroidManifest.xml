@@ -42,7 +42,6 @@
             android:authorities="com.gmail.maloef.rememberme"
             android:name=".persistence.generated.RememberMeProvider"
             android:exported="false" />
-        <service android:name=".service.LanguageUpdateService" android:exported="false" />
     </application>
 
 </manifest>

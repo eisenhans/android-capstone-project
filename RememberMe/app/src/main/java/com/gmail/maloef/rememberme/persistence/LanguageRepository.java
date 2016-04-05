@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme.persistence;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Pair;
@@ -33,7 +34,30 @@ public class LanguageRepository {
         return languages;
     }
 
-    public Pair<String, String>[] getLanguages(String nameCode) {
+//    public Pair<String, String>[] getLanguages(String nameCode) {
+//        LanguageCursor languageCursor = new LanguageCursor(contentResolver.query(
+//                RememberMeProvider.Language.LANGUAGES,
+//                null,
+//                LanguageColumns.NAME_CODE + " = ?",
+//                new String[]{nameCode},
+//                null));
+//
+//        Pair[] pairs = new Pair[languageCursor.getCount()];
+//        int i = 0;
+//        for (Language language : languageCursor) {
+//            pairs[i++] = Pair.create(language.code, language.name);
+//        }
+//        languageCursor.close();
+//
+//        // ToDo 08.03.16: remove
+//        if (pairs.length == 0 && !isRobelectricTest()) {
+//            pairs = createDummyLanguages();
+//        }
+//
+//        return pairs;
+//    }
+
+    public Language[] getLanguages(String nameCode) {
         LanguageCursor languageCursor = new LanguageCursor(contentResolver.query(
                 RememberMeProvider.Language.LANGUAGES,
                 null,
@@ -41,19 +65,32 @@ public class LanguageRepository {
                 new String[]{nameCode},
                 null));
 
-        Pair[] pairs = new Pair[languageCursor.getCount()];
+        Language[] languages = new Language[languageCursor.getCount()];
         int i = 0;
         for (Language language : languageCursor) {
-            pairs[i++] = Pair.create(language.code, language.name);
+            languages[i++] = language;
         }
         languageCursor.close();
 
-        // ToDo 08.03.16: remove
-        if (pairs.length == 0 && !isRobelectricTest()) {
-            pairs = createDummyLanguages();
-        }
+        return languages;
+    }
 
-        return pairs;
+    public int insertLanguages(Pair<String, String>[] languages, String nameCode) {
+        ContentValues[] values = new ContentValues[languages.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = new ContentValues();
+            values[i].put("code", languages[i].first);
+            values[i].put("name", languages[i].second);
+            values[i].put("nameCode", nameCode);
+        }
+        return contentResolver.bulkInsert(RememberMeProvider.Language.LANGUAGES, values);
+    }
+
+    public int deleteLanguages(String nameCode) {
+        return contentResolver.delete(
+                RememberMeProvider.Language.LANGUAGES,
+                LanguageColumns.NAME_CODE + " = ?",
+                new String[]{nameCode});
     }
 
     private Pair[] createDummyLanguages() {

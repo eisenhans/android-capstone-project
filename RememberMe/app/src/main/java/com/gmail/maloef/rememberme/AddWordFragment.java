@@ -1,14 +1,9 @@
 package com.gmail.maloef.rememberme;
 
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,13 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.gmail.maloef.rememberme.addword.TranslationResult;
+import com.gmail.maloef.rememberme.addword.TranslationResultLoader;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
-import com.gmail.maloef.rememberme.service.LanguageUpdateService;
 import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
-import com.gmail.maloef.rememberme.translate.google.TranslateLoader;
 import com.gmail.maloef.rememberme.translate.google.Translation;
 import com.gmail.maloef.rememberme.util.StringUtils;
 import com.gmail.maloef.rememberme.util.text.AfterTextChangedWatcher;
@@ -41,7 +36,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 @FragmentWithArgs
-public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<Translation> {
+public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<TranslationResult> {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -142,20 +137,23 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     }
 
     @Override
-    public Loader<Translation> onCreateLoader(int id, Bundle args) {
+    public Loader<TranslationResult> onCreateLoader(int id, Bundle args) {
         logInfo("loading translation for word " + foreignWord + " from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
-        return new TranslateLoader(getActivity(), translateService, foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
+        return new TranslationResultLoader(getActivity(), languageRepository, translateService,
+                foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
     }
 
     @Override
-    public void onLoadFinished(Loader<Translation> translateLoader, Translation translation) {
+    public void onLoadFinished(Loader<TranslationResult> translationResultLoader, TranslationResult translationResult) {
+        Translation translation = translationResult.translation;
         logInfo("translation returned by loader: " + translation);
 
         if (translation.detectedSourceLanguage != null) {
-            showConfirmLanguageSettingsDialog(translation.detectedSourceLanguage);
+            showConfirmLanguageSettingsDialog(translationResult);
         }
         if (StringUtils.isBlank(translation.translatedText) || translation.translatedText.equalsIgnoreCase(foreignWord)) {
             nativeWord = null;
+            nativeWordEditText.setText(null);
             saveButton.setEnabled(false);
             Toast.makeText(getActivity(), getString(R.string.no_translation_found), Toast.LENGTH_SHORT).show();
         } else {
@@ -171,10 +169,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         addWordParentLayout.requestFocus();
     }
 
-    private void showConfirmLanguageSettingsDialog(String detectedSourceLanguage) {
-        if (detectedSourceLanguage != null) {
-            selectedBox.foreignLanguage = detectedSourceLanguage;
-        }
+    private void showConfirmLanguageSettingsDialog(TranslationResult translationResult) {
+        selectedBox.foreignLanguage = translationResult.translation.detectedSourceLanguage;
         final String foreignLanguageUsedForTranslation = selectedBox.foreignLanguage;
         final String nativeLanguageUsedForTranslation = selectedBox.nativeLanguage;
 
@@ -185,21 +181,11 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
 
         foreignLanguageSpinner = (Spinner) dialogView.findViewById(R.id.foreignLanguageSpinner);
         nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
-        languageSettingsManager = new LanguageSettingsManager(getActivity(), boxRepository, languageRepository);
+        languageSettingsManager = new LanguageSettingsManager(getActivity(), boxRepository, translationResult.languages);
 
         configureLanguageSpinners();
         updateForeignLanguageSpinner(foreignLanguageUsedForTranslation);
         updateNativeLanguageSpinner(nativeLanguageUsedForTranslation);
-
-        // ToDo 09.03.16: necessary here? DRY?
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                configureLanguageSpinners();
-            }
-        };
-        IntentFilter languagesUpdatedFilter = new IntentFilter(LanguageUpdateService.LANGUAGES_UPDATED);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, languagesUpdatedFilter);
 
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -255,7 +241,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     }
 
     @Override
-    public void onLoaderReset(Loader<Translation> loader) {}
+    public void onLoaderReset(Loader<TranslationResult> loader) {}
 
     @OnClick(R.id.cancelButton)
     public void cancelAddWord(View view) {

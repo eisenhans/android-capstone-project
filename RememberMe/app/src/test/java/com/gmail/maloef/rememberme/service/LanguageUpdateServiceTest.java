@@ -3,6 +3,7 @@ package com.gmail.maloef.rememberme.service;
 import android.app.Application;
 import android.util.Pair;
 
+import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.persistence.AbstractPersistenceTest;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
@@ -20,31 +21,31 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     static final String EN = "en";
 
     Application application;
-    LanguageRepository languageService;
+    LanguageRepository languageRepository;
 
-    LanguageUpdateService languageUpdateService;
+    LanguageUpdater languageUpdater;
 
     @Before
     public void before() throws Exception {
         super.before();
         application = RuntimeEnvironment.application;
-        languageService = new LanguageRepository(application);
+        languageRepository = new LanguageRepository(application);
     }
 
     @Test
     public void updateLanguages() {
         assertEquals(0, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(createLanguageProvider(0));
-        languageUpdateService.updateLanguages(EN);
+        languageUpdater = new LanguageUpdater(languageRepository, createLanguageProvider(0));
+        languageUpdater.updateLanguages(EN);
         assertEquals(0, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(createLanguageProvider(2));
-        languageUpdateService.updateLanguages(EN);
+        languageUpdater = new LanguageUpdater(languageRepository, createLanguageProvider(2));
+        languageUpdater.updateLanguages(EN);
         assertEquals(2, countLanguagesInDatabase());
 
-        languageUpdateService = new LanguageUpdateService(createLanguageProvider(1));
-        languageUpdateService.updateLanguages(EN);
+        languageUpdater = new LanguageUpdater(languageRepository, createLanguageProvider(1));
+        languageUpdater.updateLanguages(EN);
         assertEquals(1, countLanguagesInDatabase());
     }
 
@@ -64,7 +65,7 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     }
 
     private int countLanguagesInDatabase() {
-        Pair<String, String>[] languages = languageService.getLanguages(EN);
+        Language[] languages = languageRepository.getLanguages(EN);
         return languages.length;
     }
 }
