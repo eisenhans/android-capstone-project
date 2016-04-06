@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.word;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gmail.maloef.rememberme.R;
+import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.WordRepository;

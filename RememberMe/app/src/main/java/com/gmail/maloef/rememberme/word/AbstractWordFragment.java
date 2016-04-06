@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.word;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import com.gmail.maloef.rememberme.AbstractRememberMeFragment;
 
 public abstract class AbstractWordFragment extends AbstractRememberMeFragment {
 

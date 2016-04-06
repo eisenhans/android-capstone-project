@@ -1,13 +1,13 @@
 package com.gmail.maloef.rememberme.di;
 
-import com.gmail.maloef.rememberme.AddWordFragment;
-import com.gmail.maloef.rememberme.EditWordFragment;
+import com.gmail.maloef.rememberme.word.AddWordFragment;
+import com.gmail.maloef.rememberme.word.EditWordFragment;
 import com.gmail.maloef.rememberme.MainActivity;
-import com.gmail.maloef.rememberme.MemorizeActivity;
-import com.gmail.maloef.rememberme.MemorizeFragment;
-import com.gmail.maloef.rememberme.QueryWordFragment;
-import com.gmail.maloef.rememberme.ShowWordFragment;
-import com.gmail.maloef.rememberme.WordActivity;
+import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
+import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.service.LanguageUpdater;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListFragment;

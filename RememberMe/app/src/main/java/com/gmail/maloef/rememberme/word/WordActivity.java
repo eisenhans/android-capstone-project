@@ -1,9 +1,13 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.word;
 
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
+import com.gmail.maloef.rememberme.R;
+import com.gmail.maloef.rememberme.RememberMeApplication;
+import com.gmail.maloef.rememberme.RememberMeIntent;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
@@ -98,7 +102,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private void replaceFragment(Fragment fragment) {
-        getFragmentManager().beginTransaction().replace(R.id.word_content, fragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
     }
 
     @Override

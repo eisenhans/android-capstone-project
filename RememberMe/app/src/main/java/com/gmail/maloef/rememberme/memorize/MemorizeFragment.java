@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.memorize;
 
 
 import android.os.Bundle;
@@ -13,6 +13,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.gmail.maloef.rememberme.AbstractRememberMeFragment;
+import com.gmail.maloef.rememberme.R;
+import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
@@ -28,6 +31,7 @@ import butterknife.OnClick;
 @FragmentWithArgs
 public class MemorizeFragment extends AbstractRememberMeFragment {
 
+    public static final String TAG = "memorizeFragmentTag";
     private static final String OFFSET_KEY = "offsetKey";
 
     @Inject WordRepository wordRepository;

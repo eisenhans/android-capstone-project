@@ -1,5 +1,6 @@
 package com.gmail.maloef.rememberme;
 
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -20,6 +21,9 @@ import android.widget.Toast;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
+import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.memorize.MemorizeFragmentBuilder;
 import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
@@ -31,6 +35,7 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
+import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 
 import java.util.Arrays;
@@ -81,6 +86,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Bind(R.id.memorizeButton) Button memorizeButton;
 
+    @Bind(R.id.detail_container) View contentDetailView;
+
     @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
 
     @BindString(R.string.rename_box) String renameBoxString;
@@ -101,6 +108,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     private LanguageSettingsManager languageSettingsManager;
     private boolean loadFinished;
 
+    private boolean twoPaneLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +117,11 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
+
+        if (contentDetailView != null) {
+            logInfo("twoPaneLayout because contentDetailView is not null");
+            twoPaneLayout = true;
+        }
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -142,7 +156,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             }
         });
 
-//        createTestData();
+        createTestData();
 
         addRowListeners();
     }
@@ -216,12 +230,16 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 if (wordsInCompartment == 0) {
                     return;
                 }
-                Intent intent = new Intent(MainActivity.this, WordListActivity.class)
-                        .setAction(RememberMeIntent.ACTION_SHOW)
-                        .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
-                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
+//                if (twoPaneLayout) {
+//
+//                } else {
+                    Intent intent = new Intent(MainActivity.this, WordListActivity.class)
+                            .setAction(RememberMeIntent.ACTION_SHOW)
+                            .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
+                            .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
 
-                startActivity(intent);
+                    startActivity(intent);
+//                }
             }
         });
     }
@@ -261,6 +279,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
@@ -318,9 +337,22 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @OnClick(R.id.memorizeButton)
     public void memorizeWordsFromCompartment1(View parentView) {
-        Intent intent = new Intent(MainActivity.this, MemorizeActivity.class)
-                .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
-        startActivity(intent);
+        if (twoPaneLayout) {
+            logInfo("showing words in right pane");
+            showMemorizeFragment();
+        } else {
+            Intent intent = new Intent(MainActivity.this, MemorizeActivity.class).putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
+            startActivity(intent);
+        }
+    }
+
+    // ToDo 06.04.16: same method as in MemorizeActivity - merge?
+    private void showMemorizeFragment() {
+        Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
+        if (memorizeFragment == null) {
+            memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(selectedBox.id);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, memorizeFragment, MemorizeFragment.TAG).commit();
     }
 
     public void showRenameBoxDialog() {
@@ -438,7 +470,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         int biasId = wordRepository.createWord(boxId, "bias", "Tendenz, Neigung");
         wordRepository.updateRepeatDate(biasId);
 
-        wordRepository.createWord(boxId, 2, "emissary", "Abgesandter");
+        wordRepository.createWord(boxId, 6, "emissary", "Abgesandter");
     }
 
     @Override

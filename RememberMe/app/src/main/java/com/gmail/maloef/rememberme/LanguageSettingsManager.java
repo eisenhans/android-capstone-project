@@ -18,7 +18,7 @@ import java.util.List;
 
 public class LanguageSettingsManager {
 
-    interface LanguageSelectionListener {
+    public interface LanguageSelectionListener {
         void selectionChanged(boolean isSelectionOk);
     }
 
