@@ -12,8 +12,6 @@ import butterknife.ButterKnife;
 
 public class WordListActivity extends AbstractRememberMeActivity {
 
-    private static final String WORD_LIST_FRAGMENT_TAG = "wordListFragmentTag";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +24,11 @@ public class WordListActivity extends AbstractRememberMeActivity {
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
 
-        Fragment fragment = getFragmentManager().findFragmentByTag(WORD_LIST_FRAGMENT_TAG);
+        Fragment fragment = getFragmentManager().findFragmentByTag(WordListFragment.TAG);
         if (fragment == null) {
             fragment = WordListFragmentBuilder.newWordListFragment(boxId, compartment);
         }
-        getFragmentManager().beginTransaction().replace(R.id.word_list_content, fragment, WORD_LIST_FRAGMENT_TAG).commit();
+        getFragmentManager().beginTransaction().replace(R.id.word_list_content, fragment, WordListFragment.TAG).commit();
     }
 
 

@@ -37,6 +37,8 @@ import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
 import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
+import com.gmail.maloef.rememberme.wordlist.WordListFragment;
+import com.gmail.maloef.rememberme.wordlist.WordListFragmentBuilder;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -230,18 +232,27 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 if (wordsInCompartment == 0) {
                     return;
                 }
-//                if (twoPaneLayout) {
-//
-//                } else {
+                if (twoPaneLayout) {
+                    initToolbar(false, R.string.words_learned);
+                    showWordListFragment(compartment);
+                } else {
                     Intent intent = new Intent(MainActivity.this, WordListActivity.class)
                             .setAction(RememberMeIntent.ACTION_SHOW)
                             .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
                             .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment);
 
                     startActivity(intent);
-//                }
+                }
             }
         });
+    }
+
+    private void showWordListFragment(int compartment) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(WordListFragment.TAG);
+        if (fragment == null) {
+            fragment = WordListFragmentBuilder.newWordListFragment(selectedBox.id, compartment);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, WordListFragment.TAG).commit();
     }
 
     private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
@@ -339,6 +350,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     public void memorizeWordsFromCompartment1(View parentView) {
         if (twoPaneLayout) {
             logInfo("showing words in right pane");
+            initToolbar(false, R.string.memorize);
             showMemorizeFragment();
         } else {
             Intent intent = new Intent(MainActivity.this, MemorizeActivity.class).putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);

@@ -27,6 +27,8 @@ import butterknife.ButterKnife;
 @FragmentWithArgs
 public class WordListFragment extends AbstractRememberMeFragment {
 
+    public static final String TAG = "wordListFragmentTag";
+
     @Inject WordRepository wordRepository;
     @Inject RememberMePreferences preferences;
 
