@@ -2,6 +2,7 @@ package com.gmail.maloef.rememberme.word;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.View;
 
 import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.R;
@@ -13,6 +14,7 @@ import com.gmail.maloef.rememberme.persistence.WordRepository;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback,
@@ -20,6 +22,8 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
+
+    @Bind(R.id.detail_container) View contentDetailView;
 
     int wordsInCompartment;
     int translationDirection;
@@ -32,11 +36,9 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this);
 
-        logInfo("intent: " + getIntent() + ", action: " + getIntent().getAction() + ", type: " + getIntent().getType() +
-                ", extras: " + getIntent().getExtras());
-        if (getIntent().getExtras() != null) {
-            logInfo("extra keys: " + getIntent().getExtras().keySet());
-        }
+        logInfo("contentDetailView: " + contentDetailView);
+
+        logInfo("intent: " + getIntent() + ", action: " + getIntent().getAction() + ", extras: " + getIntent().getExtras());
 
         wordsInCompartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, -1);
         translationDirection = getIntent().getIntExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, -1);
@@ -56,7 +58,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private void addWord() {
-        initToolbar(false, R.string.add_word);
+//        initToolbar(false, R.string.add_word);
 
         String foreignWord = getIntent().getStringExtra(RememberMeIntent.EXTRA_FOREIGN_WORD);
         showAddWordFragment(foreignWord);

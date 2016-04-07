@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,7 +95,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Bind(R.id.memorizeButton) Button memorizeButton;
 
-    @Bind(R.id.detail_container) View contentDetailView;
+    @Bind(R.id.detail_container) @Nullable View contentDetailView;
 
     @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
 
