@@ -1,7 +1,6 @@
 package com.gmail.maloef.rememberme.word;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
@@ -33,11 +32,6 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         RememberMeApplication.injector().inject(this);
         ButterKnife.bind(this);
 
-        if (!"text/plain".equals(getIntent().getType())) {
-            // ToDo 17.03.16: handle this
-            logWarn("intent type is " + getIntent().getType());
-        }
-
         logInfo("intent: " + getIntent() + ", action: " + getIntent().getAction() + ", type: " + getIntent().getType() +
                 ", extras: " + getIntent().getExtras());
         if (getIntent().getExtras() != null) {
@@ -58,27 +52,21 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private boolean isAddWord() {
-        String action = getIntent().getAction();
-        return Intent.ACTION_SEND.equals(action) || RememberMeIntent.ACTION_ADD.equals(action);
+        return getIntent().getAction().equals(RememberMeIntent.ACTION_ADD);
     }
 
     private void addWord() {
         initToolbar(false, R.string.add_word);
 
-        String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        AddWordFragment fragment = AddWordFragmentBuilder.newAddWordFragment(foreignWord);
-
-        replaceFragment(fragment);
+        String foreignWord = getIntent().getStringExtra(RememberMeIntent.EXTRA_FOREIGN_WORD);
+        showAddWordFragment(foreignWord);
     }
 
     private void queryWord() {
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
-        initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
-
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
 
-        QueryWordFragment fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
-        replaceFragment(fragment);
+        showQueryWordFragment(boxId, compartment, translationDirection);
     }
 
     public void showWord(int wordId) {
@@ -111,6 +99,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     @Override
     public void updateOverview() {}
 
+    // ToDo 07.04.16: remove, use superclass methods instead
     private void replaceFragment(Fragment fragment) {
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
     }
@@ -135,6 +124,9 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     public void editWordDone(int wordId) {
         showWord(wordId);
     }
+
+    @Override
+    public void languageSettingsConfirmed(String foreignLanguage, String nativeLanguage) {}
 
     @Override
     public void addWordDone() {

@@ -43,6 +43,7 @@ import butterknife.OnClick;
 public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<TranslationResult> {
 
     public interface Callback {
+        void languageSettingsConfirmed(String foreignLanguage, String nativeLanguage);
         void addWordDone();
     }
 
@@ -218,6 +219,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
                         "translated from " + foreignLanguageUsedForTranslation + " to " + nativeLanguageUsedForTranslation +
                         ", need translation from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
 
+                callback.languageSettingsConfirmed(selectedBox.foreignLanguage, selectedBox.nativeLanguage);
                 if (foreignLanguageUsedForTranslation.equals(selectedBox.foreignLanguage) &&
                         nativeLanguageUsedForTranslation.equals(selectedBox.nativeLanguage)) {
                     logInfo("no re-translation necessary");

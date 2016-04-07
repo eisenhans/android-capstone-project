@@ -30,6 +30,11 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
 
+    protected void initToolbar(int titleResId, String... args) {
+        boolean withUpArrow = !(this instanceof MainActivity);
+        initToolbar(withUpArrow, titleResId, args);
+    }
+
     protected void initToolbar(boolean withUpArrow, int titleResId, String... args) {
         setSupportActionBar(toolbar);
         if (withUpArrow) {
@@ -66,7 +71,7 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
     }
 
     protected void showMemorizeFragment(int boxId) {
-        initToolbar(true, R.string.memorize);
+        initToolbar(R.string.memorize);
         Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
         if (memorizeFragment == null) {
             memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(boxId);
@@ -75,6 +80,7 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
     }
 
     protected void showQueryWordFragment(int boxId, int compartment, int translationDirection) {
+        initToolbar(R.string.compartment_i, String.valueOf(compartment));
         Fragment fragment = getFragmentManager().findFragmentByTag(QueryWordFragment.TAG);
         if (fragment == null) {
             fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
@@ -90,15 +96,17 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, ShowWordFragment.TAG).commit();
     }
 
-    protected void showAddWordFragment() {
+    protected void showAddWordFragment(String foreignWord) {
+        initToolbar(R.string.add_word);
         Fragment fragment = getFragmentManager().findFragmentByTag(AddWordFragment.TAG);
         if (fragment == null) {
-            fragment = AddWordFragmentBuilder.newAddWordFragment(null);
+            fragment = AddWordFragmentBuilder.newAddWordFragment(foreignWord);
         }
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
     }
 
     protected void showEditWordFragment(int translationDirection, int wordId) {
+        initToolbar(R.string.edit_word);
         Fragment fragment = getFragmentManager().findFragmentByTag(EditWordFragment.TAG);
         if (fragment == null) {
             fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirection, wordId);
@@ -107,6 +115,7 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
     }
 
     protected void showWordListFragment(int boxId, int compartment) {
+        initToolbar(R.string.words_learned);
         Fragment fragment = getFragmentManager().findFragmentByTag(WordListFragment.TAG);
         if (fragment == null) {
             fragment = WordListFragmentBuilder.newWordListFragment(boxId, compartment);

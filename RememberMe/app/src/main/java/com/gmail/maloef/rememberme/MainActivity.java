@@ -130,19 +130,29 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         ButterKnife.bind(this);
         RememberMeApplication.injector().inject(this);
 
-        if (contentDetailView != null) {
-            logInfo("twoPaneLayout because contentDetailView is not null");
-            twoPaneLayout = true;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-
-        initToolbar(false, R.string.vocabulary_box);
-
         if (!boxRepository.isOneBoxSaved()) {
             boxRepository.createDefaultBox();
         }
         selectedBox = boxRepository.getSelectedBox();
+        getLoaderManager().initLoader(0, null, this);
+
+        if (contentDetailView != null) {
+            logInfo("twoPaneLayout because contentDetailView is not null");
+            twoPaneLayout = true;
+        } else if (getIntent().getAction().equals(Intent.ACTION_SEND)) {
+            String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            // user shared a word from another app -> just add this word and go back to other app, skip rest of this method
+            Intent intent = new Intent(this, WordActivity.class)
+                    .setAction(RememberMeIntent.ACTION_ADD)
+                    .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
+                    .putExtra(RememberMeIntent.EXTRA_FOREIGN_WORD, foreignWord);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        initToolbar(false, R.string.vocabulary_box);
+
         updateBoxSpinner();
 
         String[] translationDirections = new String[] { foreignToNativeString, nativeToForeignString, randomString};
@@ -171,6 +181,15 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         createTestData();
 
         addRowListeners();
+
+        updateOverviewTable();
+
+        if (getIntent().getAction().equals(Intent.ACTION_SEND)) {
+            String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            if (twoPaneLayout) {
+                showAddWordFragment(foreignWord);
+            }
+        }
     }
 
     @Override
@@ -179,6 +198,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
         clearTempCompartment();
         updateSelectedBox(selectedBox.name);
+        updateOverviewTable();
     }
 
     private void clearTempCompartment() {
@@ -301,7 +321,13 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         vocabularyBoxSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
+                logInfo("item selected: position=" + position + ", id=" + id + ", vocabularyBoxSpinner.getSelectedItem()=" +
+                        vocabularyBoxSpinner.getSelectedItem() + ", boxName so far=" + selectedBox.name);
+                String newBoxName = vocabularyBoxSpinner.getSelectedItem().toString();
+                if (!newBoxName.equals(selectedBox.name)) {
+                    updateSelectedBox(vocabularyBoxSpinner.getSelectedItem().toString());
+                    clearState();
+                }
             }
 
             @Override
@@ -316,7 +342,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         updateNativeLanguageSpinner(selectedBox.nativeLanguage);
         translationDirectionSpinner.setSelection(selectedBox.translationDirection);
 
-        clearState();
         logInfo("updated selected box: " + boxName);
     }
 
@@ -428,7 +453,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             if (twoPaneLayout) {
                 clearTempCompartment();
                 updateOverviewTable();
-                showAddWordFragment();
+                showAddWordFragment(null);
             } else {
                 Intent intent = new Intent(MainActivity.this, WordActivity.class)
                         .setAction(RememberMeIntent.ACTION_ADD)
@@ -536,13 +561,14 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     private void clearState() {
+        initToolbar(R.string.vocabulary_box);
+        clearTempCompartment();
+        updateOverviewTable();
+        hideKeyboard();
         if (twoPaneLayout) {
             removeFragments(MemorizeFragment.TAG, WordListFragment.TAG, QueryWordFragment.TAG, ShowWordFragment.TAG, AddWordFragment.TAG,
                     EditWordFragment.TAG);
         }
-        clearTempCompartment();
-        updateOverviewTable();
-        hideKeyboard();
     }
 
     private void removeFragments(String... tags) {
@@ -565,6 +591,12 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     @Override
     public void updateOverview() {
         updateOverviewTable();
+    }
+
+    @Override
+    public void languageSettingsConfirmed(String foreignLanguage, String nativeLanguage) {
+        updateForeignLanguageSpinner(foreignLanguage);
+        updateNativeLanguageSpinner(nativeLanguage);
     }
 
     @Override
