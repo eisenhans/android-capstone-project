@@ -26,6 +26,8 @@ import butterknife.ButterKnife;
 @FragmentWithArgs
 public class QueryWordFragment extends AbstractWordFragment {
 
+    public static final String TAG = "queryWordFragmentTag";
+
     public interface AnswerListener {
         void onWordEntered(Word word, String givenAnswer);
     }

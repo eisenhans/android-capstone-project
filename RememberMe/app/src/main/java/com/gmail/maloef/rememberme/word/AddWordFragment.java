@@ -1,5 +1,6 @@
 package com.gmail.maloef.rememberme.word;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.DialogInterface;
 import android.content.Loader;
@@ -41,6 +42,12 @@ import butterknife.OnClick;
 @FragmentWithArgs
 public class AddWordFragment extends AbstractWordFragment implements LoaderManager.LoaderCallbacks<TranslationResult> {
 
+    public interface Callback {
+        void addWordDone();
+    }
+
+    public static final String TAG = "addWordFragmentTag";
+
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
     @Inject LanguageRepository languageRepository;
@@ -64,6 +71,14 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     String nativeWord;
     VocabularyBox selectedBox;
     int languageCount;
+
+    private Callback callback;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callback = (Callback) activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -253,7 +268,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     @OnClick(R.id.cancelButton)
     public void cancelAddWord(View view) {
         logInfo("cancelling add word");
-        getActivity().finish();
+        callback.addWordDone();
     }
 
     @OnClick(R.id.translateButton)
@@ -287,7 +302,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
 
         if (finish) {
-            getActivity().finish();
+            callback.addWordDone();
         }
     }
 }

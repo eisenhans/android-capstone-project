@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 
 public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback,
-        EditWordFragment.EditWordCallback {
+        EditWordFragment.EditWordCallback, AddWordFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -101,6 +101,9 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         replaceFragment(fragment);
     }
 
+    @Override
+    public void updateOverview() {}
+
     private void replaceFragment(Fragment fragment) {
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
     }
@@ -124,5 +127,10 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     @Override
     public void editDone(int wordId) {
         showWord(wordId);
+    }
+
+    @Override
+    public void addWordDone() {
+
     }
 }

@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
+import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
 import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
 import com.gmail.maloef.rememberme.memorize.MemorizeFragmentBuilder;
@@ -35,6 +37,13 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
+import com.gmail.maloef.rememberme.word.AddWordFragment;
+import com.gmail.maloef.rememberme.word.AddWordFragmentBuilder;
+import com.gmail.maloef.rememberme.word.EditWordFragment;
+import com.gmail.maloef.rememberme.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.word.QueryWordFragmentBuilder;
+import com.gmail.maloef.rememberme.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.word.ShowWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListFragment;
@@ -51,7 +60,8 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AbstractRememberMeActivity implements LoaderManager.LoaderCallbacks<Language[]> {
+public class MainActivity extends AbstractRememberMeActivity implements LoaderManager.LoaderCallbacks<Language[]>,
+        QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback, AddWordFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject CompartmentRepository compartmentRepository;
@@ -112,6 +122,10 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     private boolean twoPaneLayout;
 
+    private int compartmentForQuery;
+    private int wordsInCompartmentForQuery;
+    private int translationDirectionForQuery;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,13 +163,13 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 if (position != selectedBox.translationDirection) {
                     selectedBox.translationDirection = position;
                     boxRepository.updateTranslationDirection(selectedBox.id, position);
+                    translationDirectionForQuery = position;
                     logInfo("updated translation direction for box " + selectedBox.name + ": " + position);
                 }
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
         createTestData();
@@ -167,10 +181,13 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     public void onResume() {
         super.onResume();
 
+        clearTempCompartment();
+        updateSelectedBox(selectedBox.name);
+    }
+
+    private void clearTempCompartment() {
         // move all words from the 'virtual' compartment 0 to compartment 1
         wordRepository.moveAll(selectedBox.id, 0, 1);
-
-        updateSelectedBox(selectedBox.name);
     }
 
     private void updateForeignLanguageSpinner(String foreignLanguage) {
@@ -199,27 +216,49 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             @Override
             public void onClick(View v) {
                 logInfo("clicked: compartment " + compartment);
-                int wordsInCompartment = wordRepository.countWords(selectedBox.id, compartment);
-                if (wordsInCompartment == 0) {
+                compartmentForQuery = compartment;
+                wordsInCompartmentForQuery = wordRepository.countWords(selectedBox.id, compartment);
+                if (wordsInCompartmentForQuery == 0) {
                     return;
                 }
 
-                int translationDirection = selectedBox.translationDirection;
-                if (translationDirection == VocabularyBox.TRANSLATION_DIRECTION_RANDOM) {
+                translationDirectionForQuery = selectedBox.translationDirection;
+                if (translationDirectionForQuery == VocabularyBox.TRANSLATION_DIRECTION_RANDOM) {
                     double random = Math.random();
-                    translationDirection = (random >= 0.5) ?
+                    translationDirectionForQuery = (random >= 0.5) ?
                             VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
                 }
-
-                Intent intent = new Intent(MainActivity.this, WordActivity.class)
-                        .setAction(RememberMeIntent.ACTION_QUERY)
-                        .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
-                        .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirection)
-                        .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment)
-                        .putExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, wordsInCompartment);
-                startActivity(intent);
+                if (twoPaneLayout) {
+                    clearTempCompartment();
+                    updateOverviewTable();
+                    showQueryWordFragment(compartment, translationDirectionForQuery);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, WordActivity.class)
+                            .setAction(RememberMeIntent.ACTION_QUERY)
+                            .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id)
+                            .putExtra(RememberMeIntent.EXTRA_TRANSLATION_DIRECTION, translationDirectionForQuery)
+                            .putExtra(RememberMeIntent.EXTRA_COMPARTMENT, compartment)
+                            .putExtra(RememberMeIntent.EXTRA_WORDS_IN_COMPARTMENT, wordsInCompartmentForQuery);
+                    startActivity(intent);
+                }
             }
         });
+    }
+
+    private void showQueryWordFragment(int compartment, int translationDirection) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(QueryWordFragment.TAG);
+        if (fragment == null) {
+            fragment = QueryWordFragmentBuilder.newQueryWordFragment(selectedBox.id, compartment, translationDirection);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, QueryWordFragment.TAG).commit();
+    }
+
+    private void showShowWordFragment(String givenAnswer, int translationDirection, Word word, int wordsInCompartment) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(ShowWordFragment.TAG);
+        if (fragment == null) {
+            fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, ShowWordFragment.TAG).commit();
     }
 
     private void addWordListActivityRowListener(TableRow row, final int compartment) {
@@ -234,6 +273,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 }
                 if (twoPaneLayout) {
                     initToolbar(false, R.string.words_learned);
+                    clearTempCompartment();
+                    updateOverviewTable();
                     showWordListFragment(compartment);
                 } else {
                     Intent intent = new Intent(MainActivity.this, WordListActivity.class)
@@ -351,6 +392,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         if (twoPaneLayout) {
             logInfo("showing words in right pane");
             initToolbar(false, R.string.memorize);
+            clearTempCompartment();
+            updateOverviewTable();
             showMemorizeFragment();
         } else {
             Intent intent = new Intent(MainActivity.this, MemorizeActivity.class).putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
@@ -418,14 +461,28 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             return true;
         }
         if (item.getItemId() == R.id.action_add_word) {
-            Intent intent = new Intent(MainActivity.this, WordActivity.class)
-                    .setAction(RememberMeIntent.ACTION_ADD)
-                    .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
+            if (twoPaneLayout) {
+                clearTempCompartment();
+                updateOverviewTable();
+                showAddWordFragment();
+            } else {
+                Intent intent = new Intent(MainActivity.this, WordActivity.class)
+                        .setAction(RememberMeIntent.ACTION_ADD)
+                        .putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
 
-            startActivity(intent);
+                startActivity(intent);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAddWordFragment() {
+        Fragment fragment = getFragmentManager().findFragmentByTag(AddWordFragment.TAG);
+        if (fragment == null) {
+            fragment = AddWordFragmentBuilder.newAddWordFragment(null);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
     }
 
     private void showConfirmDeleteDialog() {
@@ -470,7 +527,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     void createTestData() {
         int boxId = selectedBox.id;
 
-        if (wordRepository.countWords(boxId, 1) > 0) {
+        if (wordRepository.countWords(boxId) > 0) {
             return;
         }
 
@@ -504,4 +561,51 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Override
     public void onLoaderReset(Loader<Language[]> languageLoader) {}
+
+    @Override
+    public void onWordEntered(Word word, String givenAnswer) {
+        showShowWordFragment(givenAnswer, translationDirectionForQuery, word, wordsInCompartmentForQuery);
+    }
+
+    @Override
+    public void nextWord(boolean moreWordsAvailable) {
+        if (moreWordsAvailable) {
+            logInfo("showing next word, extras: " + getIntent().getExtras());
+            showQueryWordFragment(compartmentForQuery, translationDirectionForQuery);
+        } else {
+            showEmptyFragment();
+        }
+    }
+
+    private void showEmptyFragment() {
+        removeFragments(MemorizeFragment.TAG, WordListFragment.TAG, QueryWordFragment.TAG, ShowWordFragment.TAG, AddWordFragment.TAG,
+                EditWordFragment.TAG);
+    }
+
+    private void removeFragments(String... tags) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (String tag : tags) {
+            Fragment fragment = getFragmentManager().findFragmentByTag(tag);
+            if (fragment != null && fragment.isVisible()) {
+                logInfo("removing fragment " + tag);
+                fragmentTransaction.remove(fragment);
+            }
+        }
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void editWord(int wordId) {
+
+    }
+
+    @Override
+    public void updateOverview() {
+        updateOverviewTable();
+    }
+
+    @Override
+    public void addWordDone() {
+        showEmptyFragment();
+    }
 }

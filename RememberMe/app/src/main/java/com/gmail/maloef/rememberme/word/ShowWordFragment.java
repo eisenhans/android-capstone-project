@@ -31,9 +31,12 @@ import butterknife.ButterKnife;
 @FragmentWithArgs
 public class ShowWordFragment extends AbstractWordFragment {
 
+    public static final String TAG = "showWordFragmentTag";
+
     public interface ShowWordCallback {
         void nextWord(boolean moreWordsAvailable);
         void editWord(int wordId);
+        void updateOverview();
     }
 
     private ShowWordCallback showWordCallback;
@@ -88,6 +91,7 @@ public class ShowWordFragment extends AbstractWordFragment {
             // move word back to compartment 1
             wordRepository.moveToCompartment(word.id, 1);
         }
+        showWordCallback.updateOverview();
     }
 
     @Override

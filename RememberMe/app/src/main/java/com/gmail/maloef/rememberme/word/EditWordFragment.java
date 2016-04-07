@@ -30,6 +30,8 @@ import butterknife.OnClick;
 @FragmentWithArgs
 public class EditWordFragment extends AbstractWordFragment {
 
+    public static final String TAG = "editWordFragmentTag";
+
     public interface EditWordCallback {
         void editDone(int wordId);
     }
