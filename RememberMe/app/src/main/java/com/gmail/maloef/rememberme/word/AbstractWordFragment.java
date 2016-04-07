@@ -1,12 +1,12 @@
 package com.gmail.maloef.rememberme.word;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.AbstractRememberMeFragment;
 
 public abstract class AbstractWordFragment extends AbstractRememberMeFragment {
@@ -38,7 +38,6 @@ public abstract class AbstractWordFragment extends AbstractRememberMeFragment {
     }
 
     protected void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        ((AbstractRememberMeActivity) getActivity()).hideKeyboard();
     }
 }

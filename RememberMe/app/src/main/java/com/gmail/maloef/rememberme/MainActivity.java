@@ -56,7 +56,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AbstractRememberMeActivity implements LoaderManager.LoaderCallbacks<Language[]>,
-        QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback, AddWordFragment.Callback, EditWordFragment.Callback {
+        QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback, AddWordFragment.Callback, EditWordFragment.Callback,
+        MemorizeFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject CompartmentRepository compartmentRepository;
@@ -315,8 +316,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         updateNativeLanguageSpinner(selectedBox.nativeLanguage);
         translationDirectionSpinner.setSelection(selectedBox.translationDirection);
 
-        updateOverviewTable();
-
+        clearState();
         logInfo("updated selected box: " + boxName);
     }
 
@@ -377,8 +377,10 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             @Override
             public void process(String newBoxName) {
                 boxRepository.updateBoxName(selectedBox.id, newBoxName);
+                selectedBox = boxRepository.getSelectedBox();
                 logInfo("updated box name: " + newBoxName);
                 updateBoxSpinner();
+                clearState();
             }
         };
         InputValidator inputValidator = createNewBoxNameInputValidator();
@@ -464,16 +466,18 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     public void createNewBox(String boxName) {
         boxRepository.createBox(boxName, null, selectedBox.nativeLanguage, selectedBox.translationDirection, true);
+        selectedBox = boxRepository.getSelectedBox();
         logInfo("created new box: " + boxName);
         updateBoxSpinner();
-        updateOverviewTable();
+        clearState();
     }
 
     public void deleteSelectedBox() {
         String boxName = selectedBox.name;
         boxRepository.deleteSelectedBox();
+        selectedBox = boxRepository.getSelectedBox();
         updateBoxSpinner();
-        updateOverviewTable();
+        clearState();
         CharSequence message = Html.fromHtml(getString(R.string.deleted_box_s, boxName));
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -527,15 +531,18 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             logInfo("showing next word, extras: " + getIntent().getExtras());
             showQueryWordFragment(selectedBox.id, compartmentForQuery, translationDirectionForQuery);
         } else {
-            showEmptyFragment();
+            clearState();
         }
     }
 
-    private void showEmptyFragment() {
-        removeFragments(MemorizeFragment.TAG, WordListFragment.TAG, QueryWordFragment.TAG, ShowWordFragment.TAG, AddWordFragment.TAG,
-                EditWordFragment.TAG);
+    private void clearState() {
+        if (twoPaneLayout) {
+            removeFragments(MemorizeFragment.TAG, WordListFragment.TAG, QueryWordFragment.TAG, ShowWordFragment.TAG, AddWordFragment.TAG,
+                    EditWordFragment.TAG);
+        }
         clearTempCompartment();
         updateOverviewTable();
+        hideKeyboard();
     }
 
     private void removeFragments(String... tags) {
@@ -562,12 +569,17 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Override
     public void addWordDone() {
-        showEmptyFragment();
+        clearState();
     }
 
     @Override
     public void editWordDone(int wordId) {
         Word word = wordRepository.findWord(wordId);
         showShowWordFragment(null, translationDirectionForQuery, word, wordsInCompartmentForQuery);
+    }
+
+    @Override
+    public void memorizeDone() {
+        clearState();
     }
 }

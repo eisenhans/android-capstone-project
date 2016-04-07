@@ -1,6 +1,7 @@
 package com.gmail.maloef.rememberme.memorize;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
@@ -34,6 +35,12 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
     public static final String TAG = "memorizeFragmentTag";
     private static final String OFFSET_KEY = "offsetKey";
 
+    public interface Callback {
+        void memorizeDone();
+    }
+
+    private Callback callback;
+
     @Inject WordRepository wordRepository;
 
     @Bind(R.id.memorize_table_container) FrameLayout memorizeTableContainer;
@@ -47,6 +54,12 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
     @Override
     public void onSaveInstanceState(Bundle args) {
         args.putInt(OFFSET_KEY, offset);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callback = (Callback) activity;
     }
 
     @Override
@@ -146,7 +159,7 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
     @OnClick(R.id.memorize_left_button)
     public void onLeftButtonClick(View view) {
         if (leftButton.getRotation() != 0) {
-            goUp();
+            callback.memorizeDone();
         } else {
             logInfo("showing previous words");
             offset -= 5;
@@ -157,15 +170,11 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
     @OnClick(R.id.memorize_right_button)
     public void onRightButtonClick(View view) {
         if (rightButton.getRotation() != 0) {
-            goUp();
+            callback.memorizeDone();
         } else {
             logInfo("showing next words");
             offset += 5;
             update();
         }
-    }
-
-    private void goUp() {
-        getActivity().finish();
     }
 }

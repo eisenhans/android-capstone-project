@@ -1,10 +1,13 @@
 package com.gmail.maloef.rememberme;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
@@ -54,7 +57,16 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
+    public void hideKeyboard() {
+        View focusView = getCurrentFocus();
+        if (focusView != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(focusView.getWindowToken(), 0);
+        }
+    }
+
     protected void showMemorizeFragment(int boxId) {
+        initToolbar(true, R.string.memorize);
         Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
         if (memorizeFragment == null) {
             memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(boxId);
