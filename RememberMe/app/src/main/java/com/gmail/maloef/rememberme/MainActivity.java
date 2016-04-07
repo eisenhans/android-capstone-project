@@ -40,10 +40,10 @@ import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
 import com.gmail.maloef.rememberme.word.AddWordFragment;
 import com.gmail.maloef.rememberme.word.AddWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.EditWordFragment;
+import com.gmail.maloef.rememberme.word.EditWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.QueryWordFragment;
 import com.gmail.maloef.rememberme.word.QueryWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.ShowWordFragment;
-import com.gmail.maloef.rememberme.word.ShowWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListFragment;
@@ -61,7 +61,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AbstractRememberMeActivity implements LoaderManager.LoaderCallbacks<Language[]>,
-        QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback, AddWordFragment.Callback {
+        QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback, AddWordFragment.Callback, EditWordFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject CompartmentRepository compartmentRepository;
@@ -251,14 +251,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             fragment = QueryWordFragmentBuilder.newQueryWordFragment(selectedBox.id, compartment, translationDirection);
         }
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, QueryWordFragment.TAG).commit();
-    }
-
-    private void showShowWordFragment(String givenAnswer, int translationDirection, Word word, int wordsInCompartment) {
-        Fragment fragment = getFragmentManager().findFragmentByTag(ShowWordFragment.TAG);
-        if (fragment == null) {
-            fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, ShowWordFragment.TAG).commit();
     }
 
     private void addWordListActivityRowListener(TableRow row, final int compartment) {
@@ -568,7 +560,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     @Override
-    public void nextWord(boolean moreWordsAvailable) {
+    public void showNextWord(boolean moreWordsAvailable) {
         if (moreWordsAvailable) {
             logInfo("showing next word, extras: " + getIntent().getExtras());
             showQueryWordFragment(compartmentForQuery, translationDirectionForQuery);
@@ -580,6 +572,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     private void showEmptyFragment() {
         removeFragments(MemorizeFragment.TAG, WordListFragment.TAG, QueryWordFragment.TAG, ShowWordFragment.TAG, AddWordFragment.TAG,
                 EditWordFragment.TAG);
+        clearTempCompartment();
+        updateOverviewTable();
     }
 
     private void removeFragments(String... tags) {
@@ -595,8 +589,17 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     @Override
-    public void editWord(int wordId) {
+    public void editShownWord(int wordId) {
+        initToolbar(false, R.string.edit_word);
+        showEditWordFragment(wordId);
+    }
 
+    private void showEditWordFragment(int wordId) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(EditWordFragment.TAG);
+        if (fragment == null) {
+            fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirectionForQuery, wordId);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, EditWordFragment.TAG).commit();
     }
 
     @Override
@@ -607,5 +610,11 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     @Override
     public void addWordDone() {
         showEmptyFragment();
+    }
+
+    @Override
+    public void editWordDone(int wordId) {
+        Word word = wordRepository.findWord(wordId);
+        showShowWordFragment(null, translationDirectionForQuery, word, wordsInCompartmentForQuery);
     }
 }

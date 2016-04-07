@@ -32,11 +32,11 @@ public class EditWordFragment extends AbstractWordFragment {
 
     public static final String TAG = "editWordFragmentTag";
 
-    public interface EditWordCallback {
-        void editDone(int wordId);
+    public interface Callback {
+        void editWordDone(int wordId);
     }
 
-    private EditWordCallback editWordCallback;
+    private Callback callback;
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -58,7 +58,7 @@ public class EditWordFragment extends AbstractWordFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        editWordCallback = (EditWordCallback) activity;
+        callback = (Callback) activity;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class EditWordFragment extends AbstractWordFragment {
     @OnClick(R.id.cancelButton)
     public void cancelEditWord(View view) {
         logInfo("cancelling edit word");
-        editWordCallback.editDone(wordId);
+        callback.editWordDone(wordId);
     }
 
     @OnClick(R.id.saveButton)
@@ -148,6 +148,6 @@ public class EditWordFragment extends AbstractWordFragment {
         wordRepository.updateWord(wordId, foreignWord, nativeWord);
         hideKeyboard();
         Toast.makeText(getActivity(), getString(R.string.changes_saved), Toast.LENGTH_SHORT).show();
-        editWordCallback.editDone(wordId);
+        callback.editWordDone(wordId);
     }
 }

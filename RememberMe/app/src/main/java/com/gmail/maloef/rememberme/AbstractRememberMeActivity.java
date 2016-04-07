@@ -1,9 +1,14 @@
 package com.gmail.maloef.rememberme;
 
+import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.gmail.maloef.rememberme.domain.Word;
+import com.gmail.maloef.rememberme.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.word.ShowWordFragmentBuilder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,6 +42,14 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    protected void showShowWordFragment(String givenAnswer, int translationDirection, Word word, int wordsInCompartment) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(ShowWordFragment.TAG);
+        if (fragment == null) {
+            fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, ShowWordFragment.TAG).commit();
     }
 
     protected void logInfo(String message) {

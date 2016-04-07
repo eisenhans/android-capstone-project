@@ -34,8 +34,8 @@ public class ShowWordFragment extends AbstractWordFragment {
     public static final String TAG = "showWordFragmentTag";
 
     public interface ShowWordCallback {
-        void nextWord(boolean moreWordsAvailable);
-        void editWord(int wordId);
+        void showNextWord(boolean moreWordsAvailable);
+        void editShownWord(int wordId);
         void updateOverview();
     }
 
@@ -130,7 +130,7 @@ public class ShowWordFragment extends AbstractWordFragment {
 
     private void requestNextWord() {
         int words = wordRepository.countWords(word.boxId, compartment);
-        showWordCallback.nextWord(words > 0);
+        showWordCallback.showNextWord(words > 0);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ShowWordFragment extends AbstractWordFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit_word) {
             logInfo("editing word");
-            showWordCallback.editWord(word.id);
+            showWordCallback.editShownWord(word.id);
             return true;
         }
         if (item.getItemId() == R.id.action_delete_word) {

@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 
 public class WordActivity extends AbstractRememberMeActivity implements QueryWordFragment.AnswerListener, ShowWordFragment.ShowWordCallback,
-        EditWordFragment.EditWordCallback, AddWordFragment.Callback {
+        EditWordFragment.Callback, AddWordFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
     @Inject WordRepository wordRepository;
@@ -95,10 +95,17 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     @Override
-    public void editWord(int wordId) {
+    public void editShownWord(int wordId) {
         initToolbar(false, R.string.edit_word);
-        EditWordFragment fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirection, wordId);
-        replaceFragment(fragment);
+        showEditWordFragment(wordId);
+    }
+
+    private void showEditWordFragment(int wordId) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(EditWordFragment.TAG);
+        if (fragment == null) {
+            fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirection, wordId);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, EditWordFragment.TAG).commit();
     }
 
     @Override
@@ -115,7 +122,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     @Override
-    public void nextWord(boolean moreWordsAvailable) {
+    public void showNextWord(boolean moreWordsAvailable) {
         if (moreWordsAvailable) {
             logInfo("showing next word, extras: " + getIntent().getExtras());
             queryWord();
@@ -125,12 +132,12 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     @Override
-    public void editDone(int wordId) {
+    public void editWordDone(int wordId) {
         showWord(wordId);
     }
 
     @Override
     public void addWordDone() {
-
+        finish();
     }
 }
