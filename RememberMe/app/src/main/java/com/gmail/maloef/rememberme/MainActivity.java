@@ -25,7 +25,6 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
 import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
-import com.gmail.maloef.rememberme.memorize.MemorizeFragmentBuilder;
 import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
@@ -38,16 +37,12 @@ import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
 import com.gmail.maloef.rememberme.word.AddWordFragment;
-import com.gmail.maloef.rememberme.word.AddWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.EditWordFragment;
-import com.gmail.maloef.rememberme.word.EditWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.QueryWordFragment;
-import com.gmail.maloef.rememberme.word.QueryWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.ShowWordFragment;
 import com.gmail.maloef.rememberme.word.WordActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListActivity;
 import com.gmail.maloef.rememberme.wordlist.WordListFragment;
-import com.gmail.maloef.rememberme.wordlist.WordListFragmentBuilder;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -231,7 +226,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 if (twoPaneLayout) {
                     clearTempCompartment();
                     updateOverviewTable();
-                    showQueryWordFragment(compartment, translationDirectionForQuery);
+                    showQueryWordFragment(selectedBox.id, compartment, translationDirectionForQuery);
                 } else {
                     Intent intent = new Intent(MainActivity.this, WordActivity.class)
                             .setAction(RememberMeIntent.ACTION_QUERY)
@@ -243,14 +238,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 }
             }
         });
-    }
-
-    private void showQueryWordFragment(int compartment, int translationDirection) {
-        Fragment fragment = getFragmentManager().findFragmentByTag(QueryWordFragment.TAG);
-        if (fragment == null) {
-            fragment = QueryWordFragmentBuilder.newQueryWordFragment(selectedBox.id, compartment, translationDirection);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, QueryWordFragment.TAG).commit();
     }
 
     private void addWordListActivityRowListener(TableRow row, final int compartment) {
@@ -267,7 +254,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                     initToolbar(false, R.string.words_learned);
                     clearTempCompartment();
                     updateOverviewTable();
-                    showWordListFragment(compartment);
+                    showWordListFragment(selectedBox.id, compartment);
                 } else {
                     Intent intent = new Intent(MainActivity.this, WordListActivity.class)
                             .setAction(RememberMeIntent.ACTION_SHOW)
@@ -278,14 +265,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                 }
             }
         });
-    }
-
-    private void showWordListFragment(int compartment) {
-        Fragment fragment = getFragmentManager().findFragmentByTag(WordListFragment.TAG);
-        if (fragment == null) {
-            fragment = WordListFragmentBuilder.newWordListFragment(selectedBox.id, compartment);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, WordListFragment.TAG).commit();
     }
 
     private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
@@ -386,20 +365,11 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             initToolbar(false, R.string.memorize);
             clearTempCompartment();
             updateOverviewTable();
-            showMemorizeFragment();
+            showMemorizeFragment(selectedBox.id);
         } else {
             Intent intent = new Intent(MainActivity.this, MemorizeActivity.class).putExtra(RememberMeIntent.EXTRA_BOX_ID, selectedBox.id);
             startActivity(intent);
         }
-    }
-
-    // ToDo 06.04.16: same method as in MemorizeActivity - merge?
-    private void showMemorizeFragment() {
-        Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
-        if (memorizeFragment == null) {
-            memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(selectedBox.id);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, memorizeFragment, MemorizeFragment.TAG).commit();
     }
 
     public void showRenameBoxDialog() {
@@ -467,14 +437,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showAddWordFragment() {
-        Fragment fragment = getFragmentManager().findFragmentByTag(AddWordFragment.TAG);
-        if (fragment == null) {
-            fragment = AddWordFragmentBuilder.newAddWordFragment(null);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
     }
 
     private void showConfirmDeleteDialog() {
@@ -563,7 +525,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     public void showNextWord(boolean moreWordsAvailable) {
         if (moreWordsAvailable) {
             logInfo("showing next word, extras: " + getIntent().getExtras());
-            showQueryWordFragment(compartmentForQuery, translationDirectionForQuery);
+            showQueryWordFragment(selectedBox.id, compartmentForQuery, translationDirectionForQuery);
         } else {
             showEmptyFragment();
         }
@@ -590,16 +552,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Override
     public void editShownWord(int wordId) {
-        initToolbar(false, R.string.edit_word);
-        showEditWordFragment(wordId);
-    }
-
-    private void showEditWordFragment(int wordId) {
-        Fragment fragment = getFragmentManager().findFragmentByTag(EditWordFragment.TAG);
-        if (fragment == null) {
-            fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirectionForQuery, wordId);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, EditWordFragment.TAG).commit();
+        showEditWordFragment(translationDirectionForQuery, wordId);
     }
 
     @Override

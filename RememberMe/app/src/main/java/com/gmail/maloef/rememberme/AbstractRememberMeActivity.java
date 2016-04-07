@@ -7,8 +7,18 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.gmail.maloef.rememberme.domain.Word;
+import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.memorize.MemorizeFragmentBuilder;
+import com.gmail.maloef.rememberme.word.AddWordFragment;
+import com.gmail.maloef.rememberme.word.AddWordFragmentBuilder;
+import com.gmail.maloef.rememberme.word.EditWordFragment;
+import com.gmail.maloef.rememberme.word.EditWordFragmentBuilder;
+import com.gmail.maloef.rememberme.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.word.QueryWordFragmentBuilder;
 import com.gmail.maloef.rememberme.word.ShowWordFragment;
 import com.gmail.maloef.rememberme.word.ShowWordFragmentBuilder;
+import com.gmail.maloef.rememberme.wordlist.WordListFragment;
+import com.gmail.maloef.rememberme.wordlist.WordListFragmentBuilder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,12 +54,52 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
+    protected void showMemorizeFragment(int boxId) {
+        Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
+        if (memorizeFragment == null) {
+            memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(boxId);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, memorizeFragment, MemorizeFragment.TAG).commit();
+    }
+
+    protected void showQueryWordFragment(int boxId, int compartment, int translationDirection) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(QueryWordFragment.TAG);
+        if (fragment == null) {
+            fragment = QueryWordFragmentBuilder.newQueryWordFragment(boxId, compartment, translationDirection);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, QueryWordFragment.TAG).commit();
+    }
+
     protected void showShowWordFragment(String givenAnswer, int translationDirection, Word word, int wordsInCompartment) {
         Fragment fragment = getFragmentManager().findFragmentByTag(ShowWordFragment.TAG);
         if (fragment == null) {
             fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
         }
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, ShowWordFragment.TAG).commit();
+    }
+
+    protected void showAddWordFragment() {
+        Fragment fragment = getFragmentManager().findFragmentByTag(AddWordFragment.TAG);
+        if (fragment == null) {
+            fragment = AddWordFragmentBuilder.newAddWordFragment(null);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
+    }
+
+    protected void showEditWordFragment(int translationDirection, int wordId) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(EditWordFragment.TAG);
+        if (fragment == null) {
+            fragment = EditWordFragmentBuilder.newEditWordFragment(translationDirection, wordId);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, EditWordFragment.TAG).commit();
+    }
+
+    protected void showWordListFragment(int boxId, int compartment) {
+        Fragment fragment = getFragmentManager().findFragmentByTag(WordListFragment.TAG);
+        if (fragment == null) {
+            fragment = WordListFragmentBuilder.newWordListFragment(boxId, compartment);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, WordListFragment.TAG).commit();
     }
 
     protected void logInfo(String message) {

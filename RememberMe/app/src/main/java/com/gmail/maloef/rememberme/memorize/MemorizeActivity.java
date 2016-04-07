@@ -1,6 +1,5 @@
 package com.gmail.maloef.rememberme.memorize;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
@@ -26,14 +25,5 @@ public class MemorizeActivity extends AbstractRememberMeActivity {
 
         int boxId = getIntent().getIntExtra(RememberMeIntent.EXTRA_BOX_ID, -1);
         showMemorizeFragment(boxId);
-    }
-
-    // ToDo 06.04.16: same method as in MainActivity - merge?
-    private void showMemorizeFragment(int boxId) {
-        Fragment memorizeFragment = getFragmentManager().findFragmentByTag(MemorizeFragment.TAG);
-        if (memorizeFragment == null) {
-            memorizeFragment = MemorizeFragmentBuilder.newMemorizeFragment(boxId);
-        }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, memorizeFragment, MemorizeFragment.TAG).commit();
     }
 }
