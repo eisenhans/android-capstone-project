@@ -82,7 +82,8 @@ public class QueryWordFragment extends AbstractWordFragment {
         return new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE ||
+                        (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     hideKeyboard();
                     String givenAnswer = answerEditText.getText().toString().trim();
                     logInfo("user entered word " + givenAnswer + " for word " + word);

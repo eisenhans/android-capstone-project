@@ -28,7 +28,7 @@ public class WordListActivity extends AbstractRememberMeActivity {
         if (fragment == null) {
             fragment = WordListFragmentBuilder.newWordListFragment(boxId, compartment);
         }
-        getFragmentManager().beginTransaction().replace(R.id.word_list_content, fragment, WordListFragment.TAG).commit();
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, WordListFragment.TAG).commit();
     }
 
 
