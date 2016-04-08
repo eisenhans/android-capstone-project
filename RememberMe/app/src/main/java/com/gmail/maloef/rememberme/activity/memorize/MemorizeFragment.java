@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.memorize;
+package com.gmail.maloef.rememberme.activity.memorize;
 
 
 import android.app.Activity;
@@ -14,7 +14,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.gmail.maloef.rememberme.AbstractRememberMeFragment;
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeFragment;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.persistence.WordRepository;

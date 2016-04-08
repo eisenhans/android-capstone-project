@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.activity;
 
 import android.app.Fragment;
 import android.os.Bundle;

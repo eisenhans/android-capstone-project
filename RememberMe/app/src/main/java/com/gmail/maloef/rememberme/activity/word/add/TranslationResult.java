@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.addword;
+package com.gmail.maloef.rememberme.activity.word.add;
 
 import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.translate.google.Translation;

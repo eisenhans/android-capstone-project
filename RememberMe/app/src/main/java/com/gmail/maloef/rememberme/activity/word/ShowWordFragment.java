@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.word;
+package com.gmail.maloef.rememberme.activity.word;
 
 import android.app.Activity;
 import android.os.Bundle;

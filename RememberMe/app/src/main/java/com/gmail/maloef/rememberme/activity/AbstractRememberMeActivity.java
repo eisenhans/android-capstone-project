@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -9,19 +9,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.gmail.maloef.rememberme.R;
+import com.gmail.maloef.rememberme.activity.main.MainActivity;
 import com.gmail.maloef.rememberme.domain.Word;
-import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
-import com.gmail.maloef.rememberme.memorize.MemorizeFragmentBuilder;
-import com.gmail.maloef.rememberme.word.AddWordFragment;
-import com.gmail.maloef.rememberme.word.AddWordFragmentBuilder;
-import com.gmail.maloef.rememberme.word.EditWordFragment;
-import com.gmail.maloef.rememberme.word.EditWordFragmentBuilder;
-import com.gmail.maloef.rememberme.word.QueryWordFragment;
-import com.gmail.maloef.rememberme.word.QueryWordFragmentBuilder;
-import com.gmail.maloef.rememberme.word.ShowWordFragment;
-import com.gmail.maloef.rememberme.word.ShowWordFragmentBuilder;
-import com.gmail.maloef.rememberme.wordlist.WordListFragment;
-import com.gmail.maloef.rememberme.wordlist.WordListFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.activity.word.QueryWordFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.activity.word.ShowWordFragmentBuilder;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListFragmentBuilder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

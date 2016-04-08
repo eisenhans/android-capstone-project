@@ -1,9 +1,9 @@
-package com.gmail.maloef.rememberme.wordlist;
+package com.gmail.maloef.rememberme.activity.wordlist;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.RememberMeIntent;

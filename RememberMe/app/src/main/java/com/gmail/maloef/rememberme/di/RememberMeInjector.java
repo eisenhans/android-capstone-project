@@ -1,16 +1,16 @@
 package com.gmail.maloef.rememberme.di;
 
-import com.gmail.maloef.rememberme.word.AddWordFragment;
-import com.gmail.maloef.rememberme.word.EditWordFragment;
-import com.gmail.maloef.rememberme.MainActivity;
-import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
-import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
-import com.gmail.maloef.rememberme.word.QueryWordFragment;
-import com.gmail.maloef.rememberme.word.ShowWordFragment;
-import com.gmail.maloef.rememberme.word.WordActivity;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
+import com.gmail.maloef.rememberme.activity.main.MainActivity;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.activity.word.WordActivity;
 import com.gmail.maloef.rememberme.service.LanguageUpdater;
-import com.gmail.maloef.rememberme.wordlist.WordListActivity;
-import com.gmail.maloef.rememberme.wordlist.WordListFragment;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListActivity;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
 
 import javax.inject.Singleton;
 

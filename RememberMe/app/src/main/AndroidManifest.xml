@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme"
         android:name=".RememberMeApplication">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,16 +26,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".word.WordActivity"
+            android:name=".activity.word.WordActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".memorize.MemorizeActivity"
+            android:name=".activity.memorize.MemorizeActivity"
             android:label="@string/memorize"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".wordlist.WordListActivity"
+            android:name=".activity.wordlist.WordListActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <provider

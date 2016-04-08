@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.wordlist;
+package com.gmail.maloef.rememberme.activity.wordlist;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gmail.maloef.rememberme.AbstractRememberMeFragment;
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeFragment;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.RememberMePreferences;

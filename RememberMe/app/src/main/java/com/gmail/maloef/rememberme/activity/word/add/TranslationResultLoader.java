@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.addword;
+package com.gmail.maloef.rememberme.activity.word.add;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

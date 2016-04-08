@@ -7,13 +7,13 @@
               android:baselineAligned="false"
               android:divider="?android:attr/dividerHorizontal"
               android:orientation="horizontal"
-              tools:context=".MainActivity">
+              tools:context=".activity.main.MainActivity">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/fragment_main"
-              android:name="com.gmail.maloef.rememberme.MainActivityFragment"
+              android:name="com.gmail.maloef.rememberme.activity.main.MainActivityFragment"
               android:layout_width="0dp"
               android:layout_height="match_parent"
               android:layout_weight="1"

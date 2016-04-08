@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.wordlist;
+package com.gmail.maloef.rememberme.activity.wordlist;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

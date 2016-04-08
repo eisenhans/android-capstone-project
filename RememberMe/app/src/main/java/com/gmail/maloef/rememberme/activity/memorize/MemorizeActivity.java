@@ -1,9 +1,9 @@
-package com.gmail.maloef.rememberme.memorize;
+package com.gmail.maloef.rememberme.activity.memorize;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import com.gmail.maloef.rememberme.AbstractRememberMeActivity;
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeIntent;
 

@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme.word;
+package com.gmail.maloef.rememberme.activity.word;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.gmail.maloef.rememberme.LanguageSettingsManager;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
-import com.gmail.maloef.rememberme.addword.TranslationResult;
-import com.gmail.maloef.rememberme.addword.TranslationResultLoader;
+import com.gmail.maloef.rememberme.activity.word.add.TranslationResult;
+import com.gmail.maloef.rememberme.activity.word.add.TranslationResultLoader;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;

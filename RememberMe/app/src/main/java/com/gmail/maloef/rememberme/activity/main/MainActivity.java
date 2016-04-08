@@ -1,4 +1,4 @@
-package com.gmail.maloef.rememberme;
+package com.gmail.maloef.rememberme.activity.main;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -20,12 +20,18 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
+import com.gmail.maloef.rememberme.LanguageLoader;
+import com.gmail.maloef.rememberme.LanguageSettingsManager;
+import com.gmail.maloef.rememberme.R;
+import com.gmail.maloef.rememberme.RememberMeApplication;
+import com.gmail.maloef.rememberme.RememberMeIntent;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
-import com.gmail.maloef.rememberme.memorize.MemorizeActivity;
-import com.gmail.maloef.rememberme.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
 import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
@@ -37,13 +43,13 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
-import com.gmail.maloef.rememberme.word.AddWordFragment;
-import com.gmail.maloef.rememberme.word.EditWordFragment;
-import com.gmail.maloef.rememberme.word.QueryWordFragment;
-import com.gmail.maloef.rememberme.word.ShowWordFragment;
-import com.gmail.maloef.rememberme.word.WordActivity;
-import com.gmail.maloef.rememberme.wordlist.WordListActivity;
-import com.gmail.maloef.rememberme.wordlist.WordListFragment;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
+import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.activity.word.WordActivity;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListActivity;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
 
 import java.util.Arrays;
 import java.util.Date;
