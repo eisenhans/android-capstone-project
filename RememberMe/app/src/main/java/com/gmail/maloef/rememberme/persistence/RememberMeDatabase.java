@@ -11,9 +11,6 @@ public class RememberMeDatabase {
     @Table(VocabularyBoxColumns.class)
     static final String VOCABULARY_BOX = "vocabularyBox";
 
-    @Table(CompartmentColumns.class)
-    static final String COMPARTMENT = "compartment";
-
     @Table(WordColumns.class)
     static final String WORD = "word";
 

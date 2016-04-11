@@ -3,6 +3,7 @@ package com.gmail.maloef.rememberme.persistence;
 import android.app.Application;
 import android.util.Pair;
 
+import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.Word;
 
 import org.junit.Before;
@@ -190,5 +191,44 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         assertEquals("foreignNew", word.foreignWord);
         assertEquals("nativeNew", word.nativeWord);
         assertTrue(word.updateDate >= timestamp);
+    }
+
+    @Test
+    public void getBoxOverviewBoxEmpty() {
+        BoxOverview boxOverview = wordRepository.getBoxOverview(boxId);
+        for (int compartment = 1; compartment <= 5; compartment++) {
+            assertCompartmentEmpty(boxOverview, compartment);
+        }
+    }
+
+    @Test
+    public void getBoxOverview() {
+        wordRepository.createWord(boxId, "porcupine", "Stachelschwein");
+
+        int ointmentId = wordRepository.createWord(boxId, "ointment", "Salbe");
+        wordRepository.updateRepeatDate(ointmentId);
+
+        int biasId = wordRepository.createWord(boxId, "bias", "Tendenz, Neigung");
+        wordRepository.updateRepeatDate(biasId);
+        Long timestamp = new Date().getTime();
+
+        wordRepository.createWord(boxId, 2, "emissary", "Abgesandter");
+
+        BoxOverview boxOverview = wordRepository.getBoxOverview(boxId);
+
+        assertEquals(3, boxOverview.getWordCount(1));
+        assertAlmostEqual(timestamp, boxOverview.getEarliestLastRepeatDate(1), 100);
+
+        assertEquals(1, boxOverview.getWordCount(2));
+        assertEquals(0, boxOverview.getEarliestLastRepeatDate(2));
+
+        for (int compartment = 3; compartment <= 5; compartment++) {
+            assertCompartmentEmpty(boxOverview, compartment);
+        }
+    }
+
+    void assertCompartmentEmpty(BoxOverview boxOverview, int compartment) {
+        assertEquals(0, boxOverview.getWordCount(compartment));
+        assertEquals(0, boxOverview.getEarliestLastRepeatDate(compartment));
     }
 }

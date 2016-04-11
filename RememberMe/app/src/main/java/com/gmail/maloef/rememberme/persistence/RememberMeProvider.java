@@ -15,7 +15,6 @@ public class RememberMeProvider {
 
     interface Path{
         String VOCABULARY_BOXES = "vocabularyBoxes";
-        String COMPARTMENTS = "compartments";
         String WORDS = "words";
         String LANGUAGES = "languages";
     }
@@ -65,52 +64,6 @@ public class RememberMeProvider {
 //        }
     }
 
-    @TableEndpoint(table = RememberMeDatabase.COMPARTMENT)
-    public static class Compartment {
-
-        /**
-         * Finds all compartments (in all boxes).
-         *
-         * Example: ...rememberme/compartments
-         */
-        @ContentUri(
-                path = Path.COMPARTMENTS,
-                type = "vnd.android.cursor.dir/compartment",
-                defaultSort = CompartmentColumns.NUMBER)
-        public static final Uri COMPARTMENTS = BASE_CONTENT_URI.buildUpon().appendPath(Path.COMPARTMENTS).build();
-
-        /**
-         * Finds a compartment by id.
-         * <p/>
-         * Example: ...rememberme/compartments/123
-         */
-        @InexactContentUri(
-                path = Path.COMPARTMENTS + "/#",
-                name = "COMPARTMENT",
-                type = "vnd.android.cursor.item/compartment",
-                whereColumn = CompartmentColumns.ID,
-                pathSegment = 1)
-        public static Uri findById(int id) {
-            return COMPARTMENTS.buildUpon().appendPath(String.valueOf(id)).build();
-        }
-
-        /**
-         * Finds the compartments of one vocabulary box by the box' database id.
-         * <p/>
-         * Example: ...rememberme/vocabularyBoxes/123/compartments
-         */
-        @InexactContentUri(
-                path = Path.VOCABULARY_BOXES + "/#/" + Path.COMPARTMENTS,
-                name = "COMPARTMENTS_BY_VOCABULARY_BOX",
-                type = "vnd.android.cursor.dir/compartments",
-                whereColumn = CompartmentColumns.VOCABULARY_BOX,
-                pathSegment = 0,
-                defaultSort = CompartmentColumns.NUMBER)
-        public static final Uri findCompartments(int vocabularyBoxId) {
-            return VocabularyBox.findById(vocabularyBoxId).buildUpon().appendPath(Path.COMPARTMENTS).build();
-        }
-    }
-
     @TableEndpoint(table = RememberMeDatabase.WORD)
     public static class Word {
 
@@ -138,22 +91,6 @@ public class RememberMeProvider {
                 pathSegment = 1)
         public static Uri findById(int id) {
             return WORDS.buildUpon().appendPath(String.valueOf(id)).build();
-        }
-
-        /**
-         * Finds all words in one compartment by the compartment's database id.
-         * <p/>
-         * Example: ...rememberme/compartments/123/words
-         */
-        @InexactContentUri(
-                path = Path.COMPARTMENTS + "/#/" + Path.WORDS,
-                name = "WORDS_BY_COMPARTMENT",
-                type = "vnd.android.cursor.dir/words",
-                whereColumn = WordColumns.COMPARTMENT,
-                pathSegment = 1,
-                defaultSort = WordColumns.ID)
-        public static final Uri findWords(int compartmentId) {
-            return Compartment.findById(compartmentId).buildUpon().appendPath(Path.WORDS).build();
         }
     }
 

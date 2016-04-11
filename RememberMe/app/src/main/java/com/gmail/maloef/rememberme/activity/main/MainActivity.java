@@ -32,7 +32,6 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
-import com.gmail.maloef.rememberme.persistence.CompartmentRepository;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
@@ -67,7 +66,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         MemorizeFragment.Callback {
 
     @Inject VocabularyBoxRepository boxRepository;
-    @Inject CompartmentRepository compartmentRepository;
     @Inject WordRepository wordRepository;
     @Inject LanguageRepository languageRepository;
     @Inject LanguageProvider languageProvider;
@@ -355,7 +353,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     private void updateOverviewTable() {
-        BoxOverview boxOverview = compartmentRepository.getBoxOverview(selectedBox.id);
+        BoxOverview boxOverview = wordRepository.getBoxOverview(selectedBox.id);
         overviewWords1TextView.setText(String.valueOf(boxOverview.getWordCount(1)));
         overviewWords2TextView.setText(String.valueOf(boxOverview.getWordCount(2)));
         overviewWords3TextView.setText(String.valueOf(boxOverview.getWordCount(3)));

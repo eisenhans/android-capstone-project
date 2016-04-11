@@ -3,7 +3,6 @@ package com.gmail.maloef.rememberme.persistence;
 import android.content.ContentValues;
 import android.net.Uri;
 
-import com.gmail.maloef.rememberme.domain.Compartment;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 
@@ -37,24 +36,6 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
 
         assertFalse(boxCursor.moveToNext());
         boxCursor.close();
-    }
-
-    @Test
-    public void testCompartment() {
-        CompartmentCursor compartmentCursor = new CompartmentCursor(
-                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
-        assertFalse(compartmentCursor.moveToFirst());
-        compartmentCursor.close();
-
-        insertCompartment(1, 2);
-
-        compartmentCursor = new CompartmentCursor(
-                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
-        assertTrue(compartmentCursor.moveToFirst());
-        Compartment compartment = compartmentCursor.peek();
-        assertEquals(1, compartment.vocabularyBox);
-        assertEquals(2, compartment.number);
-        compartmentCursor.close();
     }
 
     private long time = System.currentTimeMillis();
@@ -104,13 +85,6 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         assertEquals(boxId, boxCursor.peek().id);
         boxCursor.close();
 
-        insertCompartment(boxId, 1);
-        CompartmentCursor compartmentCursor = new CompartmentCursor(
-                contentProvider.query(RememberMeProvider.Compartment.COMPARTMENTS, null, null, null, null));
-        assertTrue(compartmentCursor.moveToFirst());
-        int compartmentId = compartmentCursor.peek().id;
-        compartmentCursor.close();
-
         insertWord(boxId, 1, "porcupine", "Stachelschwein");
         WordCursor wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.WORDS, null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
@@ -119,14 +93,8 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
 
         wordCursor = new WordCursor(contentProvider.query(RememberMeProvider.Word.findById(wordId), null, null, null, null));
         assertTrue(wordCursor.moveToFirst());
-        assertEquals(compartmentId, wordCursor.peek().compartment);
+        assertEquals(1, wordCursor.peek().compartment);
         wordCursor.close();
-
-        compartmentCursor = new CompartmentCursor(
-                contentProvider.query(RememberMeProvider.Compartment.findById(compartmentId), null, null, null, null));
-        assertTrue(compartmentCursor.moveToFirst());
-        assertEquals(boxId, compartmentCursor.peek().vocabularyBox);
-        compartmentCursor.close();
     }
 
     private int insertVocabularyBox(String name, String foreignLanguage, String nativeLanguage, int translationDirection) {
@@ -139,14 +107,6 @@ public class RememberMeProviderTest extends AbstractPersistenceTest {
         Uri uri = contentProvider.insert(RememberMeProvider.VocabularyBox.VOCABULARY_BOXES, values);
         String boxIdString = uri.getLastPathSegment();
         return Integer.valueOf(boxIdString);
-    }
-
-    private void insertCompartment(int boxId, int number) {
-        ContentValues values = new ContentValues();
-        values.put(CompartmentColumns.VOCABULARY_BOX, boxId);
-        values.put(CompartmentColumns.NUMBER, number);
-
-        contentProvider.insert(RememberMeProvider.Compartment.COMPARTMENTS, values);
     }
 
     private void insertWord(int boxId, int compartment, String foreignWord, String nativeWord) {

@@ -28,7 +28,6 @@ public abstract class AbstractPersistenceTest extends AbstractRobolectricTest {
         }
 
         contentProvider.delete(RememberMeProvider.Word.WORDS, null, null);
-        contentProvider.delete(RememberMeProvider.Compartment.COMPARTMENTS, null, null);
         contentProvider.delete(RememberMeProvider.Word.WORDS, null, null);
     }
 
