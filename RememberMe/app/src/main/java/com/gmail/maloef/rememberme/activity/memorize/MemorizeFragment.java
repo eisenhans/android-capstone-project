@@ -135,7 +135,9 @@ public class MemorizeFragment extends AbstractRememberMeFragment {
             row.setGravity(Gravity.CENTER_VERTICAL);
 
             if (i % 2 == 0) {
-                row.setBackgroundColor(getResources().getColor(R.color.colorTableRowDark));
+                row.setBackgroundColor(getResources().getColor(R.color.colorTableRowDefault));
+            } else {
+                row.setBackgroundColor(getResources().getColor(R.color.colorTableRowLight));
             }
             row.addView(createTableCell(words.get(i).second));
             row.addView(createTableCell(words.get(i).first));

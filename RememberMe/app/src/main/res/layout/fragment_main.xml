@@ -124,7 +124,7 @@
                 <TextView android:id="@+id/overviewWords1" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated1" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
+            <TableRow android:id="@+id/overviewTableRow2" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="2" />
                 <TextView android:id="@+id/overviewWords2" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated2" style="@style/DefaultText" />
@@ -134,7 +134,7 @@
                 <TextView android:id="@+id/overviewWords3" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated3" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
+            <TableRow android:id="@+id/overviewTableRow4" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="4" />
                 <TextView android:id="@+id/overviewWords4" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated4" style="@style/DefaultText" />
@@ -144,7 +144,7 @@
                 <TextView android:id="@+id/overviewWords5" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated5" style="@style/DefaultText" />
             </TableRow>
-            <TableRow android:id="@+id/overviewTableRow6" android:paddingTop="8dp" android:paddingBottom="8dp" android:background="@color/colorTableRowDark">
+            <TableRow android:id="@+id/overviewTableRow6" android:paddingTop="8dp" android:paddingBottom="8dp">
                 <TextView style="@style/DefaultText" android:text="6" />
                 <TextView android:id="@+id/overviewWords6" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated6" style="@style/DefaultText" />

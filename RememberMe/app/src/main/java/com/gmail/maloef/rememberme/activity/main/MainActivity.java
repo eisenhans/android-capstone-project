@@ -20,18 +20,25 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.LanguageLoader;
 import com.gmail.maloef.rememberme.LanguageSettingsManager;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.RememberMeIntent;
+import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
+import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
+import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
+import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
+import com.gmail.maloef.rememberme.activity.word.WordActivity;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListActivity;
+import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.Language;
 import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
-import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
-import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.persistence.VocabularyBoxRepository;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
@@ -42,13 +49,6 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
-import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
-import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
-import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
-import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
-import com.gmail.maloef.rememberme.activity.word.WordActivity;
-import com.gmail.maloef.rememberme.activity.wordlist.WordListActivity;
-import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -56,7 +56,6 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -100,8 +99,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     @Bind(R.id.memorizeButton) Button memorizeButton;
 
     @Bind(R.id.detail_container) @Nullable View contentDetailView;
-
-    @BindColor(R.color.colorTableRowDark) int colorTableRowDark;
 
     @BindString(R.string.rename_box) String renameBoxString;
     @BindString(R.string.enter_new_name_for_box) String enterNewNameForBoxString;
@@ -295,24 +292,6 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         });
     }
 
-    private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
-        long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
-        if (repeatDate == 0) {
-            return "-";
-        }
-        Date now = new Date();
-        long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
-        logInfo("days since repeat for compartment " + compartment + ": repeat date was " + new Date(repeatDate) + ", now is " + now +
-                ", days between these two dates: " + days);
-        if (days == 0) {
-            return getString(R.string.today);
-        }
-        if (days == 1) {
-            return getString(R.string.yesterday);
-        }
-        return getString(R.string.i_days_ago, days);
-    }
-
     void updateBoxSpinner() {
         boxNames = boxRepository.getBoxNames();
 
@@ -368,7 +347,42 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         overviewNotRepeated5TextView.setText(calculateDaysSinceRepeat(boxOverview, 5));
         overviewNotRepeated6TextView.setText(calculateDaysSinceRepeat(boxOverview, 6));
 
+        overviewTableRow1.setBackgroundColor(calculateRowColor(boxOverview, 1));
+        overviewTableRow2.setBackgroundColor(calculateRowColor(boxOverview, 2));
+        overviewTableRow3.setBackgroundColor(calculateRowColor(boxOverview, 3));
+        overviewTableRow4.setBackgroundColor(calculateRowColor(boxOverview, 4));
+        overviewTableRow5.setBackgroundColor(calculateRowColor(boxOverview, 5));
+        overviewTableRow6.setBackgroundColor(calculateRowColor(boxOverview, 6));
+
         memorizeButton.setEnabled(boxOverview.getWordCount(1) > 0);
+    }
+
+    private String calculateDaysSinceRepeat(BoxOverview boxOverview, int compartment) {
+        long repeatDate = boxOverview.getEarliestLastRepeatDate(compartment);
+        if (repeatDate == 0) {
+            return "-";
+        }
+        Date now = new Date();
+        long days = DateUtils.getDaysBetweenMidnight(repeatDate, now.getTime());
+        logInfo("days since repeat for compartment " + compartment + ": repeat date was " + new Date(repeatDate) + ", now is " + now +
+                ", days between these two dates: " + days);
+        if (days == 0) {
+            return getString(R.string.today);
+        }
+        if (days == 1) {
+            return getString(R.string.yesterday);
+        }
+        return getString(R.string.i_days_ago, days);
+    }
+
+    private int calculateRowColor(BoxOverview boxOverview, int compartment) {
+        if (boxOverview.getWordCount(compartment) == 0) {
+            return getResources().getColor(R.color.colorTableRowDefault);
+        }
+        if (boxOverview.isWordDue(compartment)) {
+            return getResources().getColor(R.color.colorTableRowWordsDue);
+        }
+        return getResources().getColor(R.color.colorTableRowNoWordsDue);
     }
 
     int selectedBoxPosition() {

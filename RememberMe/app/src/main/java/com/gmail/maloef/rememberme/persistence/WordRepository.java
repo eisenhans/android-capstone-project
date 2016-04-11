@@ -12,6 +12,7 @@ import com.gmail.maloef.rememberme.RememberMeConstants;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
 import com.gmail.maloef.rememberme.domain.CompartmentOverview;
 import com.gmail.maloef.rememberme.domain.Word;
+import com.gmail.maloef.rememberme.service.RepeatWordScheduler;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -242,13 +243,16 @@ public class WordRepository {
 
         int wordCount = wordCursor.getCount();
         long earliestLastRepeatDate = 0;
+        boolean wordDue = false;
+        RepeatWordScheduler repeatWordScheduler = new RepeatWordScheduler();
         for (Word word : wordCursor) {
             earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, word.lastRepeatDate);
+            wordDue = wordDue || repeatWordScheduler.isWordDue(compartment, word.lastRepeatDate);
         }
         wordCursor.close();
 
         logInfo("compartment " + compartment + " contains " + wordCount + " words, repeated on " + new Date(earliestLastRepeatDate));
-        return new CompartmentOverview(wordCount, earliestLastRepeatDate);
+        return new CompartmentOverview(wordCount, earliestLastRepeatDate, wordDue);
     }
 
     private long earlierRepeatDate(long first, long second) {

@@ -18,4 +18,8 @@ public class BoxOverview {
     public long getEarliestLastRepeatDate(int compartment) {
         return overviewMap.get(compartment).earliestLastRepeatDate;
     }
+
+    public boolean isWordDue(int compartment) {
+        return overviewMap.get(compartment).wordDue;
+    }
 }

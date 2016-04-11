@@ -5,7 +5,10 @@
     <color name="colorAccent">@color/redA700</color>
 
     <color name="colorTableHeader">@color/grey400</color>
-    <color name="colorTableRowDark">@color/grey300</color>
+    <color name="colorTableRowDefault">@color/grey300</color>
+    <color name="colorTableRowLight">@color/grey200</color>
+    <color name="colorTableRowWordsDue">@color/red100</color>
+    <color name="colorTableRowNoWordsDue">@color/green100</color>
 
     <color name="blue100">#BBDEFB</color>
     <color name="blue500">#2196F3</color>
@@ -21,9 +24,19 @@
     <color name="deepOrangeA200">#FF6E40</color>
     <color name="deepOrangeA400">#FF3D00</color>
 
+    <color name="red50">#FFEBEE</color>
+    <color name="red100">#FFCDD2</color>
+    <color name="red200">#EF9A9A</color>
+    <color name="red300">#E57373</color>
+    <color name="redA100">#FF8A80</color>
     <color name="redA700">#D50000</color>
 
     <color name="lightGreenA200">#B2FF59</color>
+
+
+    <color name="green50">#E8F5E9</color>
+    <color name="green100">#C8E6C9</color>
+    <color name="green200">#A5D6A7</color>
     <color name="greenA400">#00E676</color>
 
     <!--<color name="yellow100">#FFF9C4</color>-->
