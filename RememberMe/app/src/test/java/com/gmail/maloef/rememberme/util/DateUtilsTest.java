@@ -1,14 +1,17 @@
 package com.gmail.maloef.rememberme.util;
 
+import com.gmail.maloef.rememberme.AbstractRobolectricTest;
+
 import org.junit.Test;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
-public class DateUtilsTest {
+public class DateUtilsTest extends AbstractRobolectricTest {
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
 
@@ -33,5 +36,15 @@ public class DateUtilsTest {
         assertEquals("2016-03-23", formatter.format(new Date(yesterday)));
         assertEquals("2016-03-24", formatter.format(new Date(today)));
         assertEquals(1, DateUtils.getDaysBetweenMidnight(yesterday, today));
+    }
+
+    @Test
+    public void daysBetweenMidnightWhenDaylightSavingTimeStarts() throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date march27th = formatter.parse("2016-03-27");
+        Date march28th = formatter.parse("2016-03-28");
+
+        // only 23 hours -> tricky to get right with standard java date classes
+        assertEquals(1, DateUtils.getDaysBetweenMidnight(march27th.getTime(), march28th.getTime()));
     }
 }

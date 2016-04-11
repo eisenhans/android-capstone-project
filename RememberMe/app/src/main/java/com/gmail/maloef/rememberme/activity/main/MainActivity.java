@@ -146,7 +146,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         if (contentDetailView != null) {
             logInfo("twoPaneLayout because contentDetailView is not null");
             twoPaneLayout = true;
-        } else if (getIntent().getAction().equals(Intent.ACTION_SEND)) {
+        } else if (isWordSharedFromOtherApp()) {
             String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
             // user shared a word from another app -> just add this word and go back to other app, skip rest of this method
             Intent intent = new Intent(this, WordActivity.class)
@@ -188,15 +188,17 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         createTestData();
 
         addRowListeners();
-
         updateOverviewTable();
 
-        if (getIntent().getAction().equals(Intent.ACTION_SEND)) {
+        if (isWordSharedFromOtherApp()) {
+            // we're in twoPaneLayout, otherwise we wouldn't get here
             String foreignWord = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            if (twoPaneLayout) {
-                showAddWordFragment(foreignWord);
-            }
+            showAddWordFragment(foreignWord);
         }
+    }
+
+    private boolean isWordSharedFromOtherApp() {
+        return getIntent().getAction().equals(Intent.ACTION_SEND);
     }
 
     @Override
@@ -492,7 +494,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             }
         };
         InputValidator inputValidator = createNewBoxNameInputValidator();
-        ValidatingInputDialog dialog = new ValidatingInputDialog(this, createNewBoxString, enterNameForNewBoxString, inputValidator, inputProcessor);
+        ValidatingInputDialog dialog = new ValidatingInputDialog(this, createNewBoxString, enterNameForNewBoxString, inputValidator,
+                inputProcessor);
         dialog.show();
     }
 
@@ -608,7 +611,12 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Override
     public void addWordDone() {
-        clearState();
+        if (isWordSharedFromOtherApp()) {
+            finish();
+        } else {
+            // user added word via menu item
+            clearState();
+        }
     }
 
     @Override

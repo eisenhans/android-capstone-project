@@ -8,6 +8,8 @@ import com.gmail.maloef.rememberme.di.RememberMeInjector;
 import com.gmail.maloef.rememberme.di.RememberMeModule;
 import com.gmail.maloef.rememberme.service.LanguageUpdater;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 public class RememberMeApplication extends Application {
 
     private static RememberMeInjector injector;
@@ -21,6 +23,8 @@ public class RememberMeApplication extends Application {
                 .build();
 
         startLanguageUpdateService();
+
+        JodaTimeAndroid.init(this);
     }
 
     private void startLanguageUpdateService() {

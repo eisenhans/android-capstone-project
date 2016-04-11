@@ -51,6 +51,8 @@ dependencies {
     compile 'com.hannesdorfmann.fragmentargs:annotation:3.0.2'
     apt 'com.hannesdorfmann.fragmentargs:processor:3.0.2'
 
+    compile 'net.danlew:android.joda:2.9.3'
+
     debugCompile 'com.facebook.stetho:stetho:1.2.0'
     debugCompile 'com.facebook.stetho:stetho-okhttp:1.2.0'
 

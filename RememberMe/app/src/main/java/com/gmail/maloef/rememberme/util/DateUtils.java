@@ -1,33 +1,38 @@
 package com.gmail.maloef.rememberme.util;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 public class DateUtils {
 
     static final long MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     public static long getDaysBetweenMidnight(long first, long second) {
-        Calendar firstCal = getMidnightOfSameDay(first);
-        Calendar secondCal = getMidnightOfSameDay(second);
+        LocalDate firstDate = new LocalDate(first);
+        LocalDate secondDate = new LocalDate(second);
+        return Days.daysBetween(firstDate, secondDate).getDays();
 
-        long diff = secondCal.getTimeInMillis() - firstCal.getTimeInMillis();
-        long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-
-        return days;
+        // does not handle daylight saving time correctly!
+//        Calendar firstCal = truncateToMidnight(first);
+//        Calendar secondCal = truncateToMidnight(second);
+//
+//        long diff = secondCal.getTimeInMillis() - firstCal.getTimeInMillis();
+//        long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+//
+//        return days;
     }
 
-    static Calendar getMidnightOfSameDay(long millis) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(new Date(millis));
-
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar;
-    }
+//    public static Calendar truncateToMidnight(long millis) {
+//        GregorianCalendar calendar = new GregorianCalendar();
+//        calendar.setTime(new Date(millis));
+//
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//
+//        System.out.println("truncated date " + new Date(millis) + " to midnight: " + calendar.getTime());
+//
+//        return calendar;
+//    }
 }
