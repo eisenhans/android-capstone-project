@@ -45,7 +45,7 @@ public class UpdateWidgetIntentService extends IntentService {
         int imageResId;
         if (wordsDue == 0) {
             text = getResources().getString(R.string.no_words_due);
-            imageResId = R.mipmap.widget_green_letter;
+            imageResId = R.mipmap.ic_launcher_green;
         } else if (wordsDue == 1) {
             text = getResources().getString(R.string.one_word_due);
             imageResId = R.mipmap.ic_launcher;
@@ -57,12 +57,10 @@ public class UpdateWidgetIntentService extends IntentService {
         views.setContentDescription(R.id.words_to_repeat_textview, text);
         views.setImageViewResource(R.id.widget_icon, imageResId);
 
-        // Create an Intent to launch MainActivity
         Intent launchIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
         views.setOnClickPendingIntent(R.id.widget_view, pendingIntent);
 
-        // Tell the AppWidgetManager to perform an update on the current app widget
         logInfo("updating widget " + appWidgetId + ": " + text);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
