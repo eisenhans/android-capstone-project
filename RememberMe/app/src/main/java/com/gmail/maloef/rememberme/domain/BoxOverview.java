@@ -1,5 +1,7 @@
 package com.gmail.maloef.rememberme.domain;
 
+import com.gmail.maloef.rememberme.RememberMeConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,19 @@ public class BoxOverview {
         return overviewMap.get(compartment).earliestLastRepeatDate;
     }
 
+    public int getWordDueCount(int compartment) {
+        return overviewMap.get(compartment).wordsDue;
+    }
+
     public boolean isWordDue(int compartment) {
-        return overviewMap.get(compartment).wordDue;
+        return getWordDueCount(compartment) > 0;
+    }
+
+    public int getWordDueCount() {
+        int total = 0;
+        for (int compartment = 1; compartment < RememberMeConstants.NUMBER_OF_COMPARTMENTS; compartment++) {
+            total += getWordDueCount(compartment);
+        }
+        return total;
     }
 }

@@ -71,5 +71,8 @@
     <string name="words_from_compartment_known">You\'ve mastered the words from this\ncompartment. There\'s no need to\nrepeat them any more.</string>
     <string name="randomString">Random</string>
     <string name="will_be_detected">Will be detected</string>
+    <string name="no_words_due">No words due</string>
+    <string name="one_word_due">1 word due</string>
+    <string name="i_words_due">%s words due</string>
 
 </resources>

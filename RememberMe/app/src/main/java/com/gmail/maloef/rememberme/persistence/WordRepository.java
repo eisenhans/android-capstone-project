@@ -243,16 +243,18 @@ public class WordRepository {
 
         int wordCount = wordCursor.getCount();
         long earliestLastRepeatDate = 0;
-        boolean wordDue = false;
+        int wordsDue = 0;
         RepeatWordScheduler repeatWordScheduler = new RepeatWordScheduler();
         for (Word word : wordCursor) {
             earliestLastRepeatDate = earlierRepeatDate(earliestLastRepeatDate, word.lastRepeatDate);
-            wordDue = wordDue || repeatWordScheduler.isWordDue(compartment, word.lastRepeatDate);
+            if (repeatWordScheduler.isWordDue(compartment, word.lastRepeatDate)) {
+                wordsDue++;
+            }
         }
         wordCursor.close();
 
         logInfo("compartment " + compartment + " contains " + wordCount + " words, repeated on " + new Date(earliestLastRepeatDate));
-        return new CompartmentOverview(wordCount, earliestLastRepeatDate, wordDue);
+        return new CompartmentOverview(wordCount, earliestLastRepeatDate, wordsDue);
     }
 
     private long earlierRepeatDate(long first, long second) {
@@ -263,6 +265,30 @@ public class WordRepository {
             return first;
         }
         return Math.min(first, second);
+    }
+
+    public int countWordsDue() {
+        long start = System.currentTimeMillis();
+        WordCursor wordCursor = new WordCursor(
+                contentResolver.query(
+                        RememberMeProvider.Word.WORDS,
+                        new String[] {WordColumns.COMPARTMENT, WordColumns.LAST_REPEAT_DATE},
+                        WordColumns.COMPARTMENT + " < ?",
+                        new String[] {String.valueOf(RememberMeConstants.NUMBER_OF_COMPARTMENTS)},
+                        null));
+
+        RepeatWordScheduler repeatWordScheduler = new RepeatWordScheduler();
+        int wordsDue = 0;
+        for (Word word : wordCursor) {
+            if (repeatWordScheduler.isWordDue(word.compartment, word.lastRepeatDate)) {
+                wordsDue++;
+            }
+        }
+        long stop = System.currentTimeMillis();
+
+        // ToDo 12.04.16: check performance
+        logInfo("counting " + wordsDue + " words that are due took " + (stop - start) + " ms");
+        return wordsDue;
     }
 
     void logInfo(String message) {

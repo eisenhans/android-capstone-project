@@ -49,6 +49,7 @@ import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
 import com.gmail.maloef.rememberme.util.dialog.InputProcessor;
 import com.gmail.maloef.rememberme.util.dialog.InputValidator;
 import com.gmail.maloef.rememberme.util.dialog.ValidatingInputDialog;
+import com.gmail.maloef.rememberme.widget.UpdateWidgetIntentService;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -193,7 +194,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     }
 
     private boolean isWordSharedFromOtherApp() {
-        return getIntent().getAction().equals(Intent.ACTION_SEND);
+        String action = getIntent().getAction();
+        return Intent.ACTION_SEND.equals(action);
     }
 
     @Override
@@ -203,6 +205,14 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         clearTempCompartment();
         updateSelectedBox(selectedBox.name);
         updateOverviewTable();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        logInfo("updating widget because user may have repeated words");
+        startService(new Intent(this, UpdateWidgetIntentService.class));
     }
 
     private void clearTempCompartment() {

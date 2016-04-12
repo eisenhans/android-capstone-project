@@ -3,7 +3,9 @@ package com.gmail.maloef.rememberme.persistence;
 import android.app.Application;
 import android.util.Pair;
 
+import com.gmail.maloef.rememberme.RememberMeConstants;
 import com.gmail.maloef.rememberme.domain.BoxOverview;
+import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 
 import org.junit.Before;
@@ -225,6 +227,23 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         for (int compartment = 3; compartment <= 5; compartment++) {
             assertCompartmentEmpty(boxOverview, compartment);
         }
+    }
+
+    @Test
+    public void countWordsDue() {
+        wordRepository.createWord(boxId, "foreign1", "native1");
+
+        // doesn't count because word is in final compartment
+        wordRepository.createWord(boxId, RememberMeConstants.NUMBER_OF_COMPARTMENTS, "foreign2", "native2");
+
+        int otherBoxId = createAnotherBox();
+        wordRepository.createWord(otherBoxId, "foreign", "native");
+
+        assertEquals(2, wordRepository.countWordsDue());
+    }
+
+    private int createAnotherBox() {
+        return boxRepository.createBox("otherBox", "it", "de", VocabularyBox.TRANSLATION_DIRECTION_RANDOM, false);
     }
 
     void assertCompartmentEmpty(BoxOverview boxOverview, int compartment) {
