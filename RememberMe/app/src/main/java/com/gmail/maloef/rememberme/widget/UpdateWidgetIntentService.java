@@ -12,10 +12,6 @@ import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.activity.main.MainActivity;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 public class UpdateWidgetIntentService extends IntentService {
 
     public UpdateWidgetIntentService() {
@@ -39,18 +35,16 @@ public class UpdateWidgetIntentService extends IntentService {
     private void updateWidget(AppWidgetManager appWidgetManager, int appWidgetId, int wordsDue) {
         RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget);
 
-        DateTime now = new DateTime();
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm:ss");
         String text;
         int imageResId;
         if (wordsDue == 0) {
-            text = getResources().getString(R.string.no_words_due);
+            text = getResources().getString(R.string.no_words_to_repeat);
             imageResId = R.mipmap.ic_launcher_green;
         } else if (wordsDue == 1) {
-            text = getResources().getString(R.string.one_word_due);
+            text = getResources().getString(R.string.one_word_to_repeat);
             imageResId = R.mipmap.ic_launcher;
         } else {
-            text = getResources().getString(R.string.i_words_due, wordsDue);
+            text = getResources().getString(R.string.i_words_to_repeat, wordsDue);
             imageResId = R.mipmap.ic_launcher;
         }
         views.setTextViewText(R.id.words_to_repeat_textview, text);
