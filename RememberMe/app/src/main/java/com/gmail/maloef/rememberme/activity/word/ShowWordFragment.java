@@ -20,8 +20,12 @@ import com.gmail.maloef.rememberme.domain.VocabularyBox;
 import com.gmail.maloef.rememberme.domain.Word;
 import com.gmail.maloef.rememberme.persistence.WordRepository;
 import com.gmail.maloef.rememberme.util.dialog.ConfirmDialog;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -42,6 +46,7 @@ public class ShowWordFragment extends AbstractWordFragment {
     private ShowWordCallback showWordCallback;
 
     @Inject WordRepository wordRepository;
+    @Inject Tracker tracker;
 
     @Bind(R.id.query_textview) TextView queryTextView;
     @Bind(R.id.answer_textview) TextView answerTextView;
@@ -82,16 +87,32 @@ public class ShowWordFragment extends AbstractWordFragment {
         if (givenAnswer == null || word.compartment == 0) {
             return;
         }
+        int newCompartment;
         if (correctAnswer.equals(givenAnswer)) {
-            wordRepository.moveToCompartment(word.id, word.compartment + 1);
+            newCompartment = word.compartment + 1;
         } else if (compartment == 1){
             // move word to virtual compartment
-            wordRepository.moveToCompartment(word.id, 0);
+            newCompartment = 0;
         } else {
             // move word back to compartment 1
-            wordRepository.moveToCompartment(word.id, 1);
+            newCompartment = 1;
         }
+        wordRepository.moveToCompartment(word.id, newCompartment);
+        trackRepeatWordEvent(newCompartment);
+
         showWordCallback.updateOverview();
+    }
+
+    private void trackRepeatWordEvent(int newCompartment) {
+        Map<String, String> repeatEvent = new HitBuilders.EventBuilder()
+                .setCategory("Word")
+                .setAction("Repeat")
+                .setLabel("newCompartment")
+                .setValue(newCompartment)
+                .build();
+
+        tracker.send(repeatEvent);
+        logInfo("sent repeatEvent to google analytics: " + repeatEvent);
     }
 
     @Override

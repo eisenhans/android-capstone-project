@@ -2,8 +2,13 @@ package com.gmail.maloef.rememberme.di;
 
 import android.content.Context;
 
+import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -22,24 +27,19 @@ public class RememberMeModule {
         return context;
     }
 
-    @Provides
+    @Provides @Singleton
     public LanguageProvider provideLanguageProvider() {
         return new GoogleTranslateService();
     }
 
-//    @Provides @Singleton
-//    public VocabularyBoxService provideVocabularyBoxService() {
-//        return new VocabularyBoxService(context);
-//    }
-//
-//    @Provides @Singleton
-//    public CompartmentService provideCompartmentService() {
-//        return new CompartmentService(context);
-//    }
-//
-//    @Provides @Singleton
-//    public WordService provideWordService() {
-//        return new WordService(context);
-//    }
+    @Provides @Singleton
+    public Tracker provideGoogleAnalyticsTracker() {
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
 
+        Tracker tracker = analytics.newTracker(R.xml.global_tracker);
+        tracker.enableExceptionReporting(true);
+        tracker.enableAutoActivityTracking(true);
+
+        return tracker;
+    }
 }

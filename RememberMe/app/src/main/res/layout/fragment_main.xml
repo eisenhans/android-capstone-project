@@ -145,7 +145,7 @@
                 <TextView android:id="@+id/overviewNotRepeated5" style="@style/DefaultText" />
             </TableRow>
             <TableRow android:id="@+id/overviewTableRow6" android:paddingTop="8dp" android:paddingBottom="8dp">
-                <TextView style="@style/DefaultText" android:text="6" />
+                <TextView style="@style/DefaultText" android:text="@string/learned" />
                 <TextView android:id="@+id/overviewWords6" style="@style/DefaultText" />
                 <TextView android:id="@+id/overviewNotRepeated6" style="@style/DefaultText" />
             </TableRow>

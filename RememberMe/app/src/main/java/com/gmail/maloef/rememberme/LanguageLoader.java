@@ -23,7 +23,7 @@ public class LanguageLoader extends AsyncTaskLoader<Language[]> {
     public Language[] loadInBackground() {
         String appLanguage = "en";
         LanguageUpdater updater = new LanguageUpdater(languageRepository, languageProvider);
-        updater.update(appLanguage);
+        updater.updateLanguages(appLanguage);
 
         return languageRepository.getLanguages(appLanguage);
     }

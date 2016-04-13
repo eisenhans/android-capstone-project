@@ -33,6 +33,8 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.2.1'
     compile 'com.android.support:recyclerview-v7:23.2.1'
 
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+
     // There seems to be a client lib for google translate, but the documentation is bad, and maybe it's not even official.
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
@@ -59,3 +61,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
 }
+
+// this has to add the end of the file:
+// http://stackoverflow.com/questions/34398191/found-com-google-android-gmsplay-services8-4-0-but-version-8-3-0-is-needed-fo
+apply plugin: 'com.google.gms.google-services'

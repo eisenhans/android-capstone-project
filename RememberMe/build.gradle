@@ -6,6 +6,8 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.0.0'
         // annotation processing tool - used by Schematic and Dagger 2
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+
+        classpath 'com.google.gms:google-services:2.0.0-beta6'
     }
 }
 

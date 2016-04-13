@@ -1,14 +1,13 @@
 package com.gmail.maloef.rememberme.di;
 
-import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
-import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
 import com.gmail.maloef.rememberme.activity.main.MainActivity;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
+import com.gmail.maloef.rememberme.activity.word.AddWordFragment;
+import com.gmail.maloef.rememberme.activity.word.EditWordFragment;
 import com.gmail.maloef.rememberme.activity.word.QueryWordFragment;
 import com.gmail.maloef.rememberme.activity.word.ShowWordFragment;
 import com.gmail.maloef.rememberme.activity.word.WordActivity;
-import com.gmail.maloef.rememberme.service.LanguageUpdater;
 import com.gmail.maloef.rememberme.activity.wordlist.WordListActivity;
 import com.gmail.maloef.rememberme.activity.wordlist.WordListFragment;
 
@@ -31,7 +30,4 @@ public interface RememberMeInjector {
     void inject(ShowWordFragment showWordFragment);
     void inject(MemorizeFragment memorizeFragment);
     void inject(WordListFragment wordListFragment);
-
-//    void inject(RememberMePreferences prefs);
-    void inject(LanguageUpdater languageUpdater);
 }

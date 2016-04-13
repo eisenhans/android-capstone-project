@@ -30,8 +30,12 @@ import com.gmail.maloef.rememberme.translate.google.GoogleTranslateService;
 import com.gmail.maloef.rememberme.translate.google.Translation;
 import com.gmail.maloef.rememberme.util.StringUtils;
 import com.gmail.maloef.rememberme.util.text.AfterTextChangedWatcher;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -53,6 +57,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     @Inject WordRepository wordRepository;
     @Inject LanguageRepository languageRepository;
     @Inject GoogleTranslateService translateService;
+    @Inject Tracker tracker;
 
     LanguageSettingsManager languageSettingsManager;
 
@@ -71,7 +76,7 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
 
     String nativeWord;
     VocabularyBox selectedBox;
-    int languageCount;
+//    int languageCount;
 
     private Callback callback;
 
@@ -160,9 +165,21 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
 
     @Override
     public Loader<TranslationResult> onCreateLoader(int id, Bundle args) {
-        logInfo("loading translation for word " + foreignWord + " from " + selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage);
+        trackTranslateWordEvent();
+
         return new TranslationResultLoader(getActivity(), languageRepository, translateService,
                 foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
+    }
+
+    private void trackTranslateWordEvent() {
+        Map<String, String> translateWordEvent = new HitBuilders.EventBuilder()
+                .setCategory("Word")
+                .setAction("Translate")
+                .setLabel(selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage)
+                .build();
+
+        tracker.send(translateWordEvent);
+        logInfo("sent translateWordEvent to google analytics: " + translateWordEvent);
     }
 
     @Override
@@ -174,7 +191,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
             showConfirmLanguageSettingsDialog(translationResult);
         }
         if (StringUtils.isBlank(translation.translatedText)) {
-        //if (StringUtils.isBlank(translation.translatedText) || translation.translatedText.equalsIgnoreCase(foreignWord)) {
             nativeWord = null;
             nativeWordEditText.setText(null);
             saveButton.setEnabled(false);
@@ -206,9 +222,11 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         nativeLanguageSpinner = (Spinner) dialogView.findViewById(R.id.nativeLanguageSpinner);
         languageSettingsManager = new LanguageSettingsManager(getActivity(), boxRepository, translationResult.languages);
 
-        configureLanguageSpinners();
-        updateForeignLanguageSpinner(foreignLanguageUsedForTranslation);
-        updateNativeLanguageSpinner(nativeLanguageUsedForTranslation);
+        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
+        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
+
+        languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguageUsedForTranslation);
+        languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguageUsedForTranslation);
 
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -243,25 +261,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         alertDialog.show();
         boolean enableOkButton = !nativeLanguageUsedForTranslation.equals(foreignLanguageUsedForTranslation);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(enableOkButton);
-    }
-
-    private void configureLanguageSpinners() {
-        if (languageCount > 0 && languageCount == languageRepository.countLanguages("en")) {
-            // languages are up to date
-            return;
-        }
-        languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);
-        languageSettingsManager.configureNativeLanguageSpinner(nativeLanguageSpinner);
-
-        languageCount = languageRepository.countLanguages("en");
-    }
-
-    private void updateForeignLanguageSpinner(String foreignLanguage) {
-        languageSettingsManager.updateForeignLanguageSpinner(foreignLanguageSpinner, foreignLanguage);
-    }
-
-    private void updateNativeLanguageSpinner(String nativeLanguage) {
-        languageSettingsManager.updateNativeLanguageSpinner(nativeLanguageSpinner, nativeLanguage);
     }
 
     @Override
@@ -302,9 +301,20 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
             finish = true;
         }
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        trackSaveWordEvent();
 
         if (finish) {
             callback.addWordDone();
         }
+    }
+
+    private void trackSaveWordEvent() {
+        Map<String, String> saveEvent = new HitBuilders.EventBuilder()
+                .setCategory("Word")
+                .setAction("Save")
+                .build();
+
+        tracker.send(saveEvent);
+        logInfo("sent saveWordEvent to google analytics: " + saveEvent);
     }
 }

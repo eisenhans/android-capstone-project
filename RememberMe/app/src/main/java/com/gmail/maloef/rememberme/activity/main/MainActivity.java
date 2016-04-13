@@ -334,6 +334,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     void updateSelectedBox(String boxName) {
         selectedBox = boxRepository.selectBoxByName(boxName);
 
+        // This can happen before the languages are loaded from Google Translate. Therefore we update the spinners now only if
+        // loadFinished is true. They are updated again from onLoadFinished().
         updateForeignLanguageSpinner(selectedBox.foreignLanguage);
         updateNativeLanguageSpinner(selectedBox.nativeLanguage);
         translationDirectionSpinner.setSelection(selectedBox.translationDirection);

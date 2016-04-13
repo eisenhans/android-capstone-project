@@ -16,20 +16,6 @@ public class LanguageUpdater {
         this.languageProvider = languageProvider;
     }
 
-    public void update(String language) {
-        if (isTimeForUpdate(language)) {
-            updateLanguages(language);
-        }
-    }
-
-    public boolean isTimeForUpdate(String nameCode) {
-        // ToDo 05.04.16: criteria?
-        int languages = languageRepository.countLanguages(nameCode);
-        logInfo("found " + languages + " languages for nameCode " + nameCode + " in database");
-
-        return languages < 10;
-    }
-
     public void updateLanguages(String nameCode) {
         Pair<String, String>[] languages = languageProvider.getLanguages(nameCode);
         if (languages.length == 0) {

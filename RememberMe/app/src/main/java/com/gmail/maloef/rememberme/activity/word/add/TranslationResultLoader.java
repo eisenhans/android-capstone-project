@@ -30,7 +30,7 @@ public class TranslationResultLoader  extends AsyncTaskLoader<TranslationResult>
         String appLanguage = "en";
 
         LanguageUpdater updater = new LanguageUpdater(languageRepository, translateService);
-        updater.update(appLanguage);
+        updater.updateLanguages(appLanguage);
 
         TranslationResult result = new TranslationResult();
         result.languages = languageRepository.getLanguages(appLanguage);
