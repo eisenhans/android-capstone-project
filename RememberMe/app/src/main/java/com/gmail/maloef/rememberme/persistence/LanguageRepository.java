@@ -12,12 +12,10 @@ import javax.inject.Inject;
 
 public class LanguageRepository {
 
-    private Context context;
     private ContentResolver contentResolver;
 
     @Inject
     public LanguageRepository(Context context) {
-        this.context = context;
         this.contentResolver = context.getContentResolver();
     }
 
@@ -33,29 +31,6 @@ public class LanguageRepository {
         cursor.close();
         return languages;
     }
-
-//    public Pair<String, String>[] getLanguages(String nameCode) {
-//        LanguageCursor languageCursor = new LanguageCursor(contentResolver.query(
-//                RememberMeProvider.Language.LANGUAGES,
-//                null,
-//                LanguageColumns.NAME_CODE + " = ?",
-//                new String[]{nameCode},
-//                null));
-//
-//        Pair[] pairs = new Pair[languageCursor.getCount()];
-//        int i = 0;
-//        for (Language language : languageCursor) {
-//            pairs[i++] = Pair.create(language.code, language.name);
-//        }
-//        languageCursor.close();
-//
-//        // ToDo 08.03.16: remove
-//        if (pairs.length == 0 && !isRobelectricTest()) {
-//            pairs = createDummyLanguages();
-//        }
-//
-//        return pairs;
-//    }
 
     public Language[] getLanguages(String nameCode) {
         LanguageCursor languageCursor = new LanguageCursor(contentResolver.query(
@@ -91,23 +66,5 @@ public class LanguageRepository {
                 RememberMeProvider.Language.LANGUAGES,
                 LanguageColumns.NAME_CODE + " = ?",
                 new String[]{nameCode});
-    }
-
-    private Pair[] createDummyLanguages() {
-        final Pair<String, String>[] pairs = new Pair[3];
-        pairs[0] = Pair.create("en", "English");
-        pairs[1] = Pair.create("de", "German");
-        pairs[2] = Pair.create("es", "Spanish");
-
-        return pairs;
-    }
-
-    private boolean isRobelectricTest() {
-        try {
-            Class.forName("org.robolectric.Robolectric");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 }

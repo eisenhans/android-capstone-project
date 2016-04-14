@@ -107,8 +107,7 @@ public class ShowWordFragment extends AbstractWordFragment {
         Map<String, String> repeatEvent = new HitBuilders.EventBuilder()
                 .setCategory("Word")
                 .setAction("Repeat")
-                .setLabel("newCompartment")
-                .setValue(newCompartment)
+                .setLabel("newCompartment" + newCompartment)
                 .build();
 
         tracker.send(repeatEvent);

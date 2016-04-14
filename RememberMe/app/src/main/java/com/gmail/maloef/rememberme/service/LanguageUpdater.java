@@ -16,6 +16,17 @@ public class LanguageUpdater {
         this.languageProvider = languageProvider;
     }
 
+    public void updateLanguagesIfNeeded(String nameCode) {
+        if (isUpdateNeeded(nameCode)) {
+            updateLanguages(nameCode);
+        }
+    }
+
+    public boolean isUpdateNeeded(String nameCode) {
+        int languagesInDatabase = languageRepository.countLanguages(nameCode);
+        return languagesInDatabase < 50;
+    }
+
     public void updateLanguages(String nameCode) {
         Pair<String, String>[] languages = languageProvider.getLanguages(nameCode);
         if (languages.length == 0) {

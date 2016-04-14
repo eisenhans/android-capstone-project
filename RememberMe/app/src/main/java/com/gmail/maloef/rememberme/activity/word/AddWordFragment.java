@@ -165,21 +165,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
 
     @Override
     public Loader<TranslationResult> onCreateLoader(int id, Bundle args) {
-        trackTranslateWordEvent();
-
         return new TranslationResultLoader(getActivity(), languageRepository, translateService,
                 foreignWord, selectedBox.foreignLanguage, selectedBox.nativeLanguage);
-    }
-
-    private void trackTranslateWordEvent() {
-        Map<String, String> translateWordEvent = new HitBuilders.EventBuilder()
-                .setCategory("Word")
-                .setAction("Translate")
-                .setLabel(selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage)
-                .build();
-
-        tracker.send(translateWordEvent);
-        logInfo("sent translateWordEvent to google analytics: " + translateWordEvent);
     }
 
     @Override
@@ -190,12 +177,8 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         if (translation.detectedSourceLanguage != null) {
             showConfirmLanguageSettingsDialog(translationResult);
         }
-        if (StringUtils.isBlank(translation.translatedText)) {
-            nativeWord = null;
-            nativeWordEditText.setText(null);
-            saveButton.setEnabled(false);
-            Toast.makeText(getActivity(), getString(R.string.no_translation_found), Toast.LENGTH_SHORT).show();
-        } else {
+        boolean textTranslated = StringUtils.isNotBlank(translation.translatedText);
+        if (textTranslated) {
             if (nativeWord != null) {
                 // there was a translation before, so we should inform the user that we translated again
                 Toast.makeText(getActivity(), getString(R.string.word_translated), Toast.LENGTH_SHORT).show();
@@ -203,9 +186,28 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
             nativeWord = translation.translatedText;
             nativeWordEditText.setText(nativeWord);
             saveButton.setEnabled(true);
+        } else {
+            nativeWord = null;
+            nativeWordEditText.setText(null);
+            saveButton.setEnabled(false);
+            Toast.makeText(getActivity(), getString(R.string.no_translation_found), Toast.LENGTH_SHORT).show();
         }
         translateButton.setEnabled(false);
         addWordParentLayout.requestFocus();
+
+        trackTranslateWordEvent(textTranslated);
+    }
+
+    private void trackTranslateWordEvent(boolean textTranslated) {
+        String label = selectedBox.foreignLanguage + " to " + selectedBox.nativeLanguage + (textTranslated ? " successful" : " failed");
+        Map<String, String> translateWordEvent = new HitBuilders.EventBuilder()
+                .setCategory("Word")
+                .setAction("Translate")
+                .setLabel(label)
+                .build();
+
+        tracker.send(translateWordEvent);
+        logInfo("sent translateWordEvent to google analytics: " + translateWordEvent);
     }
 
     private void showConfirmLanguageSettingsDialog(TranslationResult translationResult) {
