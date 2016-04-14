@@ -75,5 +75,7 @@
     <string name="one_word_to_repeat">1 word to repeat</string>
     <string name="i_words_to_repeat">%s words to repeat</string>
     <string name="learned">Learned</string>
+    <string name="n_words_to_repeat">%s words to repeat</string>
+    <string name="n_from_box_s">%1$s from box %2$s</string>
 
 </resources>

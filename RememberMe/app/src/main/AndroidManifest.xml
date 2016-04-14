@@ -43,6 +43,7 @@
             android:authorities="com.gmail.maloef.rememberme"
             android:name=".persistence.generated.RememberMeProvider"
             android:exported="false" />
+        <receiver android:name=".notification.SendNotificationReceiver" />
         <receiver android:name=".widget.RememberMeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

@@ -16,7 +16,9 @@ import com.gmail.maloef.rememberme.service.RepeatWordScheduler;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -267,28 +269,43 @@ public class WordRepository {
         return Math.min(first, second);
     }
 
-    public int countWordsDue() {
+    public int countWordsToRepeat() {
+        Map<Integer, Integer> byBox = countWordsToRepeatByBox();
+        int total = 0;
+        for (int wordsInBox : byBox.values()) {
+            total += wordsInBox;
+        }
+        return total;
+    }
+
+    public Map<Integer, Integer> countWordsToRepeatByBox() {
         long start = System.currentTimeMillis();
         WordCursor wordCursor = new WordCursor(
                 contentResolver.query(
                         RememberMeProvider.Word.WORDS,
-                        new String[] {WordColumns.COMPARTMENT, WordColumns.LAST_REPEAT_DATE},
+                        new String[] {WordColumns.BOX_ID, WordColumns.COMPARTMENT, WordColumns.LAST_REPEAT_DATE},
                         WordColumns.COMPARTMENT + " < ?",
                         new String[] {String.valueOf(RememberMeConstants.NUMBER_OF_COMPARTMENTS)},
                         null));
 
         RepeatWordScheduler repeatWordScheduler = new RepeatWordScheduler();
-        int wordsDue = 0;
+        Map<Integer, Integer> resultMap = new HashMap<>();
         for (Word word : wordCursor) {
             if (repeatWordScheduler.isWordDue(word.compartment, word.lastRepeatDate)) {
-                wordsDue++;
+                if (resultMap.containsKey(word.boxId)) {
+                    Integer current = resultMap.get(word.boxId);
+                    resultMap.put(word.boxId, current + 1);
+                } else {
+                    resultMap.put(word.boxId, 1);
+                }
             }
         }
+        wordCursor.close();
         long stop = System.currentTimeMillis();
 
         // ToDo 12.04.16: check performance
-        logInfo("counting " + wordsDue + " words that are due took " + (stop - start) + " ms");
-        return wordsDue;
+        logInfo("counting words to repeat took " + (stop - start) + " ms");
+        return resultMap;
     }
 
     void logInfo(String message) {

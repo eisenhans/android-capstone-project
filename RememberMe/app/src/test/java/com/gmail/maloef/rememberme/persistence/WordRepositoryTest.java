@@ -14,6 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -230,7 +231,7 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
     }
 
     @Test
-    public void countWordsDue() {
+    public void countWordsToRepeat() {
         wordRepository.createWord(boxId, "foreign1", "native1");
 
         // doesn't count because word is in final compartment
@@ -239,7 +240,12 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         int otherBoxId = createAnotherBox();
         wordRepository.createWord(otherBoxId, "foreign", "native");
 
-        assertEquals(2, wordRepository.countWordsDue());
+        assertEquals(2, wordRepository.countWordsToRepeat());
+
+        Map<Integer, Integer> wordsByBox = wordRepository.countWordsToRepeatByBox();
+        assertEquals(2, wordsByBox.size());
+        assertTrue(wordsByBox.keySet().contains(boxId));
+        assertTrue(wordsByBox.keySet().contains(otherBoxId));
     }
 
     private int createAnotherBox() {

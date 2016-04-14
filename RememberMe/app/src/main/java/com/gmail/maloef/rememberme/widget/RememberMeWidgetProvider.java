@@ -21,15 +21,14 @@ public class RememberMeWidgetProvider extends AppWidgetProvider {
 
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // ToDo 12.04.16: use daily inexact repeating
-//        alarmManager.setInexactRepeating(AlarmManager.RTC, 0, AlarmManager.INTERVAL_DAY, alarmIntent); // every day after midnight
-        alarmManager.setRepeating(AlarmManager.RTC, 0, 10000, alarmIntent); // every 10 sec (for testing only)
+        alarmManager.setInexactRepeating(AlarmManager.RTC, 0, AlarmManager.INTERVAL_DAY, alarmIntent); // every day after midnight
+//        alarmManager.setRepeating(AlarmManager.RTC, 0, 10000, alarmIntent); // every 10 sec (for testing only)
     }
 
     @Override
     public void onDisabled(Context context) {
         if (alarmManager != null && alarmIntent != null) {
-            logInfo("cancelling alarm for widget upate because all widgets have been deleted, intent: " + alarmIntent);
+            logInfo("cancelling alarm for widget update because all widgets have been deleted, intent: " + alarmIntent);
             alarmManager.cancel(alarmIntent);
         }
     }

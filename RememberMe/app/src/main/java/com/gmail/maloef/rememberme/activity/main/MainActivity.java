@@ -25,6 +25,7 @@ import com.gmail.maloef.rememberme.LanguageSettingsManager;
 import com.gmail.maloef.rememberme.R;
 import com.gmail.maloef.rememberme.RememberMeApplication;
 import com.gmail.maloef.rememberme.RememberMeIntent;
+import com.gmail.maloef.rememberme.notification.NotificationHandler;
 import com.gmail.maloef.rememberme.activity.AbstractRememberMeActivity;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeActivity;
 import com.gmail.maloef.rememberme.activity.memorize.MemorizeFragment;
@@ -69,6 +70,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
     @Inject WordRepository wordRepository;
     @Inject LanguageRepository languageRepository;
     @Inject LanguageProvider languageProvider;
+    @Inject NotificationHandler notificationHandler;
 
     @Bind(R.id.vocabularyBoxSpinner) Spinner vocabularyBoxSpinner;
     @Bind(R.id.foreignLanguageSpinner) Spinner foreignLanguageSpinner;
@@ -205,14 +207,18 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         clearTempCompartment();
         updateSelectedBox(selectedBox.name);
         updateOverviewTable();
+
+        notificationHandler.clearNotification();
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        logInfo("updating widget because user may have repeated words");
+        logInfo("updating widget (if one exists) because user may have repeated words");
         startService(new Intent(this, UpdateWidgetIntentService.class));
+
+        notificationHandler.setUpAlarm();
     }
 
     private void clearTempCompartment() {

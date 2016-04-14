@@ -23,8 +23,12 @@ public class UpdateWidgetIntentService extends IntentService {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RememberMeWidgetProvider.class));
 
+        if (appWidgetIds.length == 0) {
+            return;
+        }
+
         WordRepository wordRepository = new WordRepository(getApplicationContext());
-        int wordsDue = wordRepository.countWordsDue();
+        int wordsDue = wordRepository.countWordsToRepeat();
 
         for (int appWidgetId : appWidgetIds) {
             logInfo("updating widget with id " + appWidgetId);
