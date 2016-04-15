@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+
 public class RememberMeWidgetProvider extends AppWidgetProvider {
 
     private AlarmManager alarmManager;
@@ -21,8 +23,10 @@ public class RememberMeWidgetProvider extends AppWidgetProvider {
 
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.setInexactRepeating(AlarmManager.RTC, 0, AlarmManager.INTERVAL_DAY, alarmIntent); // every day after midnight
-//        alarmManager.setRepeating(AlarmManager.RTC, 0, 10000, alarmIntent); // every 10 sec (for testing only)
+        DateTime nextMidnight = new DateTime().withTimeAtStartOfDay().plusDays(1);
+
+        // every day at midnight
+        alarmManager.setInexactRepeating(AlarmManager.RTC, nextMidnight.getMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
     @Override

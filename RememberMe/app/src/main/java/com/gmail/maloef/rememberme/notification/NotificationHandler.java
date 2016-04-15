@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import org.joda.time.DateTime;
+
 import javax.inject.Inject;
 
 public class NotificationHandler {
@@ -30,7 +32,9 @@ public class NotificationHandler {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.setInexactRepeating(AlarmManager.RTC, 0, AlarmManager.INTERVAL_DAY, alarmIntent); // every day after midnight
-//        alarmManager.setRepeating(AlarmManager.RTC, 0, 60000, alarmIntent); // every min (for testing)
+        DateTime nextMidnight = new DateTime().withTimeAtStartOfDay().plusDays(1);
+
+        // every day at midnight
+        alarmManager.setInexactRepeating(AlarmManager.RTC, nextMidnight.getMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 }
