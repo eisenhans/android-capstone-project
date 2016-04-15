@@ -12,10 +12,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file(CAPSTONE_STORE_FILE)
+            storePassword CAPSTONE_STORE_PASSWORD
+            keyAlias CAPSTONE_KEY_ALIAS
+            keyPassword CAPSTONE_KEY_PASSWORD
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     buildTypes.each {

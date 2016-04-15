@@ -1,0 +1,4 @@
+<issue id="ResourceType">
+    <!-- Currently needed to create signed apk. See https://github.com/JakeWharton/butterknife/issues/338 -->
+    <ignore path="**/*$$ViewBinder.java" />
+</issue>
