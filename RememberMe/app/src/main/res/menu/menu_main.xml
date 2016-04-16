@@ -4,6 +4,11 @@
     tools:context=".activity.main.MainActivity">
 
     <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_create_new_box"
         android:title="@string/create_new_box"
         />
@@ -22,9 +27,4 @@
         android:id="@+id/action_add_word"
         android:title="@string/add_word"
         />
-
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
 </menu>

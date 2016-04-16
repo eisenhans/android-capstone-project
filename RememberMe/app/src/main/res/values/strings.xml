@@ -68,7 +68,7 @@
     <string name="words_learned">Words learned</string>
     <string name="message">message</string>
     <string name="title">title</string>
-    <string name="words_from_compartment_known">You\'ve mastered the words from this\ncompartment. There\'s no need to\nrepeat them any more.</string>
+    <string name="words_from_compartment_known">You\'ve mastered the words from this compartment. Therefore it\'s not necessary to repeat them any more.</string>
     <string name="randomString">Random</string>
     <string name="will_be_detected">Will be detected</string>
     <string name="no_words_to_repeat">No words to repeat</string>

@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.gmail.maloef.rememberme">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.gmail.maloef.rememberme">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Remove the WAKE_LOCK permission which would otherwise be requested by google play services - not needed. -->
+    <!-- http://stackoverflow.com/questions/30960275/do-i-need-android-permission-wake-lock-for-google-play-services-if-i-only-releas -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="remove" />
 
     <application
         android:allowBackup="true"

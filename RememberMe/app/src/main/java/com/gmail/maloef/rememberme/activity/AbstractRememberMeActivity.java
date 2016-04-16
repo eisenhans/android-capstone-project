@@ -104,9 +104,7 @@ public abstract class AbstractRememberMeActivity extends AppCompatActivity {
         if (fragment == null) {
             fragment = AddWordFragmentBuilder.newAddWordFragment(foreignWord);
         }
-//        getFragmentManager().beginTransaction().add(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
         getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment, AddWordFragment.TAG).commit();
-        logInfo("fragment added: " + fragment.isAdded() + ", visible: " + fragment.isVisible() + ", resumed:" + fragment.isResumed());
     }
 
     protected void showEditWordFragment(int translationDirection, int wordId) {

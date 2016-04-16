@@ -58,8 +58,6 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
     }
 
     private void addWord() {
-//        initToolbar(false, R.string.add_word);
-
         String foreignWord = getIntent().getStringExtra(RememberMeIntent.EXTRA_FOREIGN_WORD);
         showAddWordFragment(foreignWord);
     }

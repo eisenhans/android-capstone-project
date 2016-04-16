@@ -265,8 +265,8 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                             VocabularyBox.TRANSLATION_DIRECTION_FOREIGN_TO_NATIVE : VocabularyBox.TRANSLATION_DIRECTION_NATIVE_TO_FOREIGN;
                 }
                 if (twoPaneLayout) {
-                    clearTempCompartment();
-                    updateOverviewTable();
+                    clearState();
+                    // The fragment is not shown if the row is clicked from ShowWordFragment. Don't know why it doesn't work, but is acceptable.
                     showQueryWordFragment(selectedBox.id, compartment, translationDirectionForQuery);
                 } else {
                     Intent intent = new Intent(MainActivity.this, WordActivity.class)
@@ -292,9 +292,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
                     return;
                 }
                 if (twoPaneLayout) {
-                    initToolbar(false, R.string.words_learned);
-                    clearTempCompartment();
-                    updateOverviewTable();
+                    clearState();
                     showWordListFragment(selectedBox.id, compartment);
                 } else {
                     Intent intent = new Intent(MainActivity.this, WordListActivity.class)
