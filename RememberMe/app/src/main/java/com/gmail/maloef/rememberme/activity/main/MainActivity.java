@@ -572,6 +572,11 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<Language[]> languageLoader, Language[] languages) {
+        if (languages == null || languages.length == 0) {
+            // Languages could not be loaded, probably because there is no internet connection. A toast has been displayed from
+            // LanguageLoader, so there's nothing else to do here. The app can still be used for repeating words.
+            return;
+        }
         languageSettingsManager = new LanguageSettingsManager(this, boxRepository, languages);
 
         languageSettingsManager.configureForeignLanguageSpinner(foreignLanguageSpinner);

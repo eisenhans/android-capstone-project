@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +34,7 @@ public class LanguageUpdateServiceTest extends AbstractPersistenceTest {
     }
 
     @Test
-    public void updateLanguages() {
+    public void updateLanguages() throws IOException {
         assertEquals(0, countLanguagesInDatabase());
 
         languageUpdater = new LanguageUpdater(languageRepository, createLanguageProvider(0));

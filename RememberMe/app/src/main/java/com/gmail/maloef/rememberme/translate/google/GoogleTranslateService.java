@@ -6,7 +6,6 @@ import android.util.Pair;
 import com.gmail.maloef.rememberme.BuildConfig;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 
@@ -37,79 +36,44 @@ public class GoogleTranslateService implements LanguageProvider {
         restApi = retrofit.create(GoogleTranslateRestApi.class);
     }
 
-    public Translation translate(String foreignWord, String nativeLanguage) {
+    public Translation translate(String foreignWord, String nativeLanguage) throws IOException {
         return translate(foreignWord, null, nativeLanguage);
     }
 
-    public Translation translate(String foreignWord, String foreignLanguage, String nativeLanguage) {
+    public Translation translate(String foreignWord, String foreignLanguage, String nativeLanguage) throws IOException {
         logInfo("translating word " + foreignWord + " from " + foreignLanguage + " to " + nativeLanguage + ", using apiKey " + apiKey);
         Call<TranslateTextResponse> translateCall = restApi.translate(foreignWord, foreignLanguage, nativeLanguage, "text", apiKey);
-        try {
-            // ToDo: exception handling
-            long start = System.currentTimeMillis();
-            Response<TranslateTextResponse> response = translateCall.execute();
-            long end = System.currentTimeMillis();
-            logInfo("response: " + response + ", duration " + (end - start) + " ms");
-            logInfo("response message: " + response.message());
-            logInfo("response body: " + response.body());
-            logInfo("response error body: " + response.errorBody());
-            logInfo("raw response: " + response.raw());
-            TranslateTextResponse translateTextResponse = response.body();
 
-            if (translateTextResponse == null) {
-                return Translation.create("Google doesn't know");
-            }
+        long start = System.currentTimeMillis();
+        Response<TranslateTextResponse> response = translateCall.execute();
+        long end = System.currentTimeMillis();
+        logInfo("response: " + response + ", duration " + (end - start) + " ms");
+        logInfo("response message: " + response.message());
+        logInfo("response body: " + response.body());
+        logInfo("response error body: " + response.errorBody());
+        logInfo("raw response: " + response.raw());
+        TranslateTextResponse translateTextResponse = response.body();
 
-            Translation translation = translateTextResponse.getTranslation();
-            logInfo("received translation: " + translation);
-            return translation;
-        } catch (UnknownHostException e) {
-            return Translation.create("No internet connection");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Translation.create(e.getMessage());
+        if (translateTextResponse == null) {
+            return Translation.create("Google doesn't know");
         }
-    }
 
-    public String detectLanguage(String foreignWord) {
-        logInfo("detecting language for word " + foreignWord + ", using apiKey " + apiKey);
-        Call<DetectLanguageResponse> detectCall = restApi.detect(foreignWord, "text", apiKey);
-        try {
-            // ToDo: exception handling
-            long start = System.currentTimeMillis();
-            Response<DetectLanguageResponse> response = detectCall.execute();
-            long end = System.currentTimeMillis();
-            logInfo("response: " + response + ", duration " + (end - start) + " ms");
-            logInfo("response error body: " + response.errorBody());
-            logInfo("raw response: " + response.raw());
-            DetectLanguageResponse detectLanguageResponse = response.body();
-
-            if (detectLanguageResponse == null) {
-                return "Google doesn't know";
-            }
-            return detectLanguageResponse.getDetectedLanguage();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
+        Translation translation = translateTextResponse.getTranslation();
+        logInfo("received translation: " + translation);
+        return translation;
     }
 
     @Override
-    public Pair<String, String>[] getLanguages(String nameCode) {
+    public Pair<String, String>[] getLanguages(String nameCode) throws IOException {
         logInfo("looking up available language with name in language " + nameCode + ", using apiKey " + apiKey);
         Call<AvailableLanguageResponse> languageCall = restApi.availableLanguages(nameCode, "text", apiKey);
 
-        try {
-            long start = System.currentTimeMillis();
-            Response<AvailableLanguageResponse> response = languageCall.execute();
-            long end = System.currentTimeMillis();
-            logInfo("response: " + response + ", duration " + (end - start) + " ms");
-            AvailableLanguageResponse availableLanguageResponse = response.body();
-            return availableLanguageResponse.getCodeLanguagePairs();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Pair[0];
-        }
+        long start = System.currentTimeMillis();
+        Response<AvailableLanguageResponse> response = languageCall.execute();
+        long end = System.currentTimeMillis();
+        logInfo("response: " + response + ", duration " + (end - start) + " ms");
+        AvailableLanguageResponse availableLanguageResponse = response.body();
+        return availableLanguageResponse.getCodeLanguagePairs();
     }
 
     void logInfo(String message) {

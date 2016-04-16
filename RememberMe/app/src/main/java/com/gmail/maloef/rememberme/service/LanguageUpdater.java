@@ -6,6 +6,8 @@ import android.util.Pair;
 import com.gmail.maloef.rememberme.persistence.LanguageRepository;
 import com.gmail.maloef.rememberme.translate.google.LanguageProvider;
 
+import java.io.IOException;
+
 public class LanguageUpdater {
 
     private LanguageRepository languageRepository;
@@ -16,7 +18,7 @@ public class LanguageUpdater {
         this.languageProvider = languageProvider;
     }
 
-    public void updateLanguagesIfNeeded(String nameCode) {
+    public void updateLanguagesIfNeeded(String nameCode) throws IOException {
         if (isUpdateNeeded(nameCode)) {
             updateLanguages(nameCode);
         }
@@ -27,7 +29,7 @@ public class LanguageUpdater {
         return languagesInDatabase < 50;
     }
 
-    public void updateLanguages(String nameCode) {
+    public void updateLanguages(String nameCode) throws IOException {
         Pair<String, String>[] languages = languageProvider.getLanguages(nameCode);
         if (languages.length == 0) {
             return;
