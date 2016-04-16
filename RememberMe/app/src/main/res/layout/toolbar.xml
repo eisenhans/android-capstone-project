@@ -12,6 +12,5 @@
     android:background="?attr/colorPrimary"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/AppTheme.PopupOverlay"
-    app:title="@string/vocabulary_box">
-
-</android.support.v7.widget.Toolbar>
+    app:title="@string/vocabulary_box"
+    />

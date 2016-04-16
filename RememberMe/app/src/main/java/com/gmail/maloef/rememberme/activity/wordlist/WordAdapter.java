@@ -44,7 +44,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         };
         Word word = wordCursor.peek();
         holder.foreignWordView.setText(word.foreignWord);
+        holder.foreignWordView.setContentDescription(word.foreignWord);
         holder.nativeWordView.setText(word.nativeWord);
+        holder.nativeWordView.setContentDescription(word.nativeWord);
     }
 
     @Override

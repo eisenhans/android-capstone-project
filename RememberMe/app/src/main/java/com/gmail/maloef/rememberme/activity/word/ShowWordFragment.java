@@ -128,14 +128,17 @@ public class ShowWordFragment extends AbstractWordFragment {
         } else if (correctAnswer.equals(givenAnswer)) {
             resultIconView.setVisibility(View.VISIBLE);
             resultIconView.setImageResource(R.drawable.ic_check_36dp);
+            resultIconView.setContentDescription(getString(R.string.right));
         } else {
             resultIconView.setVisibility(View.VISIBLE);
             resultIconView.setImageResource(R.drawable.ic_close_36dp);
+            resultIconView.setContentDescription(getString(R.string.wrong));
         }
 
         int wordsInCompartmentNow = wordRepository.countWords(word.boxId, compartment);
         int wordCount = wordsInCompartment - wordsInCompartmentNow;
         repeatStatusTextView.setText(wordCount + "/" + wordsInCompartment);
+        repeatStatusTextView.setContentDescription(getString(R.string.word) + wordCount + getString(R.string.out_of) + wordsInCompartment);
 
         nextWordButton.setRotation(wordsInCompartmentNow > 0 ? 0 : 270);
 

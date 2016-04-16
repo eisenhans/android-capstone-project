@@ -26,6 +26,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="@string/cancel"
+                android:contentDescription="@string/cancel"
                 />
 
             <Button
@@ -35,6 +36,7 @@
                 android:layout_weight="1"
                 android:visibility="invisible"
                 android:text="@string/translate"
+                android:contentDescription="@string/translate"
                 />
 
             <Button
@@ -43,6 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="@string/save"
+                android:contentDescription="@string/save"
                 />
 
         </LinearLayout>

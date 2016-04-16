@@ -41,19 +41,24 @@ public class UpdateWidgetIntentService extends IntentService {
 
         String text;
         int imageResId;
+        int contentDescriptionResId;
         if (wordsDue == 0) {
             text = getResources().getString(R.string.no_words_to_repeat);
             imageResId = R.mipmap.ic_launcher_green;
+            contentDescriptionResId = R.string.green_icon;
         } else if (wordsDue == 1) {
             text = getResources().getString(R.string.one_word_to_repeat);
             imageResId = R.mipmap.ic_launcher;
+            contentDescriptionResId = R.string.red_icon;
         } else {
             text = getResources().getString(R.string.i_words_to_repeat, wordsDue);
             imageResId = R.mipmap.ic_launcher;
+            contentDescriptionResId = R.string.red_icon;
         }
         views.setTextViewText(R.id.words_to_repeat_textview, text);
         views.setContentDescription(R.id.words_to_repeat_textview, text);
         views.setImageViewResource(R.id.widget_icon, imageResId);
+        views.setContentDescription(R.id.widget_icon, getString(contentDescriptionResId));
 
         Intent launchIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);

@@ -11,10 +11,11 @@
 
     <TextView
         app:layout_columnWeight="1"
-        app:layout_gravity="left"
+        app:layout_gravity="left|start"
         app:layout_row="0"
         app:layout_column="0"
         android:text="@string/foreign_language"
+        android:contentDescription="@string/foreign_language"
         style="@style/LabelText"
         />
 
@@ -24,14 +25,16 @@
         app:layout_gravity="fill_horizontal"
         app:layout_row="0"
         app:layout_column="1"
+        android:contentDescription="@string/select_foreign_language"
         />
 
     <TextView
         app:layout_columnWeight="1"
-        app:layout_gravity="left"
+        app:layout_gravity="left|start"
         app:layout_row="1"
         app:layout_column="0"
         android:text="@string/native_language"
+        android:contentDescription="@string/native_language"
         style="@style/LabelText"
         />
 
@@ -41,6 +44,7 @@
         app:layout_gravity="fill_horizontal"
         app:layout_row="1"
         app:layout_column="1"
+        android:contentDescription="@string/select_native_language"
         />
 
 </android.support.v7.widget.GridLayout>

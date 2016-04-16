@@ -78,5 +78,18 @@
     <string name="n_words_to_repeat">%s words to repeat</string>
     <string name="n_from_box_s">%1$s from box %2$s</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="select_foreign_language">Select foreign language</string>
+    <string name="select_native_language">Select native language</string>
+    <string name="select_current_box">Select current box</string>
+    <string name="select_translation_direction">Select translation direction</string>
+    <string name="show_previous_words">Show previous words</string>
+    <string name="show_next_words">Show next words</string>
+    <string name="right">Right</string>
+    <string name="show_next_word">Show next word</string>
+    <string name="wrong">Wrong</string>
+    <string name="word">Word</string>
+    <string name="out_of">out of</string>
+    <string name="green_icon">Green icon</string>
+    <string name="red_icon">Red icon</string>
 
 </resources>
