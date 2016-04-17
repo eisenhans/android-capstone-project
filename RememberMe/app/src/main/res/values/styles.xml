@@ -17,8 +17,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- ToDo -->
+    <!--<style name="SplashScreen" parent="AppTheme.NoActionBar">-->
+        <!--<item name="android:windowBackground">@drawable/ic_notification</item>-->
+    <!--</style>-->
+
     <!-- used in activity_main.xml to set up AppBarLayout -->
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!--<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
     <!-- used in activity_main.xml to set up Toolbar -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -54,6 +59,5 @@
     <style name="FlashcardText.Edit">
         <item name="android:imeOptions">actionDone</item>
     </style>
-
 
 </resources>
