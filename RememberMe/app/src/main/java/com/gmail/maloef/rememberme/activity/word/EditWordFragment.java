@@ -81,11 +81,6 @@ public class EditWordFragment extends AbstractWordFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_word, container, false);
-
-        if (savedInstanceState != null) {
-            // ToDo 14.03.16: can this information be used somehow?
-            logInfo("savedInstanceState exists: " + savedInstanceState + ", keys: " + savedInstanceState.keySet());
-        }
         ButterKnife.bind(this, rootView);
 
         configureEditTextBehavior(topWordEditText);
@@ -114,11 +109,14 @@ public class EditWordFragment extends AbstractWordFragment {
     }
 
     private void updateSaveButtonState() {
+        if (topWordEditText == null || bottomWordEditText == null) {
+            // can happen when screen orientation changes
+            return;
+        }
         String topNow = topWordEditText.getText().toString();
         String bottomNow = bottomWordEditText.getText().toString();
 
-        saveButton.setEnabled(!topNow.isEmpty() && !bottomNow.isEmpty() &&
-                !(topNow.equals(topWord) && bottomNow.equals(bottomWord)));
+        saveButton.setEnabled(!topNow.isEmpty() && !bottomNow.isEmpty() && !(topNow.equals(topWord) && bottomNow.equals(bottomWord)));
     }
 
     @Override

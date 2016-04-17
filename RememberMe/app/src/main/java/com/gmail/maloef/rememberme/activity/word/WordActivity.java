@@ -78,8 +78,7 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
         int compartment = getIntent().getIntExtra(RememberMeIntent.EXTRA_COMPARTMENT, -1);
         initToolbar(true, R.string.compartment_i, String.valueOf(compartment));
 
-        ShowWordFragment fragment = ShowWordFragmentBuilder.newShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
-        replaceFragment(fragment);
+        showShowWordFragment(givenAnswer, translationDirection, word, wordsInCompartment);
     }
 
     @Override
@@ -98,11 +97,6 @@ public class WordActivity extends AbstractRememberMeActivity implements QueryWor
 
     @Override
     public void updateOverview() {}
-
-    // ToDo 07.04.16: remove, use superclass methods instead
-    private void replaceFragment(Fragment fragment) {
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
-    }
 
     @Override
     public void onWordEntered(Word word, String givenAnswer) {

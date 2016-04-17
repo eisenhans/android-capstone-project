@@ -183,7 +183,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        createTestData();
+//        createTestData();
 
         addRowListeners();
         updateOverviewTable();
@@ -545,7 +545,7 @@ public class MainActivity extends AbstractRememberMeActivity implements LoaderMa
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    void createTestData() {
+    private void createTestData() {
         int boxId = selectedBox.id;
 
         if (wordRepository.countWords(boxId) > 0) {

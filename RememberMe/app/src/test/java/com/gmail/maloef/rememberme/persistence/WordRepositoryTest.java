@@ -72,17 +72,12 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         }
         assertEquals(5, wordRepository.countWords(boxId, 1));
 
-        long beforeUpdate = new Date().getTime() - 1;
         wordRepository.updateRepeatDate(wordIds[0]);
         wordRepository.updateRepeatDate(wordIds[2]);
         assertEquals(5, wordRepository.countWords(boxId, 1));
-        assertEquals(3, wordRepository.countWords(boxId, 1, beforeUpdate));
 
         Word first = wordRepository.getNextWord(boxId, 1);
         assertEquals("foreign1", first.foreignWord);
-
-        Word firstAfterUpdate = wordRepository.getNextWord(boxId, 1, beforeUpdate);
-        assertEquals("foreign1", firstAfterUpdate.foreignWord);
     }
 
     @Test
@@ -116,20 +111,7 @@ public class WordRepositoryTest extends AbstractPersistenceTest {
         Word word = wordRepository.findWord(wordId);
         assertEquals(0, word.lastRepeatDate);
 
-        long before = new Date().getTime();
-        wordRepository.updateRepeatDate(wordId);
-        long after = new Date().getTime();
-        word = wordRepository.findWord(wordId);
-        logInfo("repeatDate=" + word.lastRepeatDate + " (" + new Date(word.lastRepeatDate) + ")");
-        logInfo("before=" + before + ", update=" + word.lastRepeatDate + ", after=" + after);
-
-        assertTrue(before <= word.lastRepeatDate);
-        assertTrue(after >= word.lastRepeatDate);
-
         assertEquals(1, wordRepository.countWords(boxId, 1));
-        assertEquals(0, wordRepository.countWords(boxId, 1, before - 1));
-        assertEquals(1, wordRepository.countWords(boxId, 1, after));
-        assertEquals(1, wordRepository.countWords(boxId, 1, Long.MAX_VALUE));
     }
 
     @Test

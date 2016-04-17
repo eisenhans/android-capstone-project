@@ -100,11 +100,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_word, container, false);
-
-        if (savedInstanceState != null) {
-            // ToDo 14.03.16: can this information be used somehow?
-            logInfo("savedInstanceState exists: " + savedInstanceState + ", keys: " + savedInstanceState.keySet());
-        }
         ButterKnife.bind(this, rootView);
 
         configureEditTextBehavior(foreignWordEditText);
@@ -295,7 +290,6 @@ public class AddWordFragment extends AbstractWordFragment implements LoaderManag
         } else if (StringUtils.isBlank(nativeWord)) {
             message = getString(R.string.no_native_word);
         } else if (wordRepository.doesWordExist(selectedBox.id, foreignWord, nativeWord)) {
-            // ToDo 15.03.16: add parameter to strings.xml
             message = getString(R.string.word_already_exists_in_box_s, selectedBox.name);
         } else {
             wordRepository.createWord(selectedBox.id, foreignWord, nativeWord);

@@ -106,27 +106,37 @@ public class WordRepository {
     }
 
     public Word getNextWord(int boxId, int compartment) {
-        return getNextWord(boxId, compartment, Long.MAX_VALUE);
-    }
-
-    // ToDo 28.03.16: remove this method if not needed
-    public Word getNextWord(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
         WordCursor wordCursor = new WordCursor(contentResolver.query(
                 RememberMeProvider.Word.WORDS,
                 null,
-                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
-                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
-                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
                 WordColumns.LAST_REPEAT_DATE + ", " + WordColumns.CREATION_DATE));
 
         Word word = wordCursor.moveToFirst() ? wordCursor.peek() : null;
         wordCursor.close();
-        new Date(lastRepeatDateBeforeOrEqual);
-        logInfo("looked up next word from box " + boxId + ", compartment " + compartment +
-                " with lastRepeatDate before " + new Date(lastRepeatDateBeforeOrEqual) + ": " + word);
+        logInfo("looked up next word from box " + boxId + ", compartment " + compartment + ": " + word);
 
         return word;
     }
+
+//    public Word getNextWord(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
+//        WordCursor wordCursor = new WordCursor(contentResolver.query(
+//                RememberMeProvider.Word.WORDS,
+//                null,
+//                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
+//                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
+//                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
+//                WordColumns.LAST_REPEAT_DATE + ", " + WordColumns.CREATION_DATE));
+//
+//        Word word = wordCursor.moveToFirst() ? wordCursor.peek() : null;
+//        wordCursor.close();
+//        new Date(lastRepeatDateBeforeOrEqual);
+//        logInfo("looked up next word from box " + boxId + ", compartment " + compartment +
+//                " with lastRepeatDate before " + new Date(lastRepeatDateBeforeOrEqual) + ": " + word);
+//
+//        return word;
+//    }
 
     public int countWords(int boxId) {
         Cursor cursor = contentResolver.query(
@@ -143,17 +153,11 @@ public class WordRepository {
     }
 
     public int countWords(int boxId, int compartment) {
-        return countWords(boxId, compartment, Long.MAX_VALUE);
-    }
-
-    // ToDo 28.03.16: remove this method if not needed
-    public int countWords(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
         Cursor cursor = contentResolver.query(
                 RememberMeProvider.Word.WORDS,
                 new String[]{WordColumns.ID},
-                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
-                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
-                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
+                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ?",
+                new String[]{String.valueOf(boxId), String.valueOf(compartment)},
                 null);
 
         int result = cursor.getCount();
@@ -161,6 +165,21 @@ public class WordRepository {
 
         return result;
     }
+
+//    public int countWords(int boxId, int compartment, long lastRepeatDateBeforeOrEqual) {
+//        Cursor cursor = contentResolver.query(
+//                RememberMeProvider.Word.WORDS,
+//                new String[]{WordColumns.ID},
+//                WordColumns.BOX_ID + " = ? and " + WordColumns.COMPARTMENT + " = ? and (" +
+//                        WordColumns.LAST_REPEAT_DATE + " is null or " + WordColumns.LAST_REPEAT_DATE + " <= ?)",
+//                new String[]{String.valueOf(boxId), String.valueOf(compartment), String.valueOf(lastRepeatDateBeforeOrEqual)},
+//                null);
+//
+//        int result = cursor.getCount();
+//        cursor.close();
+//
+//        return result;
+//    }
 
     /**
      *
